@@ -14,6 +14,7 @@ class EstimateItem extends Model
         'company_id',
         'estimate_id',
         'item_name',
+        'item_summary',
         'quantity',
         'unit_price',
         'amount',

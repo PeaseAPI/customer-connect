@@ -59,7 +59,16 @@ class ProposalService
 
     public function update(Proposal $proposal, array $data): Proposal
     {
+        // Status changes must go through changeStatus() or send()
+        unset($data['status']);
+
         $proposal->update($data);
+        return $proposal->fresh();
+    }
+
+    public function changeStatus(Proposal $proposal, string $status): Proposal
+    {
+        $proposal->update(['status' => $status]);
         return $proposal->fresh();
     }
 

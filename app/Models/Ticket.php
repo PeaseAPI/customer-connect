@@ -25,6 +25,8 @@ class Ticket extends Model
         'client_id',
         'agent_id',
         'status',
+        'channel_id',
+        'type_id',
         'created_by',
     ];
 

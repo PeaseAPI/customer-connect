@@ -53,7 +53,21 @@ class TicketController extends BaseApiController
             'type_id' => 'nullable|exists:ticket_types,id',
         ]);
 
-        $ticket = $this->ticketService->update($ticket, $validated);
+        $status = $validated['status'] ?? null;
+        $agentId = $validated['agent_id'] ?? null;
+        unset($validated['status'], $validated['agent_id']);
+
+        if (!empty($validated)) {
+            $ticket = $this->ticketService->update($ticket, $validated);
+        }
+
+        if ($status) {
+            $ticket = $this->ticketService->changeStatus($ticket, $status);
+        }
+
+        if (array_key_exists('agent_id', $request->all())) {
+            $ticket = $this->ticketService->assign($ticket, $agentId);
+        }
 
         return $this->success($ticket->load(['agent', 'client', 'creator']), '更新成功');
     }

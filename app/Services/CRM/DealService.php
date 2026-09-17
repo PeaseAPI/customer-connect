@@ -46,20 +46,10 @@ class DealService
     public function update(Deal $deal, array $data, int $userId): Deal
     {
         return DB::transaction(function () use ($deal, $data, $userId) {
-            $oldStageId = $deal->pipeline_stage_id;
-            $deal->update($data);
+            // Stage changes must go through changeStage()
+            unset($data['pipeline_stage_id']);
 
-            if (isset($data['pipeline_stage_id']) && $data['pipeline_stage_id'] != $oldStageId) {
-                DealHistory::create([
-                    'company_id' => $deal->company_id,
-                    'deal_id' => $deal->id,
-                    'pipeline_stage_id' => $deal->pipeline_stage_id,
-                    'from_stage_id' => $oldStageId,
-                    'type' => 'stage_change',
-                    'detail' => 'Deal stage changed',
-                    'added_by' => $userId,
-                ]);
-            }
+            $deal->update($data);
 
             return $deal->fresh();
         });

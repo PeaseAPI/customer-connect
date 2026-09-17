@@ -55,7 +55,6 @@ class InvoiceController extends BaseApiController
     public function update(Request $request, Invoice $invoice)
     {
         $validated = $request->validate([
-            'status' => 'sometimes|in:draft,sent,partial,paid,canceled',
             'note' => 'nullable|string',
             'due_date' => 'sometimes|date',
             'discount' => 'nullable|numeric',

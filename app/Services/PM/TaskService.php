@@ -53,6 +53,10 @@ class TaskService
 
     public function update(Task $task, array $data): Task
     {
+        // Status changes must go through changeStatus() to dispatch events
+        // Assignment changes must go through assign() to dispatch events
+        unset($data['status'], $data['assign_to']);
+
         $task->update($data);
         return $task->fresh();
     }

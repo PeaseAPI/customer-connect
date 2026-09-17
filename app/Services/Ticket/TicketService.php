@@ -45,7 +45,22 @@ class TicketService
 
     public function update(Ticket $ticket, array $data): Ticket
     {
+        // Status and agent changes must go through changeStatus() and assign()
+        unset($data['status'], $data['agent_id']);
+
         $ticket->update($data);
+        return $ticket->fresh();
+    }
+
+    public function changeStatus(Ticket $ticket, string $status): Ticket
+    {
+        $ticket->update(['status' => $status]);
+        return $ticket->fresh();
+    }
+
+    public function assign(Ticket $ticket, ?int $agentId): Ticket
+    {
+        $ticket->update(['agent_id' => $agentId]);
         return $ticket->fresh();
     }
 

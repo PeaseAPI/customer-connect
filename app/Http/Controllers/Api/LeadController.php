@@ -65,7 +65,16 @@ class LeadController extends BaseApiController
             'next_follow_up' => 'nullable|date',
         ]);
 
-        $lead = $this->leadService->update($lead, $validated);
+        $statusId = $validated['status_id'] ?? null;
+        unset($validated['status_id']);
+
+        if (!empty($validated)) {
+            $lead = $this->leadService->update($lead, $validated);
+        }
+
+        if ($statusId) {
+            $lead = $this->leadService->changeStatus($lead, (int) $statusId);
+        }
 
         return $this->success($lead->load(['agent', 'source', 'status', 'pipelineStage']), '更新成功');
     }

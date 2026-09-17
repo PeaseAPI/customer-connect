@@ -22,11 +22,14 @@ class EmployeeDetail extends Model
         'salary',
         'hourly_rate',
         'address',
+        'date_of_birth',
+        'gender',
         'reporting_to',
     ];
 
     protected $casts = [
         'joining_date' => 'date', 'last_date' => 'date',
+        'date_of_birth' => 'date',
         'salary' => 'decimal:2', 'hourly_rate' => 'decimal:2', 'skills' => 'array',
     ];
 

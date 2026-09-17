@@ -69,6 +69,9 @@ class InvoiceService
     public function update(Invoice $invoice, array $data): Invoice
     {
         return DB::transaction(function () use ($invoice, $data) {
+            // Status changes must go through send(), cancel(), or recordPayment()
+            unset($data['status']);
+
             $items = $data['items'] ?? null;
             unset($data['items']);
 

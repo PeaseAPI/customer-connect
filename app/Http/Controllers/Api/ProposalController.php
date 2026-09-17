@@ -61,7 +61,17 @@ class ProposalController extends BaseApiController
             'note' => 'nullable|string',
         ]);
 
-        $proposal = $this->proposalService->update($proposal, $validated);
+        $status = $validated['status'] ?? null;
+        unset($validated['status']);
+
+        if (!empty($validated)) {
+            $proposal = $this->proposalService->update($proposal, $validated);
+        }
+
+        if ($status) {
+            $proposal = $this->proposalService->changeStatus($proposal, $status);
+        }
+
         return $this->success($proposal->load(['client', 'currency', 'items']), '更新成功');
     }
 

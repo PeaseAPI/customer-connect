@@ -52,7 +52,6 @@ class DealController extends BaseApiController
     {
         $validated = $request->validate([
             'deal_name' => 'sometimes|string|max:191',
-            'pipeline_stage_id' => 'sometimes|exists:pipeline_stages,id',
             'client_id' => 'nullable|exists:users,id',
             'currency_id' => 'nullable|exists:currencies,id',
             'agent_id' => 'nullable|exists:users,id',

@@ -46,6 +46,9 @@ class ProjectService
     public function update(Project $project, array $data): Project
     {
         return DB::transaction(function () use ($project, $data) {
+            // Status changes must go through changeStatus()
+            unset($data['status']);
+
             $members = $data['members'] ?? null;
             unset($data['members']);
 
@@ -55,6 +58,12 @@ class ProjectService
             }
             return $project->fresh();
         });
+    }
+
+    public function changeStatus(Project $project, string $status): Project
+    {
+        $project->update(['status' => $status]);
+        return $project->fresh();
     }
 
     public function delete(Project $project): bool

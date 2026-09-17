@@ -55,12 +55,21 @@ class LeadService
     public function update(Lead $lead, array $data): Lead
     {
         return DB::transaction(function () use ($lead, $data) {
+            // Status changes must go through changeStatus() to dispatch events
+            unset($data['status_id']);
+
             $lead->update($data);
             if (isset($data['tags'])) {
                 $lead->tags()->sync($data['tags']);
             }
             return $lead->fresh();
         });
+    }
+
+    public function changeStatus(Lead $lead, int $statusId): Lead
+    {
+        $lead->update(['status_id' => $statusId]);
+        return $lead->fresh();
     }
 
     public function delete(Lead $lead): bool

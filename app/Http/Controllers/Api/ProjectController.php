@@ -55,7 +55,17 @@ class ProjectController extends BaseApiController
             'category_id' => 'nullable|exists:project_categories,id',
         ]);
 
-        $project = $this->projectService->update($project, $validated);
+        $status = $validated['status'] ?? null;
+        unset($validated['status']);
+
+        if (!empty($validated)) {
+            $project = $this->projectService->update($project, $validated);
+        }
+
+        if ($status) {
+            $project = $this->projectService->changeStatus($project, $status);
+        }
+
         return $this->success($project->load(['client', 'members', 'creator']), '更新成功');
     }
 

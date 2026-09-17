@@ -48,7 +48,6 @@ class ExpenseController extends BaseApiController
     public function update(Request $request, Expense $expense)
     {
         $validated = $request->validate([
-            'status' => 'sometimes|in:approved,pending,declined',
             'item_name' => 'sometimes|string|max:191',
             'amount' => 'sometimes|numeric',
             'purchase_date' => 'sometimes|date',

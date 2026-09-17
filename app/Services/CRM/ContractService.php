@@ -45,6 +45,9 @@ class ContractService
 
     public function update(Contract $contract, array $data): Contract
     {
+        // Status changes must go through changeStatus() to dispatch events
+        unset($data['status']);
+
         $contract->update($data);
         return $contract->fresh();
     }
