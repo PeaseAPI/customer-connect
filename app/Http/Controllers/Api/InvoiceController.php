@@ -89,11 +89,15 @@ class InvoiceController extends BaseApiController
     {
         $validated = $request->validate([
             'amount' => 'required|numeric|min:0.01',
-            'payment_method' => 'required|string',
+            'gateway' => 'required|string',
             'transaction_id' => 'nullable|string',
             'paid_on' => 'sometimes|date',
             'note' => 'nullable|string',
         ]);
+
+        $validated['client_id'] = $invoice->client_id;
+        $validated['currency_id'] = $invoice->currency_id;
+        $validated['created_by'] = $request->user()->id;
 
         $payment = $this->invoiceService->recordPayment($invoice, $validated);
 

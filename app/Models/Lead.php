@@ -19,7 +19,7 @@ class Lead extends Model
     protected $fillable = [
         'company_id', 'client_id', 'lead_name', 'lead_email', 'lead_mobile',
         'lead_address', 'agent_id', 'source_id', 'status_id', 'pipeline_stage_id',
-        'next_follow_up', 'value', 'is_client', 'created_by',
+        'next_follow_up', 'value', 'is_client', 'client_converted_id', 'created_by',
     ];
 
     protected $casts = [

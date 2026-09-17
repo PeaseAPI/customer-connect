@@ -28,6 +28,10 @@ class OrderService
 
     public function update(Order $order, array $data): Order
     {
+        // Status changes should go through a dedicated changeStatus() method
+        // when business logic (e.g., event dispatch) is added in the future
+        unset($data['status']);
+
         $order->update($data);
         return $order->fresh();
     }

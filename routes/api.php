@@ -135,8 +135,11 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
     // CRM模块
     Route::middleware('module:crm')->prefix('crm')->group(function () {
         Route::apiResource('clients', ClientController::class);
+        Route::get('clients/export', [ClientController::class, 'export']);
+        Route::post('clients/import', [ClientController::class, 'import']);
         Route::apiResource('leads', LeadController::class);
         Route::post('leads/{lead}/convert', [LeadController::class, 'convert']);
+        Route::get('leads/export', [LeadController::class, 'export']);
         Route::apiResource('leads.follow-ups', \App\Http\Controllers\Api\LeadFollowUpController::class)->only(['index', 'store', 'update', 'destroy']);
                 Route::apiResource('contacts', \App\Http\Controllers\Api\LeadContactController::class);
                 Route::apiResource('products', ProductController::class);
@@ -192,6 +195,7 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
                 Route::apiResource('invoices', InvoiceController::class);
                 Route::post('invoices/{invoice}/send', [InvoiceController::class, 'send']);
         Route::post('invoices/{invoice}/cancel', [InvoiceController::class, 'cancel']);
+        Route::post('invoices/{invoice}/record-payment', [InvoiceController::class, 'recordPayment']);
         Route::apiResource('invoices.payments', PaymentController::class)->only(['index', 'store']);
         Route::apiResource('payments', PaymentController::class);
         Route::apiResource('expenses', ExpenseController::class);

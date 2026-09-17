@@ -23,10 +23,10 @@ class InvoiceService
             $query->where('status', $filters['status']);
         }
         if (!empty($filters['start_date'])) {
-            $query->where('invoice_date', '>=', $filters['start_date']);
+            $query->where('date', '>=', $filters['start_date']);
         }
         if (!empty($filters['end_date'])) {
-            $query->where('invoice_date', '<=', $filters['end_date']);
+            $query->where('date', '<=', $filters['end_date']);
         }
 
         return $query->orderBy('created_at', 'desc')->paginate($perPage);
@@ -136,7 +136,7 @@ class InvoiceService
 
     public function sendInvoice(Invoice $invoice): Invoice
     {
-        $invoice->update(['status' => 'sent', 'sent_at' => now()]);
+        $invoice->update(['status' => 'sent', 'sent_on' => now()]);
         return $invoice->fresh();
     }
 

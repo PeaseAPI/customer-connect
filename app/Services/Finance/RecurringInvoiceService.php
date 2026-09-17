@@ -28,6 +28,10 @@ class RecurringInvoiceService
 
     public function update(RecurringInvoice $recurringInvoice, array $data): RecurringInvoice
     {
+        // Status changes should go through a dedicated method
+        // when business logic is added in the future
+        unset($data['status']);
+
         $recurringInvoice->update($data);
         return $recurringInvoice->fresh();
     }
@@ -37,3 +41,4 @@ class RecurringInvoiceService
         return $recurringInvoice->delete();
     }
 }
+

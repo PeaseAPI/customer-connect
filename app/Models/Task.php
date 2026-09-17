@@ -34,6 +34,7 @@ class Task extends Model
         'category_id',
         'board_column',
         'is_pinned',
+        'completed_at',
         'created_by',
     ];
 
@@ -42,6 +43,7 @@ class Task extends Model
         'is_recurring' => 'boolean', 'is_pinned' => 'boolean',
         'completion_percent' => 'integer', 'board_column' => 'integer',
         'status' => TaskStatus::class, 'priority' => Priority::class,
+        'completed_at' => 'datetime',
     ];
 
         public function project(): BelongsTo { return $this->belongsTo(Project::class); }

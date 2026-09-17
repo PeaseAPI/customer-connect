@@ -113,8 +113,8 @@ class LeadService
         return $lead->fresh();
     }
 
-    public function batchUpdateStatus(array $leadIds, string $status): int
+    public function batchUpdateStatus(array $leadIds, int $statusId): int
     {
-        return Lead::whereIn('id', $leadIds)->update(['status' => $status]);
+        return Lead::whereIn('id', $leadIds)->update(['status_id' => $statusId]);
     }
 }
