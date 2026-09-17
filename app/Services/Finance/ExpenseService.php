@@ -40,6 +40,9 @@ class ExpenseService
 
     public function update(Expense $expense, array $data): Expense
     {
+        // Status changes must go through approve() or reject()
+        unset($data['status']);
+
         $expense->update($data);
         return $expense->fresh();
     }

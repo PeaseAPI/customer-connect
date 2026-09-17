@@ -62,7 +62,6 @@ class EstimateController extends BaseApiController
             'client_id' => 'sometimes|exists:users,id',
             'sub_total' => 'sometimes|numeric',
             'total' => 'sometimes|numeric',
-            'status' => 'sometimes|in:pending,sent,accepted,declined,expired',
             'valid_till' => 'sometimes|date',
             'date' => 'sometimes|date',
             'discount' => 'nullable|numeric',

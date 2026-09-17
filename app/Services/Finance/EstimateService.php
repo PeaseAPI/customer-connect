@@ -48,6 +48,9 @@ class EstimateService
     public function update(Estimate $estimate, array $data, ?array $items = null): Estimate
     {
         return DB::transaction(function () use ($estimate, $data, $items) {
+            // Status changes must go through send()
+            unset($data['status']);
+
             $estimate->update($data);
 
             // Replace items if provided

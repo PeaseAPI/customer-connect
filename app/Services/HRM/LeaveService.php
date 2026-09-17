@@ -78,6 +78,10 @@ class LeaveService
 
     public function update(Leave $leave, array $data): Leave
     {
+        // Status changes must go through approve(), reject(), or cancel()
+        // to properly handle leave balance and dispatch events
+        unset($data['status'], $data['approved_by']);
+
         $leave->update($data);
         return $leave->fresh();
     }
