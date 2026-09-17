@@ -6,7 +6,6 @@ use App\Enums\UserStatus;
 use App\Models\User;
 use App\Services\HRM\EmployeeService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class EmployeeController extends BaseApiController
 {

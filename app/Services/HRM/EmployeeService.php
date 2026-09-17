@@ -6,7 +6,6 @@ use App\Enums\UserStatus;
 use App\Models\User;
 use App\Models\EmployeeDetail;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 
 class EmployeeService
 {
@@ -34,7 +33,7 @@ class EmployeeService
                 'name' => $data['name'],
                 'email' => $data['email'],
                 'mobile' => $data['mobile'] ?? null,
-                'password' => Hash::make($data['password']),
+                                'password' => $data['password'],
                 'status' => UserStatus::Active,
                 'company_id' => $data['company_id'],
             ]);

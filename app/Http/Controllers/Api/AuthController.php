@@ -46,7 +46,7 @@ class AuthController extends BaseApiController
             'mobile' => 'nullable|string|max:20|unique:users,mobile', 'password' => 'required|string|min:8|confirmed',
         ]);
         $company = \App\Models\Company::create(['company_name' => $validated['company_name'], 'company_email' => $validated['company_email'], 'status' => \App\Enums\CompanyStatus::Active]);
-        $user = User::create(['company_id' => $company->id, 'name' => $validated['name'], 'email' => $validated['email'], 'mobile' => $validated['mobile'] ?? null, 'password' => Hash::make($validated['password']), 'status' => UserStatus::Active]);
+                $user = User::create(['company_id' => $company->id, 'name' => $validated['name'], 'email' => $validated['email'], 'mobile' => $validated['mobile'] ?? null, 'password' => $validated['password'], 'status' => UserStatus::Active]);
         UserAuth::create(['user_id' => $user->id, 'company_id' => $company->id, 'is_superadmin' => true]);
         $user->assignRole('admin');
         \App\Models\OrganisationSetting::create(['company_id' => $company->id, 'company_name' => $validated['company_name'], 'company_email' => $validated['company_email']]);
@@ -103,7 +103,7 @@ class AuthController extends BaseApiController
         if (!Hash::check($request->current_password, $request->user()->password)) {
             throw ValidationException::withMessages(['current_password' => ['当前密码错误']]);
         }
-        $request->user()->update(['password' => Hash::make($request->password)]);
+                $request->user()->update(['password' => $request->password]);
         return $this->success(null, '密码修改成功');
     }
 

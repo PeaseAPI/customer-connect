@@ -31,10 +31,7 @@ class ClientService
     public function create(array $data): User
     {
         return DB::transaction(function () use ($data) {
-            $password = $data['password'];
-            unset($data['password']);
-            $data['password'] = bcrypt($password);
-
+            // Password is auto-hashed by User model's 'hashed' cast
             $client = User::create($data);
             $client->assignRole('client');
 

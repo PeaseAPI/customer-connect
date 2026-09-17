@@ -45,7 +45,7 @@ class ProfileController extends BaseApiController
             return $this->error('当前密码不正确', 422);
         }
 
-        $user->update(['password' => Hash::make($validated['password'])]);
+                $user->update(['password' => $validated['password']]);
         return $this->success(null, '密码修改成功');
     }
 

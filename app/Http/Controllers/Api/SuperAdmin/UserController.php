@@ -6,7 +6,6 @@ use App\Http\Controllers\Api\BaseApiController;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class UserController extends BaseApiController
 {
@@ -66,7 +65,7 @@ class UserController extends BaseApiController
     public function resetPassword(User $user): JsonResponse
     {
         $newPassword = \Illuminate\Support\Str::random(12);
-        $user->update(['password' => Hash::make($newPassword)]);
+                $user->update(['password' => $newPassword]);
 
         return $this->success([
             'new_password' => $newPassword,

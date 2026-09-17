@@ -22,7 +22,7 @@ class Project extends Model
     protected $fillable = [
         'company_id',
         'project_name',
-        'description',
+        'project_summary',
         'client_id',
         'start_date',
         'deadline',

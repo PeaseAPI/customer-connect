@@ -26,7 +26,7 @@ class ProjectController extends BaseApiController
             'status' => 'sometimes|in:not_started,planning,in_progress,on_hold,completed,canceled,finished',
             'priority' => 'sometimes|in:low,medium,high,urgent',
             'budget' => 'nullable|numeric',
-            'description' => 'nullable|string',
+            'project_summary' => 'nullable|string',
             'category_id' => 'nullable|exists:project_categories,id',
         ]);
 
@@ -51,12 +51,14 @@ class ProjectController extends BaseApiController
             'status' => 'sometimes|in:not_started,planning,in_progress,on_hold,completed,canceled,finished',
             'priority' => 'sometimes|in:low,medium,high,urgent',
             'budget' => 'nullable|numeric',
-            'description' => 'nullable|string',
+            'project_summary' => 'nullable|string',
             'category_id' => 'nullable|exists:project_categories,id',
         ]);
 
         $status = $validated['status'] ?? null;
         unset($validated['status']);
+
+        $validated['last_updated_by'] = $request->user()->id;
 
         if (!empty($validated)) {
             $project = $this->projectService->update($project, $validated);

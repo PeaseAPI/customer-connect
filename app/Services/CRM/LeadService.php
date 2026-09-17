@@ -87,7 +87,7 @@ class LeadService
                 'source_id' => $lead->source_id,
                 'agent_id' => $lead->agent_id,
                 'company_id' => $lead->company_id,
-                'password' => bcrypt(str()->random(16)),
+                                'password' => str()->random(16),
             ], $clientData);
 
             $client = \App\Models\User::create($clientData);
