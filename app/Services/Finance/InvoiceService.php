@@ -1,0 +1,147 @@
+<?php
+
+namespace App\Services\Finance;
+
+use App\Models\Invoice;
+use App\Models\InvoiceItem;
+use App\Models\Payment;
+use App\Events\InvoiceCreated;
+use App\Events\PaymentReceived;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+
+class InvoiceService
+{
+    public function list(array $filters = [], int $perPage = 15)
+    {
+        $query = Invoice::with(['client', 'project', 'items']);
+
+        if (!empty($filters['client_id'])) {
+            $query->where('client_id', $filters['client_id']);
+        }
+        if (!empty($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+        if (!empty($filters['start_date'])) {
+            $query->where('invoice_date', '>=', $filters['start_date']);
+        }
+        if (!empty($filters['end_date'])) {
+            $query->where('invoice_date', '<=', $filters['end_date']);
+        }
+
+        return $query->orderBy('created_at', 'desc')->paginate($perPage);
+    }
+
+    public function create(array $data, array $items = []): Invoice
+    {
+        return DB::transaction(function () use ($data, $items) {
+            // If items were extracted from data by the controller, use the passed items
+            // Otherwise, fall back to items within the data array
+            if (empty($items) && isset($data['items'])) {
+                $items = $data['items'];
+            }
+            unset($data['items']);
+
+            $data['invoice_number'] = $data['invoice_number'] ?? $this->generateInvoiceNumber();
+            $data['status'] = $data['status'] ?? 'draft';
+            $data['hash'] = $data['hash'] ?? Str::random(32);
+
+            $invoice = Invoice::create($data);
+
+            $totalAmount = 0;
+            foreach ($items as $item) {
+                $invoiceItem = $invoice->items()->create(array_merge($item, [
+                    'company_id' => $invoice->company_id,
+                ]));
+                $totalAmount += $invoiceItem->amount ?? 0;
+            }
+
+            $invoice->update([
+                'sub_total' => $totalAmount,
+                'total' => $totalAmount + $invoice->tax,
+            ]);
+
+            event(new InvoiceCreated($invoice));
+            return $invoice->fresh();
+        });
+    }
+
+    public function update(Invoice $invoice, array $data): Invoice
+    {
+        return DB::transaction(function () use ($invoice, $data) {
+            $items = $data['items'] ?? null;
+            unset($data['items']);
+
+            $invoice->update($data);
+
+            if ($items !== null) {
+                $invoice->items()->delete();
+                $totalAmount = 0;
+                foreach ($items as $item) {
+                    $invoiceItem = $invoice->items()->create(array_merge($item, [
+                        'company_id' => $invoice->company_id,
+                    ]));
+                    $totalAmount += $invoiceItem->amount ?? 0;
+                }
+                $invoice->update([
+                    'sub_total' => $totalAmount,
+                    'total' => $totalAmount + $invoice->tax,
+                ]);
+            }
+            return $invoice->fresh();
+        });
+    }
+
+    public function delete(Invoice $invoice): bool
+    {
+        return DB::transaction(function () use ($invoice) {
+            $invoice->items()->delete();
+            return $invoice->delete();
+        });
+    }
+
+    public function recordPayment(Invoice $invoice, array $paymentData): Payment
+    {
+        return DB::transaction(function () use ($invoice, $paymentData) {
+            $payment = Payment::create(array_merge($paymentData, [
+                'invoice_id' => $invoice->id,
+                'company_id' => $invoice->company_id,
+            ]));
+
+            $totalPaid = $invoice->payments()->sum('amount');
+            if ($totalPaid >= $invoice->total) {
+                $invoice->update(['status' => 'paid']);
+            } elseif ($totalPaid > 0) {
+                $invoice->update(['status' => 'partial']);
+            }
+
+            event(new PaymentReceived($payment));
+            return $payment;
+        });
+    }
+
+    public function send(Invoice $invoice): Invoice
+    {
+        return $this->sendInvoice($invoice);
+    }
+
+    public function cancel(Invoice $invoice): Invoice
+    {
+        $invoice->update(['status' => 'canceled']);
+        return $invoice->fresh();
+    }
+
+    public function sendInvoice(Invoice $invoice): Invoice
+    {
+        $invoice->update(['status' => 'sent', 'sent_at' => now()]);
+        return $invoice->fresh();
+    }
+
+    private function generateInvoiceNumber(): string
+    {
+        $prefix = 'INV';
+        $date = now()->format('Ymd');
+        $last = Invoice::whereDate('created_at', today())->count() + 1;
+        return $prefix . '-' . $date . '-' . str_pad($last, 4, '0', STR_PAD_LEFT);
+    }
+}
