@@ -32,7 +32,7 @@ class InvoiceService
         return $query->orderBy('created_at', 'desc')->paginate($perPage);
     }
 
-    public function create(array $data, array $items = []): Invoice
+        public function create(array $data, array $items = []): Invoice
     {
         return DB::transaction(function () use ($data, $items) {
             // If items were extracted from data by the controller, use the passed items
@@ -56,9 +56,13 @@ class InvoiceService
                 $totalAmount += $invoiceItem->amount ?? 0;
             }
 
+            $discount = $invoice->discount ?? 0;
+            $discountAmount = ($invoice->discount_type ?? 'percent') === 'percent'
+                ? $totalAmount * ($discount / 100) : $discount;
+
             $invoice->update([
                 'sub_total' => $totalAmount,
-                'total' => $totalAmount + $invoice->tax,
+                'total' => $totalAmount - $discountAmount + $invoice->tax,
             ]);
 
             event(new InvoiceCreated($invoice));
@@ -66,7 +70,7 @@ class InvoiceService
         });
     }
 
-    public function update(Invoice $invoice, array $data): Invoice
+        public function update(Invoice $invoice, array $data): Invoice
     {
         return DB::transaction(function () use ($invoice, $data) {
             // Status changes must go through send(), cancel(), or recordPayment()
@@ -86,9 +90,14 @@ class InvoiceService
                     ]));
                     $totalAmount += $invoiceItem->amount ?? 0;
                 }
+
+                $discount = $invoice->discount ?? 0;
+                $discountAmount = ($invoice->discount_type ?? 'percent') === 'percent'
+                    ? $totalAmount * ($discount / 100) : $discount;
+
                 $invoice->update([
                     'sub_total' => $totalAmount,
-                    'total' => $totalAmount + $invoice->tax,
+                    'total' => $totalAmount - $discountAmount + $invoice->tax,
                 ]);
             }
             return $invoice->fresh();

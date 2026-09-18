@@ -15,7 +15,7 @@ class EnsureSuperAdmin
     {
         $user = $request->user();
 
-        if (!$user || !$user->is_super_admin) {
+        if (!$user || !$user->isSuperAdmin()) {
             if ($request->expectsJson()) {
                 return response()->json(['message' => '无权访问，仅超级管理员可操作'], 403);
             }

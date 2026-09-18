@@ -3,7 +3,7 @@
 namespace App\Services\HRM;
 
 use App\Models\Attendance;
-use App\Models\Employee;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -19,8 +19,8 @@ class AttendanceService
         if (!empty($filters['date'])) {
             $query->whereDate('date', $filters['date']);
         }
-        if (!empty($filters['status'])) {
-            $query->where('status', $filters['status']);
+        if (!empty($filters['late'])) {
+            $query->where('late', $filters['late']);
         }
 
         return $query->orderBy('date', 'desc')->paginate($perPage);
@@ -67,95 +67,82 @@ class AttendanceService
         return $attendance->fresh();
     }
 
-    public function checkIn(Employee $employee, array $data = []): Attendance
+            public function checkIn(User $user, array $data = []): Attendance
     {
         $today = now()->toDateString();
-        $existing = Attendance::where('employee_id', $employee->id)
+        $existing = Attendance::where('user_id', $user->id)
             ->where('date', $today)
             ->first();
 
-        if ($existing && $existing->check_in_time) {
+        if ($existing && $existing->clock_in_time) {
             throw new \Exception('今日已签到');
         }
 
-        $checkInTime = now();
-        $isLate = $this->isLate($employee, $checkInTime);
+        $clockInTime = now();
+        $isLate = $this->isLate($user, $clockInTime);
 
         return Attendance::updateOrCreate(
-            ['employee_id' => $employee->id, 'date' => $today],
+            ['user_id' => $user->id, 'date' => $today],
             [
-                'company_id' => $employee->company_id,
-                'check_in_time' => $checkInTime,
-                'check_in_ip' => $data['ip'] ?? request()->ip(),
-                'check_in_location' => $data['location'] ?? null,
-                'status' => $isLate ? 'late' : 'normal',
-                'is_late' => $isLate,
+                'company_id' => $user->company_id,
+                'clock_in_time' => $clockInTime,
+                'clock_in_ip' => $data['ip'] ?? request()->ip(),
+                'late' => $isLate ? 'yes' : 'no',
+                'late_by' => $isLate ? $this->getLateMinutes($user, $clockInTime) : 0,
+                'shift_id' => $data['shift_id'] ?? null,
             ]
         );
     }
 
-    public function checkOut(Employee $employee, array $data = []): Attendance
+    public function checkOut(User $user, array $data = []): Attendance
     {
         $today = now()->toDateString();
-        $attendance = Attendance::where('employee_id', $employee->id)
+        $attendance = Attendance::where('user_id', $user->id)
             ->where('date', $today)
             ->firstOrFail();
 
-        $checkOutTime = now();
-        $isEarlyLeave = $this->isEarlyLeave($employee, $checkOutTime);
-
-        $workedMinutes = $checkOutTime->diffInMinutes($attendance->check_in_time);
-        $overtimeMinutes = max(0, $workedMinutes - $this->getStandardWorkMinutes($employee));
+        $clockOutTime = now();
 
         $attendance->update([
-            'check_out_time' => $checkOutTime,
-            'check_out_ip' => $data['ip'] ?? request()->ip(),
-            'check_out_location' => $data['location'] ?? null,
-            'worked_minutes' => $workedMinutes,
-            'overtime_minutes' => $overtimeMinutes,
-            'is_early_leave' => $isEarlyLeave,
-            'status' => $isEarlyLeave ? 'early_leave' : $attendance->status,
+            'clock_out_time' => $clockOutTime,
+            'clock_out_ip' => $data['ip'] ?? request()->ip(),
+            'working_from' => $data['working_from'] ?? 'office',
         ]);
 
         return $attendance->fresh();
     }
 
-    public function getMonthlyReport(int $employeeId, string $month): array
+    public function getMonthlyReport(int $userId, string $month): array
     {
         $startDate = Carbon::parse($month)->startOfMonth();
         $endDate = $startDate->copy()->endOfMonth();
 
-        $attendances = Attendance::where('employee_id', $employeeId)
+        $attendances = Attendance::where('user_id', $userId)
             ->whereBetween('date', [$startDate, $endDate])
             ->get();
 
         return [
             'total_days' => $startDate->diffInDays($endDate) + 1,
             'work_days' => $this->getWorkDays($startDate, $endDate),
-            'attended_days' => $attendances->whereNotNull('check_in_time')->count(),
-            'late_count' => $attendances->where('is_late', true)->count(),
-            'early_leave_count' => $attendances->where('is_early_leave', true)->count(),
-            'absent_count' => $this->getAbsentCount($employeeId, $startDate, $endDate),
-            'total_overtime_minutes' => $attendances->sum('overtime_minutes'),
-            'total_worked_minutes' => $attendances->sum('worked_minutes'),
+            'attended_days' => $attendances->whereNotNull('clock_in_time')->count(),
+            'late_count' => $attendances->where('late', 'yes')->count(),
+            'half_day_count' => $attendances->where('half_day', 'yes')->count(),
+            'absent_count' => $this->getAbsentCount($userId, $startDate, $endDate),
         ];
     }
 
-    private function isLate(Employee $employee, Carbon $time): bool
+            private function isLate(User $user, Carbon $time): bool
     {
-        $workStartTime = $employee->work_start_time ?? '09:00:00';
+        $shift = $user->employeeDetail?->shift;
+        $workStartTime = $shift?->start_time ?? '09:00:00';
         return $time->format('H:i:s') > $workStartTime;
     }
 
-    private function isEarlyLeave(Employee $employee, Carbon $time): bool
+    private function getLateMinutes(User $user, Carbon $time): int
     {
-        $workEndTime = $employee->work_end_time ?? '18:00:00';
-        return $time->format('H:i:s') < $workEndTime;
-    }
-
-    private function getStandardWorkMinutes(Employee $employee): int
-    {
-        return $employee->standard_work_minutes ?? 480; // 默认8小时
+        $shift = $user->employeeDetail?->shift;
+        $workStartTime = Carbon::parse($time->format('Y-m-d') . ' ' . ($shift?->start_time ?? '09:00:00'));
+        return max(0, $time->diffInMinutes($workStartTime));
     }
 
     private function getWorkDays(Carbon $start, Carbon $end): int
@@ -169,12 +156,12 @@ class AttendanceService
         return $days;
     }
 
-    private function getAbsentCount(int $employeeId, Carbon $start, Carbon $end): int
+        private function getAbsentCount(int $userId, Carbon $start, Carbon $end): int
     {
         $workDays = $this->getWorkDays($start, $end);
-        $attendedWorkDays = Attendance::where('employee_id', $employeeId)
+        $attendedWorkDays = Attendance::where('user_id', $userId)
             ->whereBetween('date', [$start, $end])
-            ->whereNotNull('check_in_time')
+            ->whereNotNull('clock_in_time')
             ->count();
         return max(0, $workDays - $attendedWorkDays);
     }

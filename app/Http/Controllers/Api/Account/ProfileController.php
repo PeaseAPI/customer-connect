@@ -17,15 +17,15 @@ class ProfileController extends BaseApiController
         return $this->success($request->user()->load(['company', 'roles']));
     }
 
-    public function update(Request $request): JsonResponse
+        public function update(Request $request): JsonResponse
     {
         $user = $request->user();
 
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
             'email' => ['sometimes', 'email', Rule::unique('users')->ignore($user->id)],
-            'phone' => ['sometimes', 'string', 'max:20', Rule::unique('users')->ignore($user->id)],
-            'avatar' => 'sometimes|string|max:500',
+            'mobile' => ['sometimes', 'string', 'max:20', Rule::unique('users')->ignore($user->id)],
+            'image' => 'sometimes|string|max:500',
         ]);
 
         $user->update($validated);
@@ -49,19 +49,15 @@ class ProfileController extends BaseApiController
         return $this->success(null, '密码修改成功');
     }
 
-    public function updatePreferences(Request $request): JsonResponse
+        public function updatePreferences(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'locale' => 'sometimes|string|in:zh-cn,en',
-            'timezone' => 'sometimes|string',
-            'notification_settings' => 'sometimes|array',
-            'notification_settings.email' => 'boolean',
-            'notification_settings.database' => 'boolean',
-            'notification_settings.sms' => 'boolean',
+            'email_notifications' => 'sometimes|boolean',
         ]);
 
         $user = $request->user();
-        $user->update(['preferences' => array_merge($user->preferences ?? [], $validated)]);
+        $user->update($validated);
 
         return $this->success($user->fresh());
     }
