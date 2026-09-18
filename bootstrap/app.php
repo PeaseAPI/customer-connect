@@ -18,12 +18,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // API 中间件组
+        // API middleware group
         $middleware->api(prepend: [
             \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         ]);
 
-        // 别名注册
+        // Middleware aliases
         $middleware->alias([
             'company' => SetCompanyContext::class,
             'subscription' => CheckSubscription::class,
@@ -32,7 +32,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'api_key' => \App\Http\Middleware\AuthenticateApiKey::class,
         ]);
 
-        // 排除不需要多租户检查的路由
+        // Exclude routes that don't need multi-tenant checks
         $middleware->validateCsrfTokens(except: [
             'api/*',
         ]);
