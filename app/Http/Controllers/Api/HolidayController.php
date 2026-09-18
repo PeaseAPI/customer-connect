@@ -27,7 +27,7 @@ class HolidayController extends BaseApiController
 
         $validated['company_id'] = $request->attributes->get('company_id');
 
-        return $this->success($this->holidayService->create($validated), '假期创建成功', 201);
+        return $this->success($this->holidayService->create($validated), 'Holiday created', 201);
     }
 
     public function show(Holiday $holiday)
@@ -45,14 +45,14 @@ class HolidayController extends BaseApiController
 
         $holiday = $this->holidayService->update($holiday, $validated);
 
-        return $this->success($holiday, '更新成功');
+        return $this->success($holiday, 'Updated successfully');
     }
 
     public function destroy(Holiday $holiday)
     {
         $this->holidayService->delete($holiday);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }
 

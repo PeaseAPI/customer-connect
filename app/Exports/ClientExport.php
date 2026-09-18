@@ -50,9 +50,9 @@ class ClientExport implements FromQuery, WithHeadings, WithMapping, ShouldQueue
     public function headings(): array
     {
         return [
-            'ID', '客户名称', '行业', '等级', '来源',
-            '联系人', '联系电话', '邮箱', '地址',
-            '负责人', '标签', '创建时间',
+            'ID', '客户名称', '行业', '等级', 'Source',
+            '联系人', '联系电话', 'Email', '地址',
+            'Owner', 'Tags', 'Created At',
         ];
     }
 

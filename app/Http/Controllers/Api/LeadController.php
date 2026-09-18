@@ -76,13 +76,13 @@ class LeadController extends BaseApiController
             $lead = $this->leadService->changeStatus($lead, (int) $statusId);
         }
 
-        return $this->success($lead->load(['agent', 'source', 'status', 'pipelineStage']), '更新成功');
+        return $this->success($lead->load(['agent', 'source', 'status', 'pipelineStage']), 'Updated successfully');
     }
 
     public function destroy(Lead $lead)
     {
         $this->leadService->delete($lead);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 
     public function convert(Lead $lead)

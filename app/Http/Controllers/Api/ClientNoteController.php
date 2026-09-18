@@ -34,7 +34,7 @@ class ClientNoteController extends BaseApiController
 
         return $this->success(
             $this->clientNoteService->create($validated)->load(['member', 'creator']),
-            '客户备注创建成功',
+            'Client note created',
             201
         );
     }
@@ -58,13 +58,13 @@ class ClientNoteController extends BaseApiController
         $validated['last_updated_by'] = $request->user()->id;
         $note = $this->clientNoteService->update($note, $validated);
 
-        return $this->success($note->load(['member', 'creator']), '更新成功');
+        return $this->success($note->load(['member', 'creator']), 'Updated successfully');
     }
 
     public function destroy($clientId, ClientNote $note)
     {
         $this->clientNoteService->delete($note);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

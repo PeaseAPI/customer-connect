@@ -12,10 +12,10 @@ enum SubscriptionStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::Active => '生效中',
-            self::Trial => '试用中',
-            self::Expired => '已过期',
-            self::Canceled => '已取消',
+            self::Active => 'Active',
+            self::Trial => 'Trial',
+            self::Expired => 'Expired',
+            self::Canceled => 'Canceled',
         };
     }
 }

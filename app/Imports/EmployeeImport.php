@@ -47,7 +47,7 @@ class EmployeeImport implements ToCollection, WithHeadingRow
                     'department_id' => $row['department_id'] ?? $row['部门ID'] ?? null,
                     'designation_id' => $row['designation_id'] ?? $row['职位ID'] ?? null,
                     'joining_date' => $row['joining_date'] ?? $row['入职日期'] ?? null,
-                    'salary' => $row['salary'] ?? $row['薪资'] ?? null,
+                    'salary' => $row['salary'] ?? $row['salary'] ?? null,
                     'hourly_rate' => $row['hourly_rate'] ?? $row['时薪'] ?? null,
                     'date_of_birth' => $row['date_of_birth'] ?? $row['出生日期'] ?? null,
                     'gender' => $row['gender'] ?? $row['性别'] ?? null,

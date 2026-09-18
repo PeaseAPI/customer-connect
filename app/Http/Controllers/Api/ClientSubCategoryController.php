@@ -50,13 +50,13 @@ class ClientSubCategoryController extends BaseApiController
         $validated['last_updated_by'] = $request->user()->id;
         $sub_category = $this->clientSubCategoryService->update($sub_category, $validated);
 
-        return $this->success($sub_category, '更新成功');
+        return $this->success($sub_category, 'Updated successfully');
     }
 
     public function destroy($categoryId, ClientSubCategory $sub_category)
     {
         $this->clientSubCategoryService->delete($sub_category);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

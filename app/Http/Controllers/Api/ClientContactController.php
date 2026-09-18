@@ -64,13 +64,13 @@ class ClientContactController extends BaseApiController
         $validated['last_updated_by'] = $request->user()->id;
         $contact = $this->clientContactService->update($contact, $validated);
 
-        return $this->success($contact->load(['creator']), '更新成功');
+        return $this->success($contact->load(['creator']), 'Updated successfully');
     }
 
     public function destroy($clientId, ClientContact $contact)
     {
         $this->clientContactService->delete($contact);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

@@ -61,6 +61,6 @@ class EmployeeShiftChangeRequestController extends BaseApiController
     {
         $this->shiftChangeRequestService->delete($shiftChangeRequest);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

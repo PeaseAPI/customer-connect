@@ -73,13 +73,13 @@ class ProposalController extends BaseApiController
             $proposal = $this->proposalService->changeStatus($proposal, $status);
         }
 
-        return $this->success($proposal->load(['client', 'currency', 'items']), '更新成功');
+        return $this->success($proposal->load(['client', 'currency', 'items']), 'Updated successfully');
     }
 
     public function destroy(Proposal $proposal)
     {
         $this->proposalService->delete($proposal);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 
     public function send(Proposal $proposal)

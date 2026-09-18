@@ -41,13 +41,13 @@ class UnitTypeController extends BaseApiController
 
         $unitType = $this->unitTypeService->update($unitType, $validated);
 
-        return $this->success($unitType, '更新成功');
+        return $this->success($unitType, 'Updated successfully');
     }
 
     public function destroy(UnitType $unitType)
     {
         $this->unitTypeService->delete($unitType);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

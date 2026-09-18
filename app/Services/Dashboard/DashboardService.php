@@ -169,7 +169,7 @@ class DashboardService
                 ['label' => '添加客户', 'route' => 'clients.store'],
             ],
             'todo' => [
-                ['type' => 'approval', 'label' => '待审批', 'count' => $pendingApprovals],
+                ['type' => 'approval', 'label' => 'Pending approval', 'count' => $pendingApprovals],
                 ['type' => 'contract', 'label' => '即将到期合同', 'count' => $expiringContracts],
                 ['type' => 'invoice', 'label' => '逾期发票', 'count' => $overdueInvoices],
                 ['type' => 'ticket', 'label' => '待处理工单', 'count' => $pendingTickets],

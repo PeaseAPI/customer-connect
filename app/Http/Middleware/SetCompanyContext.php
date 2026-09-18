@@ -10,18 +10,18 @@ use Symfony\Component\HttpFoundation\Response;
 class SetCompanyContext
 {
     /**
-     * 从子域名或认证用户解析公司ID并设置到Context中。
-     * 所有使用HasCompanyScope的模型将自动通过CompanyScope过滤。
+     * Resolve company ID from subdomain or authenticated user and set it in Context.
+     * All models using HasCompanyScope will automatically be filtered through CompanyScope.
      */
     public function handle(Request $request, Closure $next): Response
     {
         $companyId = null;
 
-        // 1. 优先从子域名解析
+        // 1. Resolve from subdomain first
         $host = $request->getHost();
         $parts = explode('.', $host);
 
-        // 如果是子域名访问 (例如: company.kht.cn)
+        // Sub-domain access (e.g.: company.example.com)
         if (count($parts) >= 3) {
             $subdomain = $parts[0];
             $company = \App\Models\Company::where('subdomain', $subdomain)->first();
@@ -30,12 +30,12 @@ class SetCompanyContext
             }
         }
 
-        // 2. 从认证用户解析（API请求或子域名未匹配时）
+        // 2. Resolve from authenticated user (API requests or no subdomain match)
         if (!$companyId && $request->user()) {
             $companyId = $request->user()->company_id;
         }
 
-        // 3. 从请求头解析（适用于API调用时通过Header传递）
+        // 3. Resolve from request header (for API calls with Header)
         if (!$companyId) {
             $companyId = $request->header('X-Company-Id');
         }

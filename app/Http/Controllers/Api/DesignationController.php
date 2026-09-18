@@ -45,14 +45,14 @@ class DesignationController extends BaseApiController
 
         $designation = $this->designationService->update($designation, $validated);
 
-        return $this->success($designation, '更新成功');
+        return $this->success($designation, 'Updated successfully');
     }
 
     public function destroy(Designation $designation)
     {
         $this->designationService->delete($designation);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }
 

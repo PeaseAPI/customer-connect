@@ -40,7 +40,7 @@ class DealController extends BaseApiController
 
         $deal = $this->dealService->create($validated, $request->user()->id);
 
-        return $this->success($deal->load(['stage', 'client', 'agent']), '交易创建成功', 201);
+        return $this->success($deal->load(['stage', 'client', 'agent']), 'Deal created', 201);
     }
 
     public function show(Deal $deal)
@@ -62,13 +62,13 @@ class DealController extends BaseApiController
 
         $deal = $this->dealService->update($deal, $validated, $request->user()->id);
 
-        return $this->success($deal->load(['stage', 'client', 'agent']), '更新成功');
+        return $this->success($deal->load(['stage', 'client', 'agent']), 'Updated successfully');
     }
 
     public function destroy(Deal $deal)
     {
         $this->dealService->delete($deal);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 
     public function changeStage(Request $request, Deal $deal)
@@ -79,7 +79,7 @@ class DealController extends BaseApiController
 
         $deal = $this->dealService->changeStage($deal, $validated['pipeline_stage_id'], $request->user()->id);
 
-        return $this->success($deal->load('stage'), '阶段更新成功');
+        return $this->success($deal->load('stage'), 'Stage updated');
     }
 
     public function storeNote(Request $request, Deal $deal)
@@ -91,7 +91,7 @@ class DealController extends BaseApiController
 
         $note = $this->dealService->addNote($deal, $validated, $request->user()->id);
 
-        return $this->success($note, '备注添加成功', 201);
+        return $this->success($note, 'Note added', 201);
     }
 
     public function history(Deal $deal)

@@ -11,9 +11,9 @@ enum RecurringStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::Active => '生效中',
-            self::Inactive => '已停用',
-            self::Completed => '已完成',
+            self::Active => 'Active',
+            self::Inactive => 'Disabled',
+            self::Completed => 'Completed',
         };
     }
 }

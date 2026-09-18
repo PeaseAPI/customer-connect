@@ -63,13 +63,13 @@ class ClientController extends BaseApiController
 
         $client = $this->clientService->update($client, $validated);
 
-        return $this->success($client->load(['clientDetail', 'roles']), '更新成功');
+        return $this->success($client->load(['clientDetail', 'roles']), 'Updated successfully');
     }
 
     public function destroy(User $client)
     {
         $this->clientService->delete($client);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 
     public function export(Request $request)

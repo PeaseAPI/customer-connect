@@ -25,7 +25,7 @@ class NotificationController extends BaseApiController
     public function destroy(Notification $notification)
     {
         $this->notificationService->delete($notification);
-        return $this->success(null, '已删除');
+        return $this->success(null, 'Deleted');
     }
 
     public function markAllRead()

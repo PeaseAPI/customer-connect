@@ -36,13 +36,13 @@ class AwardController extends BaseApiController
         $v = $request->validated();
         $v['last_updated_by'] = $request->user()->id;
         $award = $this->awardService->update($award, $v);
-        return $this->success($award->load(['user', 'awardIcon', 'creator']), '更新成功');
+        return $this->success($award->load(['user', 'awardIcon', 'creator']), 'Updated successfully');
     }
 
     public function destroy(Award $award)
     {
         $this->awardService->delete($award);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }
 

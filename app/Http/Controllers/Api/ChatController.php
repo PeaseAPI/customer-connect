@@ -40,13 +40,13 @@ class ChatController extends BaseApiController
     {
         $v = $request->validated();
         $chat = $this->chatService->update($chat, $v);
-        return $this->success($chat->load(['participants', 'creator']), '更新成功');
+        return $this->success($chat->load(['participants', 'creator']), 'Updated successfully');
     }
 
     public function destroy(Chat $chat)
     {
         $this->chatService->delete($chat);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 
     public function messages(Request $request, Chat $chat)

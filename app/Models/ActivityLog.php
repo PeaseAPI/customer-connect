@@ -71,7 +71,7 @@ class ActivityLog extends Model
     {
         return static::log(
             static::guessLogName($subject),
-            $description ?? '创建了 ' . class_basename($subject),
+            $description ?? 'Created ' . class_basename($subject),
             $subject,
             'created',
             ['new' => $subject->getAttributes()]
@@ -85,7 +85,7 @@ class ActivityLog extends Model
     {
         return static::log(
             static::guessLogName($subject),
-            '更新了 ' . class_basename($subject),
+            'Updated ' . class_basename($subject),
             $subject,
             'updated',
             ['changes' => $changes ?? $subject->getChanges()]
@@ -99,7 +99,7 @@ class ActivityLog extends Model
     {
         return static::log(
             static::guessLogName($subject),
-            '删除了 ' . class_basename($subject),
+            'Deleted ' . class_basename($subject),
             $subject,
             'deleted',
             ['old' => $subject->getAttributes()]

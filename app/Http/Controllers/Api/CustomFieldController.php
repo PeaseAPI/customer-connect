@@ -32,7 +32,7 @@ class CustomFieldController extends BaseApiController
 
         return $this->success(
             $this->customFieldService->create($validated),
-            '自定义字段创建成功',
+            'Custom field created',
             201
         );
     }
@@ -54,13 +54,13 @@ class CustomFieldController extends BaseApiController
 
         $customField = $this->customFieldService->update($customField, $validated);
 
-        return $this->success($customField, '更新成功');
+        return $this->success($customField, 'Updated successfully');
     }
 
     public function destroy(CustomField $customField)
     {
         $this->customFieldService->delete($customField);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

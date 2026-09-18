@@ -67,13 +67,13 @@ class EmployeeController extends BaseApiController
 
         $employee = $this->employeeService->update($employee, $validated);
 
-        return $this->success($employee->load(['employeeDetail.department', 'employeeDetail.designation', 'roles']), '更新成功');
+        return $this->success($employee->load(['employeeDetail.department', 'employeeDetail.designation', 'roles']), 'Updated successfully');
     }
 
         public function destroy(User $employee)
     {
         $this->employeeService->delete($employee);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 
     /**

@@ -33,7 +33,7 @@ class ProjectController extends BaseApiController
         $validated['created_by'] = $request->user()->id;
         $validated['company_id'] = $request->attributes->get('company_id');
 
-        return $this->success($this->projectService->create($validated), '项目创建成功', 201);
+        return $this->success($this->projectService->create($validated), 'Project created', 201);
     }
 
     public function show(Project $project)
@@ -68,13 +68,13 @@ class ProjectController extends BaseApiController
             $project = $this->projectService->changeStatus($project, $status);
         }
 
-        return $this->success($project->load(['client', 'members', 'creator']), '更新成功');
+        return $this->success($project->load(['client', 'members', 'creator']), 'Updated successfully');
     }
 
     public function destroy(Project $project)
     {
         $this->projectService->delete($project);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 
     public function addMember(Request $request, Project $project)

@@ -12,10 +12,10 @@ enum ContractStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::Draft => '草稿',
-            self::Active => '生效中',
-            self::Expired => '已过期',
-            self::Canceled => '已取消',
+            self::Draft => 'Draft',
+            self::Active => 'Active',
+            self::Expired => 'Expired',
+            self::Canceled => 'Canceled',
         };
     }
 }

@@ -44,13 +44,13 @@ class PipelineController extends BaseApiController
 
         $pipeline = $this->pipelineService->update($pipeline, $validated);
 
-        return $this->success($pipeline->load('stages'), '更新成功');
+        return $this->success($pipeline->load('stages'), 'Updated successfully');
     }
 
     public function destroy(LeadPipeline $pipeline)
     {
         $this->pipelineService->delete($pipeline);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 
     public function storeStage(Request $request, LeadPipeline $pipeline)
@@ -76,7 +76,7 @@ class PipelineController extends BaseApiController
         ]);
 
         $stage = $this->pipelineService->updateStage($stage, $validated);
-        return $this->success($stage, '阶段更新成功');
+        return $this->success($stage, 'Stage updated');
     }
 
     public function destroyStage(PipelineStage $stage)

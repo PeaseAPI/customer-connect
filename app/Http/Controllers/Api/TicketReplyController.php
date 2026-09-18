@@ -46,12 +46,12 @@ class TicketReplyController extends BaseApiController
 
         $reply = $this->ticketService->updateReply($reply, $validated);
 
-        return $this->success($reply->load(['user', 'creator']), '更新成功');
+        return $this->success($reply->load(['user', 'creator']), 'Updated successfully');
     }
 
     public function destroy($ticketId, TicketReply $reply)
     {
         $this->ticketService->deleteReply($reply);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

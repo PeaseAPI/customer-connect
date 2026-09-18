@@ -70,13 +70,13 @@ class ContractController extends BaseApiController
             $contract = $this->contractService->update($contract, $validated);
         }
 
-        return $this->success($contract->load(['client', 'contractType', 'currency']), '更新成功');
+        return $this->success($contract->load(['client', 'contractType', 'currency']), 'Updated successfully');
     }
 
     public function destroy(Contract $contract)
     {
         $this->contractService->delete($contract);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 
     public function renew(Request $request, Contract $contract)
@@ -123,7 +123,7 @@ class ContractController extends BaseApiController
      */
     public function listFiles(Contract $contract)
     {
-        return $this->success($contract->files()->with('user')->orderBy('created_at', 'desc')->get(), '获取成功');
+        return $this->success($contract->files()->with('user')->orderBy('created_at', 'desc')->get(), 'Data retrieved');
     }
 
     /**
@@ -167,7 +167,7 @@ class ContractController extends BaseApiController
     {
         return $this->success(
             $contract->discussions()->with('creator')->orderBy('created_at', 'desc')->paginate(15),
-            '获取成功'
+            'Data retrieved'
         );
     }
 }

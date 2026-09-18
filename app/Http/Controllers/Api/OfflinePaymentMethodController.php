@@ -34,12 +34,12 @@ class OfflinePaymentMethodController extends BaseApiController
     {
         $v = $request->validated();
         $offlinePaymentMethod = $this->offlinePaymentMethodService->update($offlinePaymentMethod, $v);
-        return $this->success($offlinePaymentMethod, '更新成功');
+        return $this->success($offlinePaymentMethod, 'Updated successfully');
     }
 
     public function destroy(OfflinePaymentMethod $offlinePaymentMethod)
     {
         $this->offlinePaymentMethodService->delete($offlinePaymentMethod);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

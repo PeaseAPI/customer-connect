@@ -13,11 +13,11 @@ enum EstimateStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::Pending => '待确认',
-            self::Sent => '已发送',
-            self::Accepted => '已接受',
-            self::Declined => '已拒绝',
-            self::Expired => '已过期',
+            self::Pending => 'Pending',
+            self::Sent => 'Sent',
+            self::Accepted => 'Accepted',
+            self::Declined => 'Declined',
+            self::Expired => 'Expired',
         };
     }
 }

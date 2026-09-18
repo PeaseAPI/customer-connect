@@ -49,13 +49,13 @@ class DiscussionController extends BaseApiController
         ]);
 
         $discussion = $this->discussionService->update($discussion, $validated);
-        return $this->success($discussion->load(['category', 'creator']), '更新成功');
+        return $this->success($discussion->load(['category', 'creator']), 'Updated successfully');
     }
 
     public function destroy(Discussion $discussion)
     {
         $this->discussionService->delete($discussion);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 
     public function replies(Discussion $discussion)

@@ -76,9 +76,15 @@ use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\NotificationSettingController;
 use App\Http\Controllers\Api\ProjectTemplateController;
+use App\Http\Controllers\Api\EmailTemplateController;
+use App\Http\Controllers\Api\EmailLogController;
+use App\Http\Controllers\Api\SmsTemplateController;
+use App\Http\Controllers\Api\CountryController;
+use App\Http\Controllers\Api\CurrencyController;
+use App\Http\Controllers\Api\DeviceTokenController;
 use Illuminate\Support\Facades\Route;
 
-// 公开API（无需认证）
+// Public API (no auth required)
 Route::prefix('auth')->group(function () {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('register', [AuthController::class, 'register']);
@@ -94,10 +100,10 @@ Route::prefix('auth')->group(function () {
     Route::post('register-with-invite', [AuthController::class, 'registerWithInvite']);
 });
 
-// 员工邀请接受路由（无需认证）
+// Employee invite acceptance (no auth required)
 Route::post('accept-employee-invite', [AuthController::class, 'acceptEmployeeInvite']);
 
-// ===== API Key 认证路由（通过 X-API-Key 头访问） =====
+// ===== API Key Auth Routes (via X-API-Key header) =====
 Route::middleware(['api_key', 'company'])->prefix('external')->group(function () {
     Route::get('me', function (\Illuminate\Http\Request $request) {
         return response()->json([
@@ -111,7 +117,7 @@ Route::middleware(['api_key', 'company'])->prefix('external')->group(function ()
     Route::apiResource('leads', \App\Http\Controllers\Api\LeadController::class)->only(['index', 'show']);
 });
 
-// 需要认证的API
+// Authenticated API
 Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function () {
     Route::prefix('user')->group(function () {
         Route::get('profile', [AuthController::class, 'profile']);
@@ -120,30 +126,30 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
         Route::post('logout', [AuthController::class, 'logout']);
         Route::post('logout-all', [AuthController::class, 'logoutAll']);
 
-        // 双因素认证
+        // Two-factor authentication
         Route::post('2fa/enable', [AuthController::class, 'enable2fa']);
         Route::post('2fa/confirm', [AuthController::class, 'confirm2fa']);
         Route::post('2fa/disable', [AuthController::class, 'disable2fa']);
 
-        // 邮箱验证
+        // Email verification
         Route::post('email/send-verification', [AuthController::class, 'sendEmailVerification']);
         Route::post('email/verify', [AuthController::class, 'verifyEmail']);
 
-        // 多公司切换
+        // Multi-company switching
         Route::get('companies', [AuthController::class, 'companies']);
         Route::post('switch-company', [AuthController::class, 'switchCompany']);
 
-        // 邀请注册
+        // Invite registration
         Route::post('invite', [AuthController::class, 'inviteUser']);
     });
 
-    // 管理员手动验证邮箱
+    // Admin manual email verification
     Route::post('users/{user}/verify-email', [AuthController::class, 'adminVerifyEmail']);
         Route::get('dashboard', [DashboardController::class, 'index']);
     Route::get('dashboard/chart', [DashboardController::class, 'chartData']);
     Route::apiResource('companies', CompanyController::class);
 
-    // HRM模块
+    // HRM Module
     Route::middleware('module:hrm')->prefix('hrm')->group(function () {
         Route::apiResource('employees', EmployeeController::class);
         Route::post('employees/invite', [EmployeeController::class, 'invite']);
@@ -164,20 +170,20 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
         Route::apiResource('document-expiries', EmployeeDocumentExpiryController::class)->only(['index', 'show', 'update', 'destroy']);
         Route::apiResource('employees.visas', EmployeeVisaController::class);
                 Route::apiResource('employees.emergency-contacts', EmergencyContactController::class);
-        // 奖项
+        // Awards
         Route::apiResource('awards', AwardController::class);
-        // 员工排班
+        // Employee Shift Schedules
         Route::apiResource('employees.shift-schedules', EmployeeShiftScheduleController::class);
-        // 换班申请
+        // Shift Change Requests
         Route::apiResource('shift-change-requests', EmployeeShiftChangeRequestController::class)->except(['update']);
         Route::post('shift-change-requests/{shiftChangeRequest}/approve', [EmployeeShiftChangeRequestController::class, 'approve']);
         Route::post('shift-change-requests/{shiftChangeRequest}/reject', [EmployeeShiftChangeRequestController::class, 'reject']);
-        // 员工假期额度
+        // Employee Leave Quotas
         Route::apiResource('employees.leave-quotas', EmployeeLeaveQuotaController::class);
         Route::post('employees/{employee}/leave-quotas/{leaveQuota}/adjust', [EmployeeLeaveQuotaController::class, 'adjust']);
     });
 
-    // CRM模块
+    // CRM Module
     Route::middleware('module:crm')->prefix('crm')->group(function () {
                 Route::apiResource('clients', ClientController::class);
         Route::get('clients/export', [ClientController::class, 'export']);
@@ -210,12 +216,12 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
         Route::apiResource('proposals', ProposalController::class);
         Route::post('proposals/{proposal}/send', [ProposalController::class, 'send']);
         Route::post('proposals/{proposal}/convert-to-invoice', [ProposalController::class, 'convertToInvoice']);
-        // 报价请求
+        // Estimate Requests
         Route::apiResource('estimate-requests', EstimateRequestController::class);
         Route::post('estimate-requests/{estimateRequest}/convert', [EstimateRequestController::class, 'convert']);
     });
 
-    // PM模块
+    // PM Module
     Route::middleware('module:pm')->prefix('pm')->group(function () {
         Route::apiResource('projects', ProjectController::class);
         Route::post('projects/{project}/members', [ProjectController::class, 'addMember']);
@@ -227,7 +233,7 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
         Route::post('tasks/{task}/files', [TaskController::class, 'uploadFile']);
         Route::get('tasks/{task}/files', [TaskController::class, 'listFiles']);
         Route::delete('tasks/{task}/files/{fileId}', [TaskController::class, 'deleteFile']);
-        // 项目模板
+        // Project Templates
         Route::apiResource('project-templates', ProjectTemplateController::class);
         Route::post('projects/{project}/create-template', [ProjectTemplateController::class, 'createFromProject']);
         Route::post('project-templates/{projectTemplate}/create-project', [ProjectTemplateController::class, 'createProject']);
@@ -240,15 +246,15 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
         Route::post('tasks/{task}/sub-tasks', [SubTaskController::class, 'store']);
         Route::put('sub-tasks/{subTask}', [SubTaskController::class, 'update']);
         Route::delete('sub-tasks/{subTask}', [SubTaskController::class, 'destroy']);
-        // 项目里程碑
+        // Project Milestones
         Route::apiResource('projects.milestones', ProjectMilestoneController::class);
-        // 项目时间记录
+        // Project Time Logs
         Route::apiResource('projects.time-logs', ProjectTimeLogController::class);
         Route::post('projects/{project}/time-logs/{timeLog}/start-break', [ProjectTimeLogController::class, 'startBreak']);
         Route::post('projects/{project}/time-logs/{timeLog}/breaks/{breakLog}/end', [ProjectTimeLogController::class, 'endBreak']);
     });
 
-    // 财务模块
+    // Finance Module
     Route::middleware('module:finance')->prefix('finance')->group(function () {
                 Route::apiResource('invoices', InvoiceController::class);
                 Route::post('invoices/{invoice}/send', [InvoiceController::class, 'send']);
@@ -280,69 +286,69 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
         Route::apiResource('contracts.discussions', ContractDiscussionController::class);
                 Route::apiResource('contracts.signatures', ContractSignatureController::class)->only(['index', 'store', 'show', 'destroy']);
         Route::apiResource('orders', OrderController::class);
-        // 循环发票
+        // Recurring Invoices
         Route::apiResource('recurring-invoices', RecurringInvoiceController::class);
-        // 循环费用
+        // Recurring Expenses
         Route::apiResource('expense-recurrings', ExpenseRecurringController::class);
-        // 计量单位
+        // Unit Types
         Route::apiResource('unit-types', UnitTypeController::class);
-        // 税率
+        // Tax Rates
         Route::apiResource('taxes', TaxController::class);
-        // 线下支付方式
+        // Offline Payment Methods
         Route::apiResource('offline-payment-methods', OfflinePaymentMethodController::class);
-        // 发票设置
+        // Invoice Settings
         Route::prefix('invoice-settings')->group(function () {
             Route::get('/', [InvoiceSettingController::class, 'show']);
             Route::put('/', [InvoiceSettingController::class, 'update']);
         });
     });
 
-        // 工单
+        // Tickets
     Route::apiResource('tickets', TicketController::class);
     Route::apiResource('tickets.replies', \App\Http\Controllers\Api\TicketReplyController::class);
 
-        // 审批
+        // Approvals
     Route::get('approvals/pending', [ApprovalController::class, 'pending']);
     Route::apiResource('approvals', ApprovalController::class);
     Route::post('approvals/{approvalRequest}/approve', [ApprovalController::class, 'approve']);
     Route::post('approvals/{approvalRequest}/reject', [ApprovalController::class, 'reject']);
 
-        // 日历事件
+        // Calendar Events
         Route::apiResource('events', EventController::class);
     Route::post('events/{event}/participants', [EventController::class, 'addParticipants']);
     Route::delete('events/{event}/participants/{user}', [EventController::class, 'removeParticipant']);
 
-    // 通知
+    // Notifications
         Route::apiResource('notifications', NotificationController::class)->only(['index', 'update', 'destroy']);
     Route::post('notifications/mark-all-read', [NotificationController::class, 'markAllRead']);
     Route::get('notifications/unread-count', [NotificationController::class, 'unreadCount']);
 
-    // 通知设置
+    // Notification Settings
     Route::get('notification-settings', [NotificationSettingController::class, 'index']);
     Route::put('notification-settings', [NotificationSettingController::class, 'update']);
     Route::get('notification-settings/company', [NotificationSettingController::class, 'companySettings']);
     Route::post('notification-settings/reset', [NotificationSettingController::class, 'reset']);
 
-    // 公告
+    // Notices
     Route::apiResource('notices', NoticeController::class);
     Route::post('notices/{notice}/mark-read', [NoticeController::class, 'markAsRead']);
 
-    // 讨论区
+    // Discussions
     Route::apiResource('discussions', DiscussionController::class);
     Route::get('discussions/{discussion}/replies', [DiscussionController::class, 'replies']);
     Route::post('discussions/{discussion}/replies', [DiscussionController::class, 'storeReply']);
     Route::post('discussions/{discussion}/replies/{reply}/mark-solution', [DiscussionController::class, 'markSolution']);
 
-    // 公司地址
+    // Company Addresses
     Route::apiResource('company-addresses', CompanyAddressController::class);
 
-    // 便签
+    // Sticky Notes
     Route::apiResource('sticky-notes', StickyNoteController::class);
 
-    // 知识库
+    // Knowledge Base
     Route::apiResource('knowledge-bases', KnowledgeBaseController::class);
 
-    // 报表
+    // Reports
     Route::prefix('reports')->group(function () {
         Route::get('finance', [ReportController::class, 'finance']);
         Route::get('tasks', [ReportController::class, 'tasks']);
@@ -353,7 +359,7 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
         Route::get('leaves', [ReportController::class, 'leaves']);
     });
 
-        // 设置
+        // Settings
     Route::prefix('settings')->group(function () {
         Route::get('/', [SettingController::class, 'index']);
         Route::get('organisation', [SettingController::class, 'getOrganisation']);
@@ -368,15 +374,15 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
         Route::apiResource('tax-settings', \App\Http\Controllers\Api\TaxSettingController::class);
     });
 
-        // ===== GDPR & 合规 =====
+        // ===== GDPR & Compliance =====
 
-    // GDPR 设置
+    // GDPR Settings
     Route::prefix('gdpr')->group(function () {
         Route::get('settings', [GdprSettingController::class, 'show']);
         Route::put('settings', [GdprSettingController::class, 'update']);
     });
 
-    // 同意目的 & 数据删除请求
+    // Consent purposes & data removal requests
     Route::apiResource('purpose-consents', PurposeConsentController::class);
     Route::post('purpose-consents/{purposeConsent}/consent-user', [PurposeConsentController::class, 'consentUser']);
     Route::post('purpose-consents/{purposeConsent}/consent-lead', [PurposeConsentController::class, 'consentLead']);
@@ -387,12 +393,12 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
     Route::get('lead-removal-requests', [PurposeConsentController::class, 'leadRemovalRequests']);
         Route::post('lead-removal-requests', [PurposeConsentController::class, 'storeLeadRemovalRequest']);
 
-    // 团队
+    // Teams
     Route::apiResource('teams', TeamController::class);
     Route::post('teams/{team}/add-members', [TeamController::class, 'addMembers']);
     Route::delete('teams/{team}/members/{userId}', [TeamController::class, 'removeMember']);
 
-    // 聊天
+    // Chat
     Route::apiResource('chats', ChatController::class);
     Route::get('chats/{chat}/messages', [ChatController::class, 'messages']);
     Route::post('chats/{chat}/messages', [ChatController::class, 'sendMessage']);
@@ -400,7 +406,7 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
         Route::delete('chats/{chat}/participants/{userId}', [ChatController::class, 'removeParticipant']);
         Route::get('chats/search', [ChatController::class, 'search']);
 
-    // 薪资管理
+    // Salary Management
     Route::middleware('module:salary')->prefix('salary')->group(function () {
         Route::apiResource('structures', \App\Http\Controllers\Api\SalaryStructureController::class);
         Route::apiResource('payslips', \App\Http\Controllers\Api\PayslipController::class)->only(['index', 'show']);
@@ -409,7 +415,7 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
         Route::post('payslips/{payslip}/send', [\App\Http\Controllers\Api\PayslipController::class, 'send']);
     });
 
-    // 资产管理
+    // Asset Management
     Route::middleware('module:asset')->prefix('assets')->group(function () {
         Route::apiResource('items', \App\Http\Controllers\Api\AssetController::class);
         Route::post('items/{asset}/allocate', [\App\Http\Controllers\Api\AssetController::class, 'allocate']);
@@ -419,7 +425,7 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
         Route::get('items/{asset}/maintenance', [\App\Http\Controllers\Api\AssetController::class, 'listMaintenanceRecords']);
     });
 
-        // 采购管理
+        // Procurement
     Route::middleware('module:procurement')->prefix('procurement')->group(function () {
         Route::apiResource('vendors', \App\Http\Controllers\Api\VendorController::class);
         Route::apiResource('purchase-requests', \App\Http\Controllers\Api\PurchaseRequestController::class);
@@ -427,40 +433,40 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
         Route::post('purchase-requests/{purchaseRequest}/reject', [\App\Http\Controllers\Api\PurchaseRequestController::class, 'reject']);
     });
 
-    // ===== 存储设置 =====
+    // ===== Storage Settings =====
     Route::prefix('storage-settings')->group(function () {
         Route::get('/', [\App\Http\Controllers\Api\StorageSettingController::class, 'show']);
         Route::put('/', [\App\Http\Controllers\Api\StorageSettingController::class, 'update']);
         Route::post('test-connection', [\App\Http\Controllers\Api\StorageSettingController::class, 'testConnection']);
     });
 
-    // ===== 数据库备份 =====
+    // ===== Database Backup =====
     Route::apiResource('database-backups', \App\Http\Controllers\Api\DatabaseBackupController::class)->except(['update']);
     Route::get('database-backups/{databaseBackup}/download', [\App\Http\Controllers\Api\DatabaseBackupController::class, 'download']);
     Route::post('database-backups/{databaseBackup}/restore', [\App\Http\Controllers\Api\DatabaseBackupController::class, 'restore']);
 
-    // ===== API Key 管理 =====
+    // ===== API Key Management =====
     Route::apiResource('api-keys', \App\Http\Controllers\Api\ApiKeyController::class)->except(['update']);
     Route::post('api-keys/{apiKey}/revoke', [\App\Http\Controllers\Api\ApiKeyController::class, 'revoke']);
 
-    // ===== 自定义模块 =====
+    // ===== Custom Modules =====
     Route::apiResource('custom-modules', \App\Http\Controllers\Api\CustomModuleController::class);
     Route::get('custom-modules/{customModule}/records', [\App\Http\Controllers\Api\CustomModuleController::class, 'listRecords']);
     Route::post('custom-modules/{customModule}/records', [\App\Http\Controllers\Api\CustomModuleController::class, 'storeRecord']);
     Route::put('custom-modules/{customModule}/records/{record}', [\App\Http\Controllers\Api\CustomModuleController::class, 'updateRecord']);
     Route::delete('custom-modules/{customModule}/records/{record}', [\App\Http\Controllers\Api\CustomModuleController::class, 'destroyRecord']);
 
-    // ===== 自定义链接 =====
+    // ===== Custom Links =====
     Route::apiResource('custom-links', \App\Http\Controllers\Api\CustomLinkController::class);
     Route::get('custom-links/active', [\App\Http\Controllers\Api\CustomLinkController::class, 'activeLinks']);
     Route::post('custom-links/reorder', [\App\Http\Controllers\Api\CustomLinkController::class, 'reorder']);
 
-        // ===== 发票模板 =====
+        // ===== Invoice Templates =====
     Route::apiResource('invoice-templates', \App\Http\Controllers\Api\InvoiceTemplateController::class);
     Route::post('invoice-templates/{invoiceTemplate}/set-default', [\App\Http\Controllers\Api\InvoiceTemplateController::class, 'setDefault']);
     Route::get('invoice-templates/{invoiceTemplate}/preview', [\App\Http\Controllers\Api\InvoiceTemplateController::class, 'preview']);
 
-    // ===== AI 助手 =====
+    // ===== AI Assistant =====
     Route::prefix('ai')->group(function () {
         Route::get('conversations', [\App\Http\Controllers\Api\AiAssistantController::class, 'index']);
         Route::post('conversations', [\App\Http\Controllers\Api\AiAssistantController::class, 'store']);
@@ -470,18 +476,38 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
         Route::post('quick-chat', [\App\Http\Controllers\Api\AiAssistantController::class, 'quickChat']);
     });
 
-    // ===== 活动日志 =====
+    // ===== Activity Logs =====
     Route::get('activity-logs', [\App\Http\Controllers\Api\ActivityLogController::class, 'index']);
     Route::get('activity-logs/{subjectType}/{subjectId}', [\App\Http\Controllers\Api\ActivityLogController::class, 'forSubject']);
     Route::post('activity-logs/cleanup', [\App\Http\Controllers\Api\ActivityLogController::class, 'cleanup']);
 
-    // ===== Webhook =====
+        // ===== Webhook =====
     Route::apiResource('webhooks', \App\Http\Controllers\Api\WebhookController::class);
     Route::get('webhooks/{webhook}/deliveries', [\App\Http\Controllers\Api\WebhookController::class, 'deliveries']);
     Route::post('webhook-deliveries/{delivery}/retry', [\App\Http\Controllers\Api\WebhookController::class, 'retryDelivery']);
+
+    // ===== Email Templates =====
+    Route::apiResource('email-templates', EmailTemplateController::class);
+    Route::post('email-templates/{emailTemplate}/render', [EmailTemplateController::class, 'render']);
+
+    // ===== Email Logs =====
+    Route::apiResource('email-logs', EmailLogController::class)->only(['index', 'show', 'destroy']);
+    Route::post('email-logs/{emailLog}/resend', [EmailLogController::class, 'resend']);
+    Route::post('email-logs/cleanup', [EmailLogController::class, 'cleanup']);
+
+    // ===== SMS Templates =====
+    Route::apiResource('sms-templates', SmsTemplateController::class);
+    Route::post('sms-templates/{smsTemplate}/render', [SmsTemplateController::class, 'render']);
+
+    // ===== Countries & Currencies =====
+    Route::apiResource('countries', CountryController::class)->only(['index', 'show']);
+    Route::apiResource('currencies', CurrencyController::class)->only(['index', 'show', 'update']);
+
+    // ===== Device Tokens (Push Notifications) =====
+    Route::apiResource('device-tokens', DeviceTokenController::class)->only(['index', 'store', 'destroy']);
 });
 
-// ===== 账户管理路由（需认证+公司上下文） =====
+// ===== Account Management (auth + company context) =====
 Route::middleware(['auth:sanctum', 'company'])->prefix('account')->group(function () {
     Route::get('profile', [\App\Http\Controllers\Api\Account\ProfileController::class, 'show']);
     Route::put('profile', [\App\Http\Controllers\Api\Account\ProfileController::class, 'update']);
@@ -491,7 +517,7 @@ Route::middleware(['auth:sanctum', 'company'])->prefix('account')->group(functio
     Route::put('company', [\App\Http\Controllers\Api\Account\CompanyController::class, 'update']);
 });
 
-// ===== 超级管理员路由（仅超级管理员可访问） =====
+// ===== Super Admin Routes (super admin only) =====
 Route::middleware(['auth:sanctum', 'super_admin'])->prefix('super-admin')->group(function () {
     Route::apiResource('companies', \App\Http\Controllers\Api\SuperAdmin\CompanyController::class);
     Route::post('companies/{company}/activate', [\App\Http\Controllers\Api\SuperAdmin\CompanyController::class, 'activate']);
@@ -503,7 +529,7 @@ Route::middleware(['auth:sanctum', 'super_admin'])->prefix('super-admin')->group
     Route::post('users/{user}/reset-password', [\App\Http\Controllers\Api\SuperAdmin\UserController::class, 'resetPassword']);
 });
 
-// ===== 支付回调路由（无需认证） =====
+// ===== Payment Callback Routes (no auth) =====
 Route::prefix('payment')->group(function () {
     Route::post('alipay/notify', [\App\Http\Controllers\Api\PaymentCallbackController::class, 'alipayNotify']);
     Route::get('alipay/return', [\App\Http\Controllers\Api\PaymentCallbackController::class, 'alipayReturn']);

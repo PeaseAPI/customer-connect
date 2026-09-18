@@ -12,7 +12,7 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-// 每日检查即将到期的合同
+// Daily check for expiring contracts
 Schedule::job(new CheckExpiringContracts(30))->dailyAt('09:00')->name('check-expiring-contracts');
 
 // 每日清理过期订阅

@@ -54,13 +54,13 @@ class MilestoneController extends BaseApiController
 
         $milestone = $this->milestoneService->update($milestone, $validated);
 
-        return $this->success($milestone->load(['project']), '更新成功');
+        return $this->success($milestone->load(['project']), 'Updated successfully');
     }
 
     public function destroy(Milestone $milestone)
     {
         $this->milestoneService->delete($milestone);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

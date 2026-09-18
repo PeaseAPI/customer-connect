@@ -15,13 +15,13 @@ enum ProjectStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::NotStarted => '未开始',
-            self::Planning => '规划中',
-            self::InProgress => '进行中',
-            self::OnHold => '暂停',
-            self::Completed => '已完成',
-            self::Canceled => '已取消',
-            self::Finished => '已结项',
+            self::NotStarted => 'Not Started',
+            self::Planning => 'Planning',
+            self::InProgress => 'In Progress',
+            self::OnHold => 'Suspended',
+            self::Completed => 'Completed',
+            self::Canceled => 'Canceled',
+            self::Finished => 'Finished',
         };
     }
 

@@ -49,14 +49,14 @@ class TaskCommentController extends BaseApiController
         $validated['last_updated_by'] = $request->user()->id;
         $comment = $this->taskCommentService->update($comment, $validated);
 
-        return $this->success($comment->load(['user', 'creator']), '更新成功');
+        return $this->success($comment->load(['user', 'creator']), 'Updated successfully');
     }
 
     public function destroy($taskId, TaskComment $comment)
     {
         $this->taskCommentService->delete($comment);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }
 

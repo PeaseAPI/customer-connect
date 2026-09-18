@@ -33,7 +33,7 @@ class TicketController extends BaseApiController
 
         $ticket = $this->ticketService->create($validated);
 
-        return $this->success($ticket->load(['agent', 'client', 'creator']), '工单创建成功', 201);
+        return $this->success($ticket->load(['agent', 'client', 'creator']), 'Ticket created', 201);
     }
 
     public function show(Ticket $ticket)
@@ -69,12 +69,12 @@ class TicketController extends BaseApiController
             $ticket = $this->ticketService->assign($ticket, $agentId);
         }
 
-        return $this->success($ticket->load(['agent', 'client', 'creator']), '更新成功');
+        return $this->success($ticket->load(['agent', 'client', 'creator']), 'Updated successfully');
     }
 
     public function destroy(Ticket $ticket)
     {
         $this->ticketService->delete($ticket);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

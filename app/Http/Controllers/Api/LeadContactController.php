@@ -53,13 +53,13 @@ class LeadContactController extends BaseApiController
 
         $contact = $this->leadContactService->update($contact, $validated);
 
-        return $this->success($contact->load(['lead', 'creator']), '更新成功');
+        return $this->success($contact->load(['lead', 'creator']), 'Updated successfully');
     }
 
     public function destroy(LeadContact $contact)
     {
         $this->leadContactService->delete($contact);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

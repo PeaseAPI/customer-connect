@@ -13,11 +13,11 @@ enum TaskStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::Pending => '待办',
-            self::InProgress => '进行中',
-            self::Review => '评审',
-            self::Completed => '已完成',
-            self::Cancelled => '已取消',
+            self::Pending => 'Pending',
+            self::InProgress => 'In Progress',
+            self::Review => 'Review',
+            self::Completed => 'Completed',
+            self::Cancelled => 'Canceled',
         };
     }
 

@@ -81,13 +81,13 @@ class EstimateController extends BaseApiController
 
         $estimate = $this->estimateService->update($estimate, $validated, $items);
 
-        return $this->success($estimate->load(['client', 'currency', 'items', 'creator']), '更新成功');
+        return $this->success($estimate->load(['client', 'currency', 'items', 'creator']), 'Updated successfully');
     }
 
     public function destroy(Estimate $estimate)
     {
         $this->estimateService->delete($estimate);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 
     public function send(Estimate $estimate)

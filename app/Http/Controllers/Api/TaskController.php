@@ -108,13 +108,13 @@ class TaskController extends BaseApiController
             $task = $this->taskService->update($task, $validated);
         }
 
-        return $this->success($task->load(['assignee', 'project', 'creator']), '更新成功');
+        return $this->success($task->load(['assignee', 'project', 'creator']), 'Updated successfully');
     }
 
     public function destroy($projectId, Task $task)
     {
         $this->taskService->delete($task);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 
         public function reorder(Request $request)
@@ -170,7 +170,7 @@ class TaskController extends BaseApiController
 
         $tasks = $query->orderBy('due_date')->get();
 
-        return $this->success($tasks, '获取成功');
+        return $this->success($tasks, 'Data retrieved');
     }
 
     /**
@@ -204,7 +204,7 @@ class TaskController extends BaseApiController
      */
     public function listFiles(Task $task)
     {
-        return $this->success($task->files()->with('user')->orderBy('created_at', 'desc')->get(), '获取成功');
+        return $this->success($task->files()->with('user')->orderBy('created_at', 'desc')->get(), 'Data retrieved');
     }
 
     /**

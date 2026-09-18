@@ -9,8 +9,8 @@ use Symfony\Component\HttpFoundation\Response;
 class CheckModuleEnabled
 {
     /**
-     * 检查指定模块是否在当前套餐中启用。
-     * 在路由中使用: ->middleware('module:hrm') 或 ->middleware('module:crm,pm')
+     * Check if the specified module is enabled in the current plan.
+     * Usage in routes: ->middleware('module:hrm') or ->middleware('module:crm,pm')
      */
     public function handle(Request $request, Closure $next, string ...$modules): Response
     {
@@ -44,10 +44,10 @@ class CheckModuleEnabled
             if (!in_array($module, $enabledModules)) {
                 if ($request->expectsJson()) {
                     return response()->json([
-                        'message' => "模块 [{$module}] 未开通，请升级套餐",
+                        'message' => "Module [{$module}] not available, please upgrade your plan",
                     ], 403);
                 }
-                abort(403, "模块 [{$module}] 未开通，请升级套餐");
+                abort(403, "Module [{$module}] not available, please upgrade your plan");
             }
         }
 

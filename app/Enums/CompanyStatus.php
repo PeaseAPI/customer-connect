@@ -12,10 +12,10 @@ enum CompanyStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::Active => '正常',
-            self::Inactive => '停用',
-            self::Suspended => '暂停',
-            self::Expired => '已过期',
+            self::Active => 'Active',
+            self::Inactive => 'Inactive',
+            self::Suspended => 'Suspended',
+            self::Expired => 'Expired',
         };
     }
 }

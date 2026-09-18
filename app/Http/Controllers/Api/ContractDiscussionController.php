@@ -48,13 +48,13 @@ class ContractDiscussionController extends BaseApiController
         $validated['last_updated_by'] = $request->user()->id;
         $discussion = $this->contractDiscussionService->update($discussion, $validated);
 
-        return $this->success($discussion->load(['creator']), '更新成功');
+        return $this->success($discussion->load(['creator']), 'Updated successfully');
     }
 
     public function destroy($contractId, ContractDiscussion $discussion)
     {
         $this->contractDiscussionService->delete($discussion);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

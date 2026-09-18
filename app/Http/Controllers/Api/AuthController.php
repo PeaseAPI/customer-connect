@@ -418,7 +418,7 @@ class AuthController extends BaseApiController
     {
         $validated = $request->validate(['name' => 'sometimes|string|max:191', 'mobile' => 'sometimes|string|max:20|unique:users,mobile,'.$request->user()->id, 'gender' => 'sometimes|in:male,female,other']);
         $request->user()->update($validated);
-        return $this->success($request->user()->fresh(), '更新成功');
+        return $this->success($request->user()->fresh(), 'Updated successfully');
     }
 
     public function changePassword(Request $request): JsonResponse

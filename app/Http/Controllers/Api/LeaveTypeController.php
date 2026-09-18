@@ -47,14 +47,14 @@ class LeaveTypeController extends BaseApiController
 
         $leaveType = $this->leaveTypeService->update($leaveType, $validated);
 
-        return $this->success($leaveType, '更新成功');
+        return $this->success($leaveType, 'Updated successfully');
     }
 
     public function destroy(LeaveType $leaveType)
     {
         $this->leaveTypeService->delete($leaveType);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }
 

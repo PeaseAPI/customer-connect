@@ -35,7 +35,7 @@ class ClientImport implements ToCollection, WithHeadingRow
                     'industry' => $row['行业'] ?? null,
                     'contact_name' => $row['联系人'] ?? null,
                     'contact_phone' => $row['联系电话'] ?? null,
-                    'contact_email' => $row['邮箱'] ?? null,
+                    'contact_email' => $row['Email'] ?? null,
                     'address' => $row['地址'] ?? null,
                     'company_id' => $this->companyId,
                 ]);

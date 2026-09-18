@@ -69,12 +69,12 @@ class OrderController extends BaseApiController
 
         $order = $this->orderService->update($order, $v);
 
-        return $this->success($order->load(['client', 'project', 'currency', 'items']), '更新成功');
+        return $this->success($order->load(['client', 'project', 'currency', 'items']), 'Updated successfully');
     }
 
     public function destroy(Order $order)
     {
         $this->orderService->delete($order);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

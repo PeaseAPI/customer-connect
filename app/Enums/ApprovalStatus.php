@@ -12,10 +12,10 @@ enum ApprovalStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::Pending => '待审批',
-            self::Approved => '已通过',
-            self::Rejected => '已驳回',
-            self::Canceled => '已撤销',
+            self::Pending => 'Pending approval',
+            self::Approved => 'Approved',
+            self::Rejected => 'Rejected',
+            self::Canceled => 'Canceled',
         };
     }
 }

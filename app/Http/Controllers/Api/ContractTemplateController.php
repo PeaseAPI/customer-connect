@@ -53,13 +53,13 @@ class ContractTemplateController extends BaseApiController
         $validated['last_updated_by'] = $request->user()->id;
         $contractTemplate = $this->contractTemplateService->update($contractTemplate, $validated);
 
-        return $this->success($contractTemplate->load(['contractType', 'creator']), '更新成功');
+        return $this->success($contractTemplate->load(['contractType', 'creator']), 'Updated successfully');
     }
 
     public function destroy(ContractTemplate $contractTemplate)
     {
         $this->contractTemplateService->delete($contractTemplate);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

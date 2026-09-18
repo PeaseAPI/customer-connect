@@ -156,7 +156,7 @@ class AiAssistantService
         if (str_contains($question, '客户')) {
             return "关于客户管理，您可以通过以下 API 端点操作：\n- GET /api/crm/clients - 获取客户列表\n- POST /api/crm/clients - 创建新客户";
         }
-        if (str_contains($question, '项目') || str_contains($question, '任务')) {
+        if (str_contains($question, 'Project') || str_contains($question, '任务')) {
             return "关于项目/任务管理：\n- GET /api/pm/projects - 项目列表\n- GET /api/pm/tasks/calendar - 任务日历视图";
         }
         return "您好！我是 KHT CRM 的 AI 助手。请告诉我您需要什么帮助？";

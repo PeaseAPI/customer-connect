@@ -24,8 +24,8 @@ class LeaveStatusNotification extends Notification implements ShouldBroadcast
     {
                 $statusText = match ($this->status) {
             ApprovalStatus::Approved->value => '已批准',
-            ApprovalStatus::Rejected->value => '已拒绝',
-            ApprovalStatus::Canceled->value => '已取消',
+            ApprovalStatus::Rejected->value => 'Declined',
+            ApprovalStatus::Canceled->value => 'Canceled',
             default => $this->status,
         };
 

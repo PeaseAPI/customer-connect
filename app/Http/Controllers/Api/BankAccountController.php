@@ -50,12 +50,12 @@ class BankAccountController extends BaseApiController
             'status' => 'nullable|in:active,inactive',
         ]);
         $bankAccount = $this->bankAccountService->update($bankAccount, $validated);
-        return $this->success($bankAccount->load('currency'), '更新成功');
+        return $this->success($bankAccount->load('currency'), 'Updated successfully');
     }
 
     public function destroy(BankAccount $bankAccount)
     {
         $this->bankAccountService->delete($bankAccount);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

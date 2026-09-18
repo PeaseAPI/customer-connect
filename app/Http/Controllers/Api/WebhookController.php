@@ -61,7 +61,7 @@ class WebhookController extends BaseApiController
         ]);
 
         $webhook = $this->webhookService->update($webhook, $validated);
-        return $this->success($webhook, '更新成功');
+        return $this->success($webhook, 'Updated successfully');
     }
 
     /**

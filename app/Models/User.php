@@ -62,6 +62,7 @@ class User extends Authenticatable
     public function clientNotes(): HasMany { return $this->hasMany(ClientNote::class, 'client_id'); }
     public function clientDocuments(): HasMany { return $this->hasMany(ClientDocument::class, 'client_id'); }
     public function stickyNotes(): HasMany { return $this->hasMany(StickyNote::class); }
+    public function deviceTokens(): HasMany { return $this->hasMany(DeviceToken::class); }
 
     public function isSuperAdmin(): bool { return $this->hasRole('super-admin'); }
     public function isAdmin(): bool { return $this->hasRole('admin'); }

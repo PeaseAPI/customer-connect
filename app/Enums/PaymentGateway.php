@@ -13,11 +13,11 @@ enum PaymentGateway: string
     public function label(): string
     {
         return match ($this) {
-            self::Alipay => '支付宝',
-            self::Wechat => '微信支付',
+            self::Alipay => 'Alipay',
+            self::Wechat => 'WeChat Pay',
             self::Stripe => 'Stripe',
             self::Paypal => 'PayPal',
-            self::Offline => '线下支付',
+            self::Offline => 'Offline',
         };
     }
 }

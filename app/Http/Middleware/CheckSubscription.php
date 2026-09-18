@@ -9,8 +9,8 @@ use Symfony\Component\HttpFoundation\Response;
 class CheckSubscription
 {
     /**
-     * 检查公司订阅是否有效。
-     * 过期或未订阅的租户将被重定向到订阅页面。
+     * Check if company subscription is valid.
+     * Expired or unsubscribed tenants will be redirected to subscription page.
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -26,24 +26,24 @@ class CheckSubscription
             return $next($request);
         }
 
-        // 超级管理员跳过检查
+        // Skip check for super admin
         if ($user->isSuperAdmin()) {
             return $next($request);
         }
 
-        // 检查公司状态
+        // Check company status
         if ($company->status !== \App\Enums\CompanyStatus::Active) {
             if ($request->expectsJson()) {
-                return response()->json(['message' => '公司账户已过期或被禁用'], 403);
+                return response()->json(['message' => 'Company account expired or disabled'], 403);
             }
             return redirect()->route('subscription.expired');
         }
 
-        // 检查订阅是否有效
+        // Check if subscription is valid
         $subscription = $company->subscription;
         if ($subscription && !$subscription->isActive()) {
             if ($request->expectsJson()) {
-                return response()->json(['message' => '订阅已过期，请续费'], 403);
+                return response()->json(['message' => 'Subscription expired, please renew'], 403);
             }
             return redirect()->route('subscription.expired');
         }

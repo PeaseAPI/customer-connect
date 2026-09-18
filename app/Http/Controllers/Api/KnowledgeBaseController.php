@@ -43,12 +43,12 @@ class KnowledgeBaseController extends BaseApiController
         $validated['last_updated_by'] = $request->user()->id;
         $knowledgeBase = $this->knowledgeBaseService->update($knowledgeBase, $validated);
 
-        return $this->success($knowledgeBase->load(['category', 'creator']), '更新成功');
+        return $this->success($knowledgeBase->load(['category', 'creator']), 'Updated successfully');
     }
 
     public function destroy(KnowledgeBase $knowledgeBase)
     {
         $this->knowledgeBaseService->delete($knowledgeBase);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

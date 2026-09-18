@@ -11,9 +11,9 @@ enum ExpenseStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::Pending => '待审批',
-            self::Approved => '已审批',
-            self::Declined => '已驳回',
+            self::Pending => 'Pending approval',
+            self::Approved => 'Approved',
+            self::Declined => 'Rejected',
         };
     }
 }

@@ -28,7 +28,7 @@ class TaxController extends BaseApiController
 
         $validated['company_id'] = $request->attributes->get('company_id');
 
-        return $this->success($this->taxService->create($validated), '税率创建成功', 201);
+        return $this->success($this->taxService->create($validated), 'Tax rate created', 201);
     }
 
     public function show(Tax $tax)
@@ -47,13 +47,13 @@ class TaxController extends BaseApiController
 
         $tax = $this->taxService->update($tax, $validated);
 
-        return $this->success($tax, '更新成功');
+        return $this->success($tax, 'Updated successfully');
     }
 
     public function destroy(Tax $tax)
     {
         $this->taxService->delete($tax);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

@@ -62,12 +62,12 @@ class PaymentController extends BaseApiController
 
         $payment = $this->paymentService->update($payment, $validated);
 
-        return $this->success($payment->load(['client', 'invoice', 'currency']), '更新成功');
+        return $this->success($payment->load(['client', 'invoice', 'currency']), 'Updated successfully');
     }
 
     public function destroy(Payment $payment)
     {
         $this->paymentService->delete($payment);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

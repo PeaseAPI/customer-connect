@@ -44,6 +44,6 @@ class ContractSignatureController extends BaseApiController
     {
         $this->contractSignatureService->delete($signature);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

@@ -37,13 +37,13 @@ class ProjectTimeLogController extends BaseApiController
     {
         $v = $request->validated();
         $timeLog = $this->projectTimeLogService->update($timeLog, $v);
-        return $this->success($timeLog->load(['user', 'task', 'creator', 'breaks']), '更新成功');
+        return $this->success($timeLog->load(['user', 'task', 'creator', 'breaks']), 'Updated successfully');
     }
 
     public function destroy($projectId, ProjectTimeLog $timeLog)
     {
         $this->projectTimeLogService->delete($timeLog);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 
     // Break management

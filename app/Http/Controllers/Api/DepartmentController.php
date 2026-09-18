@@ -44,12 +44,12 @@ class DepartmentController extends BaseApiController
 
         $department = $this->departmentService->update($department, $validated);
 
-        return $this->success($department, '更新成功');
+        return $this->success($department, 'Updated successfully');
     }
 
     public function destroy(Department $department)
     {
         $this->departmentService->delete($department);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

@@ -51,13 +51,13 @@ class PurchaseRequestController extends BaseApiController
         ]);
 
         $purchaseRequest = $this->procurementService->updatePurchaseRequest($purchaseRequest, $validated);
-        return $this->success($purchaseRequest->load(['requester', 'vendor']), '更新成功');
+        return $this->success($purchaseRequest->load(['requester', 'vendor']), 'Updated successfully');
     }
 
     public function destroy(PurchaseRequest $purchaseRequest)
     {
         $this->procurementService->deletePurchaseRequest($purchaseRequest);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 
     public function approve(Request $request, PurchaseRequest $purchaseRequest)
@@ -80,7 +80,7 @@ class PurchaseRequestController extends BaseApiController
                 $purchaseRequest,
                 $request->user()->id
             );
-            return $this->success($purchaseRequest->load(['requester', 'vendor', 'approver']), '已拒绝');
+            return $this->success($purchaseRequest->load(['requester', 'vendor', 'approver']), 'Declined');
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), 400);
         }

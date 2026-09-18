@@ -43,7 +43,7 @@ class InvoiceTemplateController extends BaseApiController
         $companyId = $request->attributes->get('company_id');
         $template = $this->templateService->create($companyId, $validated);
 
-        return $this->success($template, '发票模板创建成功', 201);
+        return $this->success($template, 'Invoice template created', 201);
     }
 
     /**
@@ -71,7 +71,7 @@ class InvoiceTemplateController extends BaseApiController
         ]);
 
         $template = $this->templateService->update($invoiceTemplate, $validated);
-        return $this->success($template, '更新成功');
+        return $this->success($template, 'Updated successfully');
     }
 
     /**
@@ -80,7 +80,7 @@ class InvoiceTemplateController extends BaseApiController
     public function destroy(InvoiceTemplate $invoiceTemplate)
     {
         $this->templateService->delete($invoiceTemplate);
-        return $this->success(null, '发票模板已删除');
+        return $this->success(null, 'Invoice template deleted');
     }
 
     /**

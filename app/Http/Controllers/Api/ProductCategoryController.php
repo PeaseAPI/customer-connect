@@ -27,7 +27,7 @@ class ProductCategoryController extends BaseApiController
 
         return $this->success(
             $this->productCategoryService->create($validated)->load(['subCategories']),
-            '产品分类创建成功',
+            'Product category created',
             201
         );
     }
@@ -45,13 +45,13 @@ class ProductCategoryController extends BaseApiController
 
         $productCategory = $this->productCategoryService->update($productCategory, $validated);
 
-        return $this->success($productCategory->load(['subCategories']), '更新成功');
+        return $this->success($productCategory->load(['subCategories']), 'Updated successfully');
     }
 
     public function destroy(ProductCategory $productCategory)
     {
         $this->productCategoryService->delete($productCategory);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

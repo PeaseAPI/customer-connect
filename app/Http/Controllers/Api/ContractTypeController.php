@@ -41,13 +41,13 @@ class ContractTypeController extends BaseApiController
 
         $contractType = $this->contractTypeService->update($contractType, $validated);
 
-        return $this->success($contractType, '更新成功');
+        return $this->success($contractType, 'Updated successfully');
     }
 
     public function destroy(ContractType $contractType)
     {
         $this->contractTypeService->delete($contractType);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

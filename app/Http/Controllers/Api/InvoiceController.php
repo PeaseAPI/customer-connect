@@ -64,13 +64,13 @@ class InvoiceController extends BaseApiController
 
         $invoice = $this->invoiceService->update($invoice, $validated);
 
-        return $this->success($invoice->load(['client', 'project', 'currency', 'items']), '更新成功');
+        return $this->success($invoice->load(['client', 'project', 'currency', 'items']), 'Updated successfully');
     }
 
     public function destroy(Invoice $invoice)
     {
         $this->invoiceService->delete($invoice);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 
     public function send(Invoice $invoice)

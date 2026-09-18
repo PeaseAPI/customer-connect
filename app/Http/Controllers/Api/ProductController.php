@@ -62,12 +62,12 @@ class ProductController extends BaseApiController
         $validated['last_updated_by'] = $request->user()->id;
         $product = $this->productService->update($product, $validated);
 
-        return $this->success($product->load(['category', 'tax', 'creator']), '更新成功');
+        return $this->success($product->load(['category', 'tax', 'creator']), 'Updated successfully');
     }
 
     public function destroy(Product $product)
     {
         $this->productService->delete($product);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

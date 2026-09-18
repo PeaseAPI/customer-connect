@@ -49,7 +49,7 @@ class LeadExport implements FromQuery, WithHeadings, WithMapping, ShouldQueue
 
     public function headings(): array
     {
-        return ['ID', '姓名', '公司', '电话', '邮箱', '状态', '来源', '负责人', '创建时间'];
+        return ['ID', 'Name', 'Company', 'Phone', 'Email', 'Status', 'Source', 'Owner', 'Created At'];
     }
 
     public function map($lead): array

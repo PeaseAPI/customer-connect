@@ -54,12 +54,12 @@ class VendorController extends BaseApiController
         ]);
 
         $vendor = $this->procurementService->updateVendor($vendor, $validated);
-        return $this->success($vendor, '更新成功');
+        return $this->success($vendor, 'Updated successfully');
     }
 
     public function destroy(Vendor $vendor)
     {
         $this->procurementService->deleteVendor($vendor);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

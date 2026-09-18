@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 class EnsureSuperAdmin
 {
     /**
-     * 确保当前用户是超级管理员。
+     * Ensure the current user is a super admin.
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -17,9 +17,9 @@ class EnsureSuperAdmin
 
         if (!$user || !$user->isSuperAdmin()) {
             if ($request->expectsJson()) {
-                return response()->json(['message' => '无权访问，仅超级管理员可操作'], 403);
+                return response()->json(['message' => 'Access denied, super admin only'], 403);
             }
-            abort(403, '无权访问，仅超级管理员可操作');
+            abort(403, 'Access denied, super admin only');
         }
 
         return $next($request);

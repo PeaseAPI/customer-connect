@@ -29,7 +29,7 @@ class ShiftController extends BaseApiController
 
         $validated['company_id'] = $request->attributes->get('company_id');
 
-        return $this->success($this->shiftService->create($validated), '班次创建成功', 201);
+        return $this->success($this->shiftService->create($validated), 'Shift created', 201);
     }
 
     public function show(Shift $shift)
@@ -49,14 +49,14 @@ class ShiftController extends BaseApiController
 
         $shift = $this->shiftService->update($shift, $validated);
 
-        return $this->success($shift, '更新成功');
+        return $this->success($shift, 'Updated successfully');
     }
 
     public function destroy(Shift $shift)
     {
         $this->shiftService->delete($shift);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }
 

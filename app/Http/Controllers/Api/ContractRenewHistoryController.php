@@ -54,13 +54,13 @@ class ContractRenewHistoryController extends BaseApiController
         $validated['last_updated_by'] = $request->user()->id;
         $renewHistory = $this->contractRenewHistoryService->update($renewHistory, $validated);
 
-        return $this->success($renewHistory->load(['creator']), '更新成功');
+        return $this->success($renewHistory->load(['creator']), 'Updated successfully');
     }
 
     public function destroy($contractId, ContractRenewHistory $renewHistory)
     {
         $this->contractRenewHistoryService->delete($renewHistory);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

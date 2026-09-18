@@ -36,9 +36,9 @@ class AppreciationController extends BaseApiController
     {
         $v = $request->validate(['description' => 'nullable|string', 'awarded_date' => 'nullable|date']);
         $appreciation = $this->appreciationService->update($appreciation, $v);
-        return $this->success($appreciation->load(['user', 'creator']), '更新成功');
+        return $this->success($appreciation->load(['user', 'creator']), 'Updated successfully');
     }
 
-    public function destroy(Appreciation $appreciation) { $this->appreciationService->delete($appreciation); return $this->success(null, '删除成功'); }
+    public function destroy(Appreciation $appreciation) { $this->appreciationService->delete($appreciation); return $this->success(null, 'Deleted successfully'); }
 }
 

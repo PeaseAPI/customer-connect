@@ -24,7 +24,7 @@ class ContractStatusNotification extends Notification implements ShouldBroadcast
     {
                 $statusText = match ($this->status) {
             ContractStatus::Active->value => '已生效',
-            ContractStatus::Expired->value => '已过期',
+            ContractStatus::Expired->value => 'Expired',
             ContractStatus::Canceled->value => '已终止',
             default => $this->status,
         };

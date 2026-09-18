@@ -44,9 +44,9 @@ class PromotionController extends BaseApiController
         ]);
         $v['last_updated_by'] = $request->user()->id;
         $promotion = $this->promotionService->update($promotion, $v);
-        return $this->success($promotion->load(['user', 'designation', 'department', 'creator']), '更新成功');
+        return $this->success($promotion->load(['user', 'designation', 'department', 'creator']), 'Updated successfully');
     }
 
-    public function destroy(Promotion $promotion) { $this->promotionService->delete($promotion); return $this->success(null, '删除成功'); }
+    public function destroy(Promotion $promotion) { $this->promotionService->delete($promotion); return $this->success(null, 'Deleted successfully'); }
 }
 

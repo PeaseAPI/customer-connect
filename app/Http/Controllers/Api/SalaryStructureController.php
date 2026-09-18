@@ -53,12 +53,12 @@ class SalaryStructureController extends BaseApiController
         ]);
 
         $structure = $this->salaryService->updateStructure($salaryStructure, $validated);
-        return $this->success($structure->load('user'), '更新成功');
+        return $this->success($structure->load('user'), 'Updated successfully');
     }
 
     public function destroy(SalaryStructure $salaryStructure)
     {
         $this->salaryService->deleteStructure($salaryStructure);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

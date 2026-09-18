@@ -32,7 +32,7 @@ class TimelogController extends BaseApiController
 
         return $this->success(
             $this->timelogService->create($validated)->load(['user', 'task', 'project']),
-            '创建成功',
+            'Created successfully',
             201
         );
     }
@@ -54,12 +54,12 @@ class TimelogController extends BaseApiController
 
         $timelog = $this->timelogService->update($timelog, $validated);
 
-        return $this->success($timelog->load(['user', 'task', 'project', 'editor']), '更新成功');
+        return $this->success($timelog->load(['user', 'task', 'project', 'editor']), 'Updated successfully');
     }
 
     public function destroy(Timelog $timelog)
     {
         $this->timelogService->delete($timelog);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

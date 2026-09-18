@@ -48,13 +48,13 @@ class TaskCategoryController extends BaseApiController
 
         $taskCategory = $this->taskCategoryService->update($taskCategory, $validated);
 
-        return $this->success($taskCategory->load(['creator']), '更新成功');
+        return $this->success($taskCategory->load(['creator']), 'Updated successfully');
     }
 
     public function destroy(TaskCategory $taskCategory)
     {
         $this->taskCategoryService->delete($taskCategory);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

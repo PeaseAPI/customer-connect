@@ -73,7 +73,7 @@ class CustomModuleController extends BaseApiController
         ]);
 
         $module = $this->customModuleService->update($customModule, $validated);
-        return $this->success($module, '更新成功');
+        return $this->success($module, 'Updated successfully');
     }
 
     /**
@@ -131,7 +131,7 @@ class CustomModuleController extends BaseApiController
             $request->user()->id
         );
 
-        return $this->success($record->load(['creator', 'updater']), '更新成功');
+        return $this->success($record->load(['creator', 'updater']), 'Updated successfully');
     }
 
     /**

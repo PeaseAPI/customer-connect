@@ -38,6 +38,6 @@ class CompanyController extends BaseApiController
 
         $company = $this->companyService->update($company, $validated);
 
-        return $this->success($company, '更新成功');
+        return $this->success($company, 'Updated successfully');
     }
 }

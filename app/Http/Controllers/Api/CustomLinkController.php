@@ -73,7 +73,7 @@ class CustomLinkController extends BaseApiController
         ]);
 
         $link = $this->customLinkService->update($customLink, $validated);
-        return $this->success($link, '更新成功');
+        return $this->success($link, 'Updated successfully');
     }
 
     /**

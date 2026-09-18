@@ -34,7 +34,7 @@ class ProjectTemplateController extends BaseApiController
 
         $template = $this->templateService->create($validated);
 
-        return $this->success($template->load(['creator', 'category']), '项目模板创建成功', 201);
+        return $this->success($template->load(['creator', 'category']), 'Project template created', 201);
     }
 
     public function show(ProjectTemplate $projectTemplate)
@@ -56,13 +56,13 @@ class ProjectTemplateController extends BaseApiController
 
         $template = $this->templateService->update($projectTemplate, $validated);
 
-        return $this->success($template->load(['creator', 'category']), '更新成功');
+        return $this->success($template->load(['creator', 'category']), 'Updated successfully');
     }
 
     public function destroy(ProjectTemplate $projectTemplate)
     {
         $this->templateService->delete($projectTemplate);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 
     /**
@@ -81,7 +81,7 @@ class ProjectTemplateController extends BaseApiController
             $validated['description'] ?? null
         );
 
-        return $this->success($template->load(['creator', 'category']), '模板创建成功', 201);
+        return $this->success($template->load(['creator', 'category']), 'Template created', 201);
     }
 
     /**
@@ -102,6 +102,6 @@ class ProjectTemplateController extends BaseApiController
 
         $project = $this->templateService->createProjectFromTemplate($projectTemplate, $validated);
 
-        return $this->success($project, '项目创建成功', 201);
+        return $this->success($project, 'Project created', 201);
     }
 }

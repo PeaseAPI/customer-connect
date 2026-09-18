@@ -68,7 +68,7 @@ class AiAssistantController extends BaseApiController
             $request->user()->id
         );
 
-        return $this->success($message->load('conversation'), '发送成功');
+        return $this->success($message->load('conversation'), 'Sent successfully');
     }
 
     /**

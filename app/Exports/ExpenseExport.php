@@ -50,7 +50,7 @@ class ExpenseExport implements FromQuery, WithHeadings, WithMapping, ShouldQueue
     {
         return [
             'ID', '费用名称', '金额', '购买日期', '购买来源',
-            '分类', '项目', '状态', '可计费', '备注', '提交人', '创建时间',
+            'Category', 'Project', 'Status', 'Billable', 'Notes', 'Submitted By', 'Created At',
         ];
     }
 

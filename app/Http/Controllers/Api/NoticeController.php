@@ -48,13 +48,13 @@ class NoticeController extends BaseApiController
         ]);
 
         $notice = $this->noticeService->update($notice, $validated);
-        return $this->success($notice->load('creator'), '更新成功');
+        return $this->success($notice->load('creator'), 'Updated successfully');
     }
 
     public function destroy(Notice $notice)
     {
         $this->noticeService->delete($notice);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 
     public function markAsRead(Notice $notice, Request $request)

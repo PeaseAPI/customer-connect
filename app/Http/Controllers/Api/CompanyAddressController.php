@@ -50,13 +50,13 @@ class CompanyAddressController extends BaseApiController
         $validated['company_id'] = $request->user()->company_id;
         $companyAddress = $this->companyAddressService->update($companyAddress, $validated);
 
-        return $this->success($companyAddress, '更新成功');
+        return $this->success($companyAddress, 'Updated successfully');
     }
 
     public function destroy(CompanyAddress $companyAddress)
     {
         $this->companyAddressService->delete($companyAddress);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

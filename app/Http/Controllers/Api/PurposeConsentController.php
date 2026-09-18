@@ -41,13 +41,13 @@ class PurposeConsentController extends BaseApiController
     {
         $v = $request->validated();
         $purposeConsent = $this->purposeConsentService->update($purposeConsent, $v);
-        return $this->success($purposeConsent, '更新成功');
+        return $this->success($purposeConsent, 'Updated successfully');
     }
 
     public function destroy(PurposeConsent $purposeConsent)
     {
         $this->purposeConsentService->delete($purposeConsent);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 
     // Consent for a user

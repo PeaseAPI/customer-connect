@@ -12,10 +12,10 @@ enum OrderStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::Pending => '待处理',
-            self::Processing => '处理中',
-            self::Completed => '已完成',
-            self::Canceled => '已取消',
+            self::Pending => 'Pending',
+            self::Processing => 'Processing',
+            self::Completed => 'Completed',
+            self::Canceled => 'Canceled',
         };
     }
 }

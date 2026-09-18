@@ -56,14 +56,14 @@ class EmergencyContactController extends BaseApiController
         $validated['last_updated_by'] = $request->user()->id;
         $emergencyContact = $this->emergencyContactService->update($emergencyContact, $validated);
 
-        return $this->success($emergencyContact->load(['creator']), '更新成功');
+        return $this->success($emergencyContact->load(['creator']), 'Updated successfully');
     }
 
     public function destroy($employeeId, EmergencyContact $emergencyContact)
     {
         $this->emergencyContactService->delete($emergencyContact);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }
 

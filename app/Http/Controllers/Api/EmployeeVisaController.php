@@ -62,13 +62,13 @@ class EmployeeVisaController extends BaseApiController
         $validated['last_updated_by'] = $request->user()->id;
         $visa = $this->visaService->update($visa, $validated);
 
-        return $this->success($visa->load(['creator']), '更新成功');
+        return $this->success($visa->load(['creator']), 'Updated successfully');
     }
 
     public function destroy($employeeId, EmployeeVisa $visa)
     {
         $this->visaService->delete($visa);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

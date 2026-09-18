@@ -22,7 +22,7 @@ class ExpenseRecurringController extends BaseApiController
     {
         $v = $request->validated();
         $v['company_id'] = $request->attributes->get('company_id');
-        return $this->success($this->expenseRecurringService->create($v)->load(['expense']), '循环费用创建成功', 201);
+        return $this->success($this->expenseRecurringService->create($v)->load(['expense']), 'Recurring expense created', 201);
     }
 
     public function show(ExpenseRecurring $expenseRecurring)
@@ -34,12 +34,12 @@ class ExpenseRecurringController extends BaseApiController
     {
         $v = $request->validated();
         $expenseRecurring = $this->expenseRecurringService->update($expenseRecurring, $v);
-        return $this->success($expenseRecurring->load(['expense']), '更新成功');
+        return $this->success($expenseRecurring->load(['expense']), 'Updated successfully');
     }
 
     public function destroy(ExpenseRecurring $expenseRecurring)
     {
         $this->expenseRecurringService->delete($expenseRecurring);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

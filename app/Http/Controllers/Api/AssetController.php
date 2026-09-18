@@ -56,13 +56,13 @@ class AssetController extends BaseApiController
         ]);
 
         $asset = $this->assetService->update($asset, $validated);
-        return $this->success($asset->load('allocatedUser'), '更新成功');
+        return $this->success($asset->load('allocatedUser'), 'Updated successfully');
     }
 
     public function destroy(Asset $asset)
     {
         $this->assetService->delete($asset);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 
     /**

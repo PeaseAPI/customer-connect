@@ -41,12 +41,12 @@ class RecurringInvoiceController extends BaseApiController
 
         $recurringInvoice = $this->recurringInvoiceService->update($recurringInvoice, $v);
 
-        return $this->success($recurringInvoice->load(['client', 'project', 'currency', 'creator']), '更新成功');
+        return $this->success($recurringInvoice->load(['client', 'project', 'currency', 'creator']), 'Updated successfully');
     }
 
     public function destroy(RecurringInvoice $recurringInvoice)
     {
         $this->recurringInvoiceService->delete($recurringInvoice);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

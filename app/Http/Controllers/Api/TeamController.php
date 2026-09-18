@@ -39,13 +39,13 @@ class TeamController extends BaseApiController
             'team_name' => 'sometimes|string|max:255|unique:teams,team_name,' . $team->id,
         ]);
         $team = $this->teamService->update($team, $v);
-        return $this->success($team->load(['creator', 'members']), '更新成功');
+        return $this->success($team->load(['creator', 'members']), 'Updated successfully');
     }
 
     public function destroy(Team $team)
     {
         $this->teamService->delete($team);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 
     public function addMembers(AddTeamMembersRequest $request, Team $team)

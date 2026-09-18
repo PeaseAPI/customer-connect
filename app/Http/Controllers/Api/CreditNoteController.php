@@ -61,12 +61,12 @@ class CreditNoteController extends BaseApiController
 
         $creditNote = $this->creditNoteService->update($creditNote, $validated);
 
-        return $this->success($creditNote->load(['client', 'currency', 'items']), '更新成功');
+        return $this->success($creditNote->load(['client', 'currency', 'items']), 'Updated successfully');
     }
 
     public function destroy(CreditNote $creditNote)
     {
         $this->creditNoteService->delete($creditNote);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

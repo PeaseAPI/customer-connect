@@ -36,13 +36,13 @@ class EstimateRequestController extends BaseApiController
     {
         $v = $request->validated();
         $estimateRequest = $this->estimateRequestService->update($estimateRequest, $v);
-        return $this->success($estimateRequest->load(['client', 'estimate', 'creator']), '更新成功');
+        return $this->success($estimateRequest->load(['client', 'estimate', 'creator']), 'Updated successfully');
     }
 
     public function destroy(EstimateRequest $estimateRequest)
     {
         $this->estimateRequestService->delete($estimateRequest);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 
     public function convert(ConvertEstimateRequestRequest $request, EstimateRequest $estimateRequest)

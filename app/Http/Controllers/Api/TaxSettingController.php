@@ -29,7 +29,7 @@ class TaxSettingController extends BaseApiController
 
         return $this->success(
             $this->taxSettingService->create($validated),
-            '税率创建成功',
+            'Tax rate created',
             201
         );
     }
@@ -49,13 +49,13 @@ class TaxSettingController extends BaseApiController
 
         $taxSetting = $this->taxSettingService->update($taxSetting, $validated);
 
-        return $this->success($taxSetting, '更新成功');
+        return $this->success($taxSetting, 'Updated successfully');
     }
 
     public function destroy(TaxSetting $taxSetting)
     {
         $this->taxSettingService->delete($taxSetting);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

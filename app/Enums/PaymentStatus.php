@@ -12,10 +12,10 @@ enum PaymentStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::Pending => '待支付',
-            self::Completed => '已支付',
-            self::Failed => '支付失败',
-            self::Refunded => '已退款',
+            self::Pending => 'Pending',
+            self::Completed => 'Paid',
+            self::Failed => 'Payment failed',
+            self::Refunded => 'Refunded',
         };
     }
 }

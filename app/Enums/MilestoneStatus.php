@@ -10,8 +10,8 @@ enum MilestoneStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::Incomplete => '未完成',
-            self::Complete => '已完成',
+            self::Incomplete => 'Incomplete',
+            self::Complete => 'Completed',
         };
     }
 }

@@ -49,6 +49,6 @@ class ApprovalController extends BaseApiController
     public function reject(Request $request, ApprovalRequest $approvalRequest)
     {
         $this->approvalService->reject($approvalRequest, $request->remark);
-        return $this->success(null, '已拒绝');
+        return $this->success(null, 'Declined');
     }
 }

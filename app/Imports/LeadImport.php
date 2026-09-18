@@ -32,7 +32,7 @@ class LeadImport implements ToCollection, WithHeadingRow
 
                 Lead::create([
                     'lead_name' => $row['lead_name'],
-                    'lead_email' => $row['lead_email'] ?? $row['邮箱'] ?? null,
+                    'lead_email' => $row['lead_email'] ?? $row['Email'] ?? null,
                     'lead_mobile' => $row['lead_mobile'] ?? $row['手机号'] ?? null,
                     'lead_address' => $row['lead_address'] ?? $row['地址'] ?? null,
                     'agent_id' => $row['agent_id'] ?? $row['代理ID'] ?? null,

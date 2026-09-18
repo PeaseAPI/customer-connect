@@ -48,13 +48,13 @@ class ProjectCategoryController extends BaseApiController
 
         $projectCategory = $this->projectCategoryService->update($projectCategory, $validated);
 
-        return $this->success($projectCategory->load(['creator']), '更新成功');
+        return $this->success($projectCategory->load(['creator']), 'Updated successfully');
     }
 
     public function destroy(ProjectCategory $projectCategory)
     {
         $this->projectCategoryService->delete($projectCategory);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

@@ -50,13 +50,13 @@ class StickyNoteController extends BaseApiController
         $validated['last_updated_by'] = $request->user()->id;
         $stickyNote = $this->stickyNoteService->update($stickyNote, $validated);
 
-        return $this->success($stickyNote->load(['user', 'creator']), '更新成功');
+        return $this->success($stickyNote->load(['user', 'creator']), 'Updated successfully');
     }
 
     public function destroy(StickyNote $stickyNote)
     {
         $this->stickyNoteService->delete($stickyNote);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

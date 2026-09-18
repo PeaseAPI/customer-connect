@@ -24,7 +24,7 @@ class EmployeeLeaveQuotaController extends BaseApiController
         $v = $request->validated();
         $quota = $this->leaveQuotaService->create($employeeId, $v, $request->user()->id);
 
-        return $this->success($quota->load(['leaveType', 'creator']), '假期额度创建成功', 201);
+        return $this->success($quota->load(['leaveType', 'creator']), 'Leave quota created', 201);
     }
 
     public function show($employeeId, EmployeeLeaveQuota $leaveQuota)
@@ -36,13 +36,13 @@ class EmployeeLeaveQuotaController extends BaseApiController
     {
         $v = $request->validated();
         $leaveQuota = $this->leaveQuotaService->update($leaveQuota, $v);
-        return $this->success($leaveQuota->load(['leaveType', 'creator']), '更新成功');
+        return $this->success($leaveQuota->load(['leaveType', 'creator']), 'Updated successfully');
     }
 
     public function destroy($employeeId, EmployeeLeaveQuota $leaveQuota)
     {
         $this->leaveQuotaService->delete($leaveQuota);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 
     // Adjust leave quota
@@ -51,6 +51,6 @@ class EmployeeLeaveQuotaController extends BaseApiController
         $v = $request->validated();
         $leaveQuota = $this->leaveQuotaService->adjust($leaveQuota, $v, $request->user()->id);
 
-        return $this->success($leaveQuota->load(['leaveType', 'creator', 'histories.creator']), '假期额度调整成功');
+        return $this->success($leaveQuota->load(['leaveType', 'creator', 'histories.creator']), 'Leave quota adjusted');
     }
 }

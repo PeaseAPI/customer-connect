@@ -45,13 +45,13 @@ class ClientCategoryController extends BaseApiController
 
         $clientCategory = $this->clientCategoryService->update($clientCategory, $validated);
 
-        return $this->success($clientCategory->load(['subCategories']), '更新成功');
+        return $this->success($clientCategory->load(['subCategories']), 'Updated successfully');
     }
 
     public function destroy(ClientCategory $clientCategory)
     {
         $this->clientCategoryService->delete($clientCategory);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

@@ -26,7 +26,7 @@ class ExpenseCategoryController extends BaseApiController
 
         $validated['company_id'] = $request->attributes->get('company_id');
 
-        return $this->success($this->expenseCategoryService->create($validated), '费用分类创建成功', 201);
+        return $this->success($this->expenseCategoryService->create($validated), 'Expense category created', 201);
     }
 
     public function show(ExpenseCategory $expenseCategory)
@@ -43,13 +43,13 @@ class ExpenseCategoryController extends BaseApiController
 
         $expenseCategory = $this->expenseCategoryService->update($expenseCategory, $validated);
 
-        return $this->success($expenseCategory, '更新成功');
+        return $this->success($expenseCategory, 'Updated successfully');
     }
 
     public function destroy(ExpenseCategory $expenseCategory)
     {
         $this->expenseCategoryService->delete($expenseCategory);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

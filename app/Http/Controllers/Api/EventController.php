@@ -50,14 +50,14 @@ class EventController extends BaseApiController
             $event->participants()->sync($participantIds);
         }
 
-        // 设置提醒
+        // Settings提醒
         if ($reminderMinutes) {
             app(\App\Services\Event\RecurringEventService::class)->setReminder($event, $reminderMinutes);
         }
 
         return $this->success(
             $event->load(['creator', 'participants']),
-            '事件创建成功',
+            'Event created',
             201
         );
     }
@@ -80,13 +80,13 @@ class EventController extends BaseApiController
 
         $event = $this->eventService->update($event, $validated);
 
-        return $this->success($event->load(['creator']), '更新成功');
+        return $this->success($event->load(['creator']), 'Updated successfully');
     }
 
         public function destroy(Event $event)
     {
         $this->eventService->delete($event);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 
     /**

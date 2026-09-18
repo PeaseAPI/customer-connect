@@ -50,13 +50,13 @@ class LeadFollowUpController extends BaseApiController
 
         $followUp = $this->leadFollowUpService->update($followUp, $validated);
 
-        return $this->success($followUp->load(['lead', 'addedBy']), '更新成功');
+        return $this->success($followUp->load(['lead', 'addedBy']), 'Updated successfully');
     }
 
     public function destroy($leadId, LeadFollowUp $followUp)
     {
         $this->leadFollowUpService->delete($followUp);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

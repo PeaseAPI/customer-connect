@@ -61,13 +61,13 @@ class ExpenseController extends BaseApiController
 
         $expense = $this->expenseService->update($expense, $validated);
 
-        return $this->success($expense->load(['user', 'project', 'category', 'currency']), '更新成功');
+        return $this->success($expense->load(['user', 'project', 'category', 'currency']), 'Updated successfully');
     }
 
     public function destroy(Expense $expense)
     {
         $this->expenseService->delete($expense);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 
     public function approve(Request $request, Expense $expense)
@@ -95,7 +95,7 @@ class ExpenseController extends BaseApiController
         ]);
 
         $expense = $this->expenseService->reject($expense, $request->user()->id, $validated['reason']);
-        return $this->success($expense->load(['user', 'project', 'category', 'currency', 'approver']), '已拒绝');
+        return $this->success($expense->load(['user', 'project', 'category', 'currency', 'approver']), 'Declined');
     }
 
     /**

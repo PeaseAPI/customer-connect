@@ -12,10 +12,10 @@ enum TicketStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::Open => '待处理',
-            self::Pending => '处理中',
-            self::Resolved => '已解决',
-            self::Closed => '已关闭',
+            self::Open => 'Pending',
+            self::Pending => 'Processing',
+            self::Resolved => 'Resolved',
+            self::Closed => 'Closed',
         };
     }
 }

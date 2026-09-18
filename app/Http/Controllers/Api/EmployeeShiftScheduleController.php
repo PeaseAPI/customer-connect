@@ -33,7 +33,7 @@ class EmployeeShiftScheduleController extends BaseApiController
 
         return $this->success(
             $this->shiftScheduleService->create($validated)->load(['shift']),
-            '排班创建成功',
+            'Shift schedule created',
             201
         );
     }
@@ -54,13 +54,13 @@ class EmployeeShiftScheduleController extends BaseApiController
 
         $shiftSchedule = $this->shiftScheduleService->update($shiftSchedule, $validated);
 
-        return $this->success($shiftSchedule->load(['shift']), '更新成功');
+        return $this->success($shiftSchedule->load(['shift']), 'Updated successfully');
     }
 
     public function destroy($employeeId, EmployeeShiftSchedule $shiftSchedule)
     {
         $this->shiftScheduleService->delete($shiftSchedule);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

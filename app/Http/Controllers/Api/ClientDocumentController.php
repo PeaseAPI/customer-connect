@@ -58,13 +58,13 @@ class ClientDocumentController extends BaseApiController
         $validated['last_updated_by'] = $request->user()->id;
         $document = $this->clientDocumentService->update($document, $validated);
 
-        return $this->success($document->load(['creator']), '更新成功');
+        return $this->success($document->load(['creator']), 'Updated successfully');
     }
 
     public function destroy($clientId, ClientDocument $document)
     {
         $this->clientDocumentService->delete($document);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }

@@ -36,7 +36,7 @@ class LeaveController extends BaseApiController
 
         event(new LeaveRequested($leave));
 
-        return $this->success($leave->load(['user', 'leaveType']), '请假申请提交成功', 201);
+        return $this->success($leave->load(['user', 'leaveType']), 'Leave request submitted', 201);
     }
 
     public function show(Leave $leave)
@@ -54,13 +54,13 @@ class LeaveController extends BaseApiController
 
         $leave = $this->leaveService->update($leave, $validated);
 
-        return $this->success($leave->load(['user', 'leaveType']), '更新成功');
+        return $this->success($leave->load(['user', 'leaveType']), 'Updated successfully');
     }
 
     public function destroy(Leave $leave)
     {
         $this->leaveService->delete($leave);
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 
     public function approve(Leave $leave)
@@ -72,6 +72,6 @@ class LeaveController extends BaseApiController
     public function reject(Request $request, Leave $leave)
     {
         $leave = $this->leaveService->reject($leave, Auth::id());
-        return $this->success(null, '已拒绝');
+        return $this->success(null, 'Declined');
     }
 }

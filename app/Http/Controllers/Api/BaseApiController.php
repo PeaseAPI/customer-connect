@@ -7,7 +7,7 @@ use Illuminate\Http\JsonResponse;
 
 class BaseApiController extends Controller
 {
-    protected function success(mixed $data = null, string $message = '操作成功', int $code = 200): JsonResponse
+    protected function success(mixed $data = null, string $message = 'Success', int $code = 200): JsonResponse
     {
         return response()->json([
             'success' => true,
@@ -16,7 +16,7 @@ class BaseApiController extends Controller
         ], $code);
     }
 
-    protected function error(string $message = '操作失败', int $code = 400, mixed $errors = null): JsonResponse
+    protected function error(string $message = 'Operation failed', int $code = 400, mixed $errors = null): JsonResponse
     {
         return response()->json([
             'success' => false,
@@ -25,7 +25,7 @@ class BaseApiController extends Controller
         ], $code);
     }
 
-    protected function paginated($paginator, string $message = '获取成功'): JsonResponse
+    protected function paginated($paginator, string $message = 'Data retrieved'): JsonResponse
     {
         return response()->json([
             'success' => true,

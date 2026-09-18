@@ -52,13 +52,13 @@ class SubTaskController extends BaseApiController
         $validated['last_updated_by'] = $request->user()->id;
         $subTask = $this->subTaskService->update($subTask, $validated);
 
-        return $this->success($subTask->load(['assignee', 'creator']), '更新成功');
+        return $this->success($subTask->load(['assignee', 'creator']), 'Updated successfully');
     }
 
     public function destroy(Task $task, SubTask $subTask)
     {
         $this->subTaskService->delete($subTask);
 
-        return $this->success(null, '删除成功');
+        return $this->success(null, 'Deleted successfully');
     }
 }
