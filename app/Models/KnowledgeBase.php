@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ActiveInactiveStatus;
 use App\Traits\HasCompanyScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -18,7 +19,7 @@ class KnowledgeBase extends Model
     ];
 
     protected $casts = [
-        'status' => 'string',
+        'status' => ActiveInactiveStatus::class,
     ];
 
     public function category(): BelongsTo { return $this->belongsTo(KnowledgeBaseCategory::class, 'category_id'); }

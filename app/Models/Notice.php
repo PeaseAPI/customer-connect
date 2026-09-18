@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ActiveInactiveStatus;
 use App\Traits\HasCompanyScope;
 use App\Traits\HasFiles;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,6 +23,7 @@ class Notice extends Model
     protected $casts = [
         'notice_date' => 'date',
         'expiry_date' => 'date',
+        'status' => ActiveInactiveStatus::class,
     ];
 
     public function creator(): BelongsTo { return $this->belongsTo(User::class, 'added_by'); }
