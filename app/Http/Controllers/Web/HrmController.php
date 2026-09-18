@@ -10,11 +10,19 @@ class HrmController extends Controller
 {
         use HasCrudActions;
 
-    public function employees(Request $request)
+public function employees(Request $request)
     {
-        $response = $this->apiGet($request, '/api/hrm/employees');
+        $params = array_filter([
+            'page' => $request->input('page', 1),
+            'search' => $request->input('search'),
+            'department' => $request->input('department'),
+            'status' => $request->input('status'),
+        ]);
+        $response = $this->apiGet($request, '/api/hrm/employees?' . http_build_query($params));
+        $data = $response->json();
         return view('hrm.employees', [
-            'employees' => $response->json('data', []),
+            'employees' => $data['data'] ?? [],
+            'pagination' => $this->extractPagination($data),
         ]);
     }
 
@@ -42,11 +50,18 @@ class HrmController extends Controller
         return redirect()->route('hrm.employees')->with('success', 'Employee deleted successfully');
     }
 
-    public function attendance(Request $request)
+public function attendance(Request $request)
     {
-        $response = $this->apiGet($request, '/api/hrm/attendances');
+        $params = array_filter([
+            'page' => $request->input('page', 1),
+            'search' => $request->input('search'),
+            'date' => $request->input('date'),
+        ]);
+        $response = $this->apiGet($request, '/api/hrm/attendances?' . http_build_query($params));
+        $data = $response->json();
         return view('hrm.attendance', [
-            'attendance' => $response->json('data', []),
+            'attendance' => $data['data'] ?? [],
+            'pagination' => $this->extractPagination($data),
         ]);
     }
 
@@ -74,11 +89,18 @@ class HrmController extends Controller
         return redirect()->route('hrm.attendance')->with('success', 'Attendance record deleted successfully');
     }
 
-    public function leaves(Request $request)
+public function leaves(Request $request)
     {
-        $response = $this->apiGet($request, '/api/hrm/leaves');
+        $params = array_filter([
+            'page' => $request->input('page', 1),
+            'search' => $request->input('search'),
+            'status' => $request->input('status'),
+        ]);
+        $response = $this->apiGet($request, '/api/hrm/leaves?' . http_build_query($params));
+        $data = $response->json();
         return view('hrm.leaves', [
-            'leaves' => $response->json('data', []),
+            'leaves' => $data['data'] ?? [],
+            'pagination' => $this->extractPagination($data),
         ]);
     }
 

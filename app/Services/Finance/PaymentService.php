@@ -12,6 +12,13 @@ class PaymentService
     {
         $query = Payment::with(['client', 'invoice', 'currency']);
 
+        if (!empty($filters['search'])) {
+            $query->where(function ($q) use ($filters) {
+                $q->whereHas('invoice', fn ($i) => $i->where('invoice_number', 'like', "%{$filters['search']}%"))
+                  ->orWhere('gateway', 'like', "%{$filters['search']}%");
+            });
+        }
+
         if (!empty($filters['invoice_id'])) {
             $query->where('invoice_id', $filters['invoice_id']);
         }

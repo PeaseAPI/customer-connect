@@ -14,6 +14,10 @@ class LeaveService
     {
         $query = Leave::with(['user', 'approver', 'leaveType']);
 
+        if (!empty($filters['search'])) {
+            $query->whereHas('user', fn ($u) => $u->where('name', 'like', "%{$filters['search']}%"));
+        }
+
         if (!empty($filters['user_id'])) {
             $query->where('user_id', $filters['user_id']);
         }

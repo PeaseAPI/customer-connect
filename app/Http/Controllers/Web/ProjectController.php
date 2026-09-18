@@ -11,9 +11,16 @@ class ProjectController extends Controller
 
     public function index(Request $request)
     {
-        $response = $this->apiGet($request, '/api/pm/projects');
+        $params = array_filter([
+            'page' => $request->input('page', 1),
+            'search' => $request->input('search'),
+            'status' => $request->input('status'),
+        ]);
+        $response = $this->apiGet($request, '/api/pm/projects?' . http_build_query($params));
+        $data = $response->json();
         return view('projects.index', [
-            'projects' => $response->json('data', []),
+            'projects' => $data['data'] ?? [],
+            'pagination' => $this->extractPagination($data),
         ]);
     }
 
@@ -51,19 +58,34 @@ class ProjectController extends Controller
 
     public function tasks(Request $request, $projectId)
     {
-        $response = $this->apiGet($request, "/api/pm/projects/{$projectId}/tasks");
+        $params = array_filter([
+            'page' => $request->input('page', 1),
+            'keyword' => $request->input('search'),
+            'status' => $request->input('status'),
+        ]);
+        $response = $this->apiGet($request, "/api/pm/projects/{$projectId}/tasks?" . http_build_query($params));
+        $data = $response->json();
         return view('projects.tasks', [
-            'tasks' => $response->json('data', []),
+            'tasks' => $data['data'] ?? [],
             'projectId' => $projectId,
+            'pagination' => $this->extractPagination($data),
         ]);
     }
 
     public function allTasks(Request $request)
     {
-        $response = $this->apiGet($request, '/api/pm/tasks');
+        $params = array_filter([
+            'page' => $request->input('page', 1),
+            'keyword' => $request->input('search'),
+            'status' => $request->input('status'),
+            'priority' => $request->input('priority'),
+        ]);
+        $response = $this->apiGet($request, '/api/pm/tasks?' . http_build_query($params));
+        $data = $response->json();
         return view('projects.tasks', [
-            'tasks' => $response->json('data', []),
+            'tasks' => $data['data'] ?? [],
             'projectId' => null,
+            'pagination' => $this->extractPagination($data),
         ]);
     }
 

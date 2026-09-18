@@ -17,6 +17,13 @@ class InvoiceService
     {
         $query = Invoice::with(['client', 'project', 'items']);
 
+        if (!empty($filters['search'])) {
+            $query->where(function ($q) use ($filters) {
+                $q->where('invoice_number', 'like', "%{$filters['search']}%")
+                  ->orWhereHas('client', fn ($c) => $c->where('name', 'like', "%{$filters['search']}%"));
+            });
+        }
+
         if (!empty($filters['client_id'])) {
             $query->where('client_id', $filters['client_id']);
         }

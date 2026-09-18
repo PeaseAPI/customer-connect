@@ -1,11 +1,41 @@
 @extends('layouts.app')
 @section('title', 'Estimates')
 @section('content')
-<div x-data="{ showModal: false, editEstimate: null }">
+<div x-data="{ showModal: {{ $errors->any() ? 'true' : 'false' }}, editEstimate: null }">
     <div class="mb-6 flex items-center justify-between">
         <h1 class="text-2xl font-bold text-gray-900">Estimates</h1>
         <button @click="showModal = true; editEstimate = null" class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500">+ New Estimate</button>
     </div>
+
+    {{-- Search & Filter Bar --}}
+    <form method="GET" action="{{ route('finance.estimates') }}" class="mb-4 flex flex-wrap items-center gap-3">
+        <div class="relative flex-1 min-w-[200px]">
+            <svg class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+            <input name="search" type="text" value="{{ request('search') }}" placeholder="Search estimates..." class="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-3 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+        </div>
+        <select name="status" class="rounded-lg border border-gray-300 px-3 py-2 text-sm">
+            <option value="">All Statuses</option>
+            <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
+            <option value="sent" {{ request('status') === 'sent' ? 'selected' : '' }}>Sent</option>
+            <option value="accepted" {{ request('status') === 'accepted' ? 'selected' : '' }}>Accepted</option>
+            <option value="declined" {{ request('status') === 'declined' ? 'selected' : '' }}>Declined</option>
+            <option value="expired" {{ request('status') === 'expired' ? 'selected' : '' }}>Expired</option>
+        </select>
+        <button type="submit" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500">Filter</button>
+        @if(request('search') || request('status'))
+        <a href="{{ route('finance.estimates') }}" class="text-sm text-gray-500 hover:text-gray-700">Clear</a>
+        @endif
+    </form>
+
+    {{-- Validation Error Banner --}}
+    @if($errors->any())
+    <div class="mb-4 rounded-lg bg-red-50 border border-red-200 p-4">
+        <p class="text-sm font-medium text-red-800">Please fix the following errors:</p>
+        <ul class="mt-1 list-disc list-inside text-sm text-red-700">
+            @foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach
+        </ul>
+    </div>
+    @endif
     <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50"><tr>
@@ -34,6 +64,9 @@
             </tbody>
         </table>
     </div>
+    @if(isset($pagination) && ($pagination['last_page'] ?? 1) > 1)
+    <x-pagination :pagination="$pagination" />
+    @endif
     <div x-show="showModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto">
         <div class="flex min-h-full items-center justify-center p-4">
             <div class="fixed inset-0 bg-gray-500/75" @click="showModal = false"></div>
@@ -43,9 +76,12 @@
                     <input type="hidden" name="_method" :value="editEstimate ? 'PUT' : 'POST'">
                     @csrf
                     <div class="space-y-4">
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Client Name *</label><input name="client_name" :value="editEstimate?.client_name" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" required></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Amount *</label><input name="total" type="number" step="0.01" :value="editEstimate?.total" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" required></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Status</label><select name="status" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"><option value="draft">Draft</option><option value="sent">Sent</option><option value="accepted">Accepted</option><option value="declined">Declined</option></select></div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Client Name *</label><input name="client_name" @if(old('client_name')) value="{{ old('client_name') }}" @else :value="editEstimate?.client_name" @endif class="w-full rounded-lg border {{ $errors->has('client_name') ? 'border-red-500' : 'border-gray-300' }} px-3 py-2 text-sm" required>
+                            @error('client_name')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror</div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Amount *</label><input name="total" type="number" step="0.01" @if(old('total')) value="{{ old('total') }}" @else :value="editEstimate?.total" @endif class="w-full rounded-lg border {{ $errors->has('total') ? 'border-red-500' : 'border-gray-300' }} px-3 py-2 text-sm" required>
+                            @error('total')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror</div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Status</label><select name="status" class="w-full rounded-lg border {{ $errors->has('status') ? 'border-red-500' : 'border-gray-300' }} px-3 py-2 text-sm"><option value="draft" :selected="(editEstimate?.status ?? '{{ old('status', 'draft') }}') === 'draft'">Draft</option><option value="sent" :selected="(editEstimate?.status ?? '{{ old('status', 'draft') }}') === 'sent'">Sent</option><option value="accepted" :selected="(editEstimate?.status ?? '{{ old('status', 'draft') }}') === 'accepted'">Accepted</option><option value="declined" :selected="(editEstimate?.status ?? '{{ old('status', 'draft') }}') === 'declined'">Declined</option></select>
+                            @error('status')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror</div>
                     </div>
                     <div class="mt-6 flex justify-end gap-3">
                         <button type="button" @click="showModal = false" class="rounded-lg border border-gray-300 px-4 py-2 text-sm">Cancel</button>

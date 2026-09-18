@@ -1,11 +1,34 @@
 @extends('layouts.app')
 @section('title', 'Attendance')
 @section('content')
-<div x-data="{ showModal: false, editRecord: null }">
+<div x-data="{ showModal: {{ $errors->any() ? 'true' : 'false' }}, editRecord: null }">
     <div class="mb-6 flex items-center justify-between">
         <h1 class="text-2xl font-bold text-gray-900">Attendance</h1>
         <button @click="showModal = true; editRecord = null" class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500">+ Record Attendance</button>
     </div>
+
+    {{-- Search & Filter Bar --}}
+    <form method="GET" action="{{ route('hrm.attendance') }}" class="mb-4 flex flex-wrap items-center gap-3">
+        <div class="relative flex-1 min-w-[200px]">
+            <svg class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+            <input name="search" type="text" value="{{ request('search') }}" placeholder="Search attendance..." class="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-3 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+        </div>
+        <input name="date" type="date" value="{{ request('date') }}" placeholder="Filter by date" class="rounded-lg border border-gray-300 px-3 py-2 text-sm">
+        <button type="submit" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500">Filter</button>
+        @if(request('search') || request('date'))
+        <a href="{{ route('hrm.attendance') }}" class="text-sm text-gray-500 hover:text-gray-700">Clear</a>
+        @endif
+    </form>
+
+    {{-- Validation Error Banner --}}
+    @if($errors->any())
+    <div class="mb-4 rounded-lg bg-red-50 border border-red-200 p-4">
+        <p class="text-sm font-medium text-red-800">Please fix the following errors:</p>
+        <ul class="mt-1 list-disc list-inside text-sm text-red-700">
+            @foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach
+        </ul>
+    </div>
+    @endif
     <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50"><tr>
@@ -36,6 +59,9 @@
             </tbody>
         </table>
     </div>
+    @if(isset($pagination) && ($pagination['last_page'] ?? 1) > 1)
+    <x-pagination :pagination="$pagination" />
+    @endif
     <div x-show="showModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto">
         <div class="flex min-h-full items-center justify-center p-4">
             <div class="fixed inset-0 bg-gray-500/75" @click="showModal = false"></div>
@@ -45,11 +71,16 @@
                     <input type="hidden" name="_method" :value="editRecord ? 'PUT' : 'POST'">
                     @csrf
                     <div class="space-y-4">
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Employee Name *</label><input name="employee_name" :value="editRecord?.employee_name" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" required></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Date *</label><input name="date" type="date" :value="editRecord?.date" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" required></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Clock In</label><input name="clock_in" type="time" :value="editRecord?.clock_in" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Clock Out</label><input name="clock_out" type="time" :value="editRecord?.clock_out" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Status</label><select name="status" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"><option value="present">Present</option><option value="absent">Absent</option><option value="late">Late</option><option value="half_day">Half Day</option></select></div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Employee Name *</label><input name="employee_name" @if(old('employee_name')) value="{{ old('employee_name') }}" @else :value="editRecord?.employee_name" @endif class="w-full rounded-lg border {{ $errors->has('employee_name') ? 'border-red-500' : 'border-gray-300' }} px-3 py-2 text-sm" required>
+                            @error('employee_name')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror</div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Date *</label><input name="date" type="date" @if(old('date')) value="{{ old('date') }}" @else :value="editRecord?.date" @endif class="w-full rounded-lg border {{ $errors->has('date') ? 'border-red-500' : 'border-gray-300' }} px-3 py-2 text-sm" required>
+                            @error('date')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror</div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Clock In</label><input name="clock_in" type="time" @if(old('clock_in')) value="{{ old('clock_in') }}" @else :value="editRecord?.clock_in" @endif class="w-full rounded-lg border {{ $errors->has('clock_in') ? 'border-red-500' : 'border-gray-300' }} px-3 py-2 text-sm">
+                            @error('clock_in')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror</div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Clock Out</label><input name="clock_out" type="time" @if(old('clock_out')) value="{{ old('clock_out') }}" @else :value="editRecord?.clock_out" @endif class="w-full rounded-lg border {{ $errors->has('clock_out') ? 'border-red-500' : 'border-gray-300' }} px-3 py-2 text-sm">
+                            @error('clock_out')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror</div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Status</label><select name="status" class="w-full rounded-lg border {{ $errors->has('status') ? 'border-red-500' : 'border-gray-300' }} px-3 py-2 text-sm"><option value="present" :selected="(editRecord?.status ?? '{{ old('status', 'present') }}') === 'present'">Present</option><option value="absent" :selected="(editRecord?.status ?? '{{ old('status', 'present') }}') === 'absent'">Absent</option><option value="late" :selected="(editRecord?.status ?? '{{ old('status', 'present') }}') === 'late'">Late</option><option value="half_day" :selected="(editRecord?.status ?? '{{ old('status', 'present') }}') === 'half_day'">Half Day</option></select>
+                            @error('status')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror</div>
                     </div>
                     <div class="mt-6 flex justify-end gap-3">
                         <button type="button" @click="showModal = false" class="rounded-lg border border-gray-300 px-4 py-2 text-sm">Cancel</button>

@@ -9,11 +9,18 @@ class FinanceController extends Controller
 {
     use HasCrudActions;
 
-    public function invoices(Request $request)
+public function invoices(Request $request)
     {
-        $response = $this->apiGet($request, '/api/finance/invoices');
+        $params = array_filter([
+            'page' => $request->input('page', 1),
+            'search' => $request->input('search'),
+            'status' => $request->input('status'),
+        ]);
+        $response = $this->apiGet($request, '/api/finance/invoices?' . http_build_query($params));
+        $data = $response->json();
         return view('finance.invoices', [
-            'invoices' => $response->json('data', []),
+            'invoices' => $data['data'] ?? [],
+            'pagination' => $this->extractPagination($data),
         ]);
     }
 
@@ -41,11 +48,18 @@ class FinanceController extends Controller
         return redirect()->route('finance.invoices')->with('success', 'Invoice deleted successfully');
     }
 
-    public function estimates(Request $request)
+public function estimates(Request $request)
     {
-        $response = $this->apiGet($request, '/api/finance/estimates');
+        $params = array_filter([
+            'page' => $request->input('page', 1),
+            'search' => $request->input('search'),
+            'status' => $request->input('status'),
+        ]);
+        $response = $this->apiGet($request, '/api/finance/estimates?' . http_build_query($params));
+        $data = $response->json();
         return view('finance.estimates', [
-            'estimates' => $response->json('data', []),
+            'estimates' => $data['data'] ?? [],
+            'pagination' => $this->extractPagination($data),
         ]);
     }
 
@@ -73,11 +87,17 @@ class FinanceController extends Controller
         return redirect()->route('finance.estimates')->with('success', 'Estimate deleted successfully');
     }
 
-    public function payments(Request $request)
+public function payments(Request $request)
     {
-        $response = $this->apiGet($request, '/api/finance/payments');
+        $params = array_filter([
+            'page' => $request->input('page', 1),
+            'search' => $request->input('search'),
+        ]);
+        $response = $this->apiGet($request, '/api/finance/payments?' . http_build_query($params));
+        $data = $response->json();
         return view('finance.payments', [
-            'payments' => $response->json('data', []),
+            'payments' => $data['data'] ?? [],
+            'pagination' => $this->extractPagination($data),
         ]);
     }
 
@@ -90,11 +110,19 @@ class FinanceController extends Controller
         return back()->withErrors($response->json('errors', []))->withInput();
     }
 
-    public function expenses(Request $request)
+public function expenses(Request $request)
     {
-        $response = $this->apiGet($request, '/api/finance/expenses');
+        $params = array_filter([
+            'page' => $request->input('page', 1),
+            'search' => $request->input('search'),
+            'status' => $request->input('status'),
+            'category' => $request->input('category'),
+        ]);
+        $response = $this->apiGet($request, '/api/finance/expenses?' . http_build_query($params));
+        $data = $response->json();
         return view('finance.expenses', [
-            'expenses' => $response->json('data', []),
+            'expenses' => $data['data'] ?? [],
+            'pagination' => $this->extractPagination($data),
         ]);
     }
 

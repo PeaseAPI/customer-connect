@@ -11,9 +11,16 @@ class CrmController extends Controller
 
     public function leads(Request $request)
     {
-        $response = $this->apiGet($request, '/api/crm/leads');
+        $params = array_filter([
+            'page' => $request->input('page', 1),
+            'search' => $request->input('search'),
+            'status' => $request->input('status'),
+        ]);
+        $response = $this->apiGet($request, '/api/crm/leads?' . http_build_query($params));
+        $data = $response->json();
         return view('crm.leads', [
-            'leads' => $response->json('data', []),
+            'leads' => $data['data'] ?? [],
+            'pagination' => $this->extractPagination($data),
         ]);
     }
 
@@ -52,9 +59,15 @@ class CrmController extends Controller
 
     public function clients(Request $request)
     {
-        $response = $this->apiGet($request, '/api/crm/clients');
+        $params = array_filter([
+            'page' => $request->input('page', 1),
+            'search' => $request->input('search'),
+        ]);
+        $response = $this->apiGet($request, '/api/crm/clients?' . http_build_query($params));
+        $data = $response->json();
         return view('crm.clients', [
-            'clients' => $response->json('data', []),
+            'clients' => $data['data'] ?? [],
+            'pagination' => $this->extractPagination($data),
         ]);
     }
 
@@ -84,9 +97,16 @@ class CrmController extends Controller
 
     public function deals(Request $request)
     {
-        $response = $this->apiGet($request, '/api/crm/deals');
+        $params = array_filter([
+            'page' => $request->input('page', 1),
+            'search' => $request->input('search'),
+            'status' => $request->input('status'),
+        ]);
+        $response = $this->apiGet($request, '/api/crm/deals?' . http_build_query($params));
+        $data = $response->json();
         return view('crm.deals', [
-            'deals' => $response->json('data', []),
+            'deals' => $data['data'] ?? [],
+            'pagination' => $this->extractPagination($data),
         ]);
     }
 

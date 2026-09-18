@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Leads')
 @section('content')
-<div x-data="{ showModal: false, editLead: null }">
+<div x-data="{ showModal: {{ $errors->any() ? 'true' : 'false' }}, editLead: null }">
     <div class="mb-6 flex items-center justify-between">
         <h1 class="text-2xl font-bold text-gray-900">Leads</h1>
         <button @click="showModal = true; editLead = null" class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500">
@@ -9,6 +9,36 @@
             Add Lead
         </button>
     </div>
+
+    {{-- Search & Filter Bar --}}
+    <form method="GET" action="{{ route('crm.leads') }}" class="mb-4 flex flex-wrap items-center gap-3">
+        <div class="relative flex-1 min-w-[200px]">
+            <svg class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/></svg>
+            <input name="search" type="text" value="{{ request('search') }}" placeholder="Search leads..." class="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-3 text-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500">
+        </div>
+        <select name="status" class="rounded-lg border border-gray-300 px-3 py-2 text-sm">
+            <option value="">All Statuses</option>
+            <option value="new" {{ request('status') === 'new' ? 'selected' : '' }}>New</option>
+            <option value="contacted" {{ request('status') === 'contacted' ? 'selected' : '' }}>Contacted</option>
+            <option value="qualified" {{ request('status') === 'qualified' ? 'selected' : '' }}>Qualified</option>
+            <option value="won" {{ request('status') === 'won' ? 'selected' : '' }}>Won</option>
+            <option value="lost" {{ request('status') === 'lost' ? 'selected' : '' }}>Lost</option>
+        </select>
+        <button type="submit" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500">Filter</button>
+        @if(request('search') || request('status'))
+        <a href="{{ route('crm.leads') }}" class="text-sm text-gray-500 hover:text-gray-700">Clear</a>
+        @endif
+    </form>
+
+    {{-- Validation Error Banner --}}
+    @if($errors->any())
+    <div class="mb-4 rounded-lg bg-red-50 border border-red-200 p-4">
+        <p class="text-sm font-medium text-red-800">Please fix the following errors:</p>
+        <ul class="mt-1 list-disc list-inside text-sm text-red-700">
+            @foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach
+        </ul>
+    </div>
+    @endif
     <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50"><tr>
@@ -41,8 +71,14 @@
                 @endif
             </tbody>
         </table>
-    </div>
-    <!-- Modal -->
+        </div>
+
+    {{-- Pagination --}}
+    @if(isset($pagination) && ($pagination['last_page'] ?? 1) > 1)
+    <x-pagination :pagination="$pagination" />
+    @endif
+
+    {{-- Modal --}}
     <div x-show="showModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto">
         <div class="flex min-h-full items-center justify-center p-4">
             <div class="fixed inset-0 bg-gray-500/75" @click="showModal = false"></div>
@@ -52,11 +88,28 @@
                     <input type="hidden" name="_method" :value="editLead ? 'PUT' : 'POST'">
                     @csrf
                     <div class="space-y-4">
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Name *</label><input name="lead_name" :value="editLead?.lead_name" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" required></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Email</label><input name="lead_email" type="email" :value="editLead?.lead_email" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Phone</label><input name="lead_mobile" :value="editLead?.lead_mobile" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Company</label><input name="company_name" :value="editLead?.company_name" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Value</label><input name="value" type="number" step="0.01" :value="editLead?.value" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"></div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+                            <input name="lead_name" @if(old('lead_name')) value="{{ old('lead_name') }}" @else :value="editLead?.lead_name" @endif class="w-full rounded-lg border {{ $errors->has('lead_name') ? 'border-red-500' : 'border-gray-300' }} px-3 py-2 text-sm" required>
+                            @error('lead_name')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                            <input name="lead_email" type="email" @if(old('lead_email')) value="{{ old('lead_email') }}" @else :value="editLead?.lead_email" @endif class="w-full rounded-lg border {{ $errors->has('lead_email') ? 'border-red-500' : 'border-gray-300' }} px-3 py-2 text-sm">
+                            @error('lead_email')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                            <input name="lead_mobile" @if(old('lead_mobile')) value="{{ old('lead_mobile') }}" @else :value="editLead?.lead_mobile" @endif class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Company</label>
+                            <input name="company_name" @if(old('company_name')) value="{{ old('company_name') }}" @else :value="editLead?.company_name" @endif class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Value</label>
+                            <input name="value" type="number" step="0.01" @if(old('value')) value="{{ old('value') }}" @else :value="editLead?.value" @endif class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm">
+                        </div>
                     </div>
                     <div class="mt-6 flex justify-end gap-3">
                         <button type="button" @click="showModal = false" class="rounded-lg border border-gray-300 px-4 py-2 text-sm">Cancel</button>

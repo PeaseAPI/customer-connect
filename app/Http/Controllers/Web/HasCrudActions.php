@@ -45,4 +45,15 @@ trait HasCrudActions
     {
         return Http::withHeaders($this->apiHeaders($request))->delete(url($url));
     }
+
+    protected function extractPagination(array $data): array
+    {
+        $meta = $data['meta'] ?? [];
+        return [
+            'current_page' => $meta['current_page'] ?? 1,
+            'last_page' => $meta['last_page'] ?? 1,
+            'per_page' => $meta['per_page'] ?? 15,
+            'total' => $meta['total'] ?? count($data['data'] ?? []),
+        ];
+    }
 }

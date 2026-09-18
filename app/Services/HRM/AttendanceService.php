@@ -13,6 +13,10 @@ class AttendanceService
     {
         $query = Attendance::with(['user', 'shift']);
 
+        if (!empty($filters['search'])) {
+            $query->whereHas('user', fn ($u) => $u->where('name', 'like', "%{$filters['search']}%"));
+        }
+
         if (!empty($filters['user_id'])) {
             $query->where('user_id', $filters['user_id']);
         }

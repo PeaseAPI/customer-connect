@@ -1,11 +1,21 @@
 @extends('layouts.app')
 @section('title', 'Pipelines')
 @section('content')
-<div x-data="{ showModal: false, editPipeline: null }">
+<div x-data="{ showModal: {{ $errors->any() ? 'true' : 'false' }}, editPipeline: null }">
     <div class="mb-6 flex items-center justify-between">
         <h1 class="text-2xl font-bold text-gray-900">Pipelines</h1>
         <button @click="showModal = true; editPipeline = null" class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500">+ Add Pipeline</button>
     </div>
+
+    {{-- Validation Error Banner --}}
+    @if($errors->any())
+    <div class="mb-4 rounded-lg bg-red-50 border border-red-200 p-4">
+        <p class="text-sm font-medium text-red-800">Please fix the following errors:</p>
+        <ul class="mt-1 list-disc list-inside text-sm text-red-700">
+            @foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach
+        </ul>
+    </div>
+    @endif
     <div class="grid grid-cols-1 gap-4">
         @foreach($pipelines as $pipeline)
         <div class="bg-white rounded-xl border border-gray-200 p-6 flex items-center justify-between">
@@ -39,8 +49,10 @@
                     <input type="hidden" name="_method" :value="editPipeline ? 'PUT' : 'POST'">
                     @csrf
                     <div class="space-y-4">
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Name *</label><input name="name" :value="editPipeline?.name" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm" required></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Description</label><textarea name="description" rows="3" class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"></textarea></div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Name *</label><input name="name" @if(old('name')) value="{{ old('name') }}" @else :value="editPipeline?.name" @endif class="w-full rounded-lg border {{ $errors->has('name') ? 'border-red-500' : 'border-gray-300' }} px-3 py-2 text-sm" required>
+                            @error('name')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror</div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Description</label><textarea name="description" rows="3" class="w-full rounded-lg border {{ $errors->has('description') ? 'border-red-500' : 'border-gray-300' }} px-3 py-2 text-sm">@if(old('description')){{ old('description') }}@endif</textarea>
+                            @error('description')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror</div>
                     </div>
                     <div class="mt-6 flex justify-end gap-3">
                         <button type="button" @click="showModal = false" class="rounded-lg border border-gray-300 px-4 py-2 text-sm">Cancel</button>
