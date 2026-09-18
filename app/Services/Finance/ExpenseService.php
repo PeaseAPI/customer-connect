@@ -2,6 +2,7 @@
 
 namespace App\Services\Finance;
 
+use App\Enums\ExpenseStatus;
 use App\Models\Expense;
 use Illuminate\Support\Facades\DB;
 
@@ -52,15 +53,15 @@ class ExpenseService
         return $expense->delete();
     }
 
-    public function approve(Expense $expense): Expense
+        public function approve(Expense $expense): Expense
     {
-        $expense->update(['status' => 'approved']);
+        $expense->update(['status' => ExpenseStatus::Approved]);
         return $expense->fresh();
     }
 
     public function reject(Expense $expense): Expense
     {
-        $expense->update(['status' => 'declined']);
+        $expense->update(['status' => ExpenseStatus::Declined]);
         return $expense->fresh();
     }
 }

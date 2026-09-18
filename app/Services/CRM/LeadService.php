@@ -77,17 +77,15 @@ class LeadService
         return $lead->delete();
     }
 
-    public function convertToClient(Lead $lead, array $clientData = []): \App\Models\User
+        public function convertToClient(Lead $lead, array $clientData = []): \App\Models\User
     {
         return DB::transaction(function () use ($lead, $clientData) {
             $clientData = array_merge([
                 'name' => $lead->lead_name,
                 'email' => $lead->lead_email ?? 'lead_' . $lead->id . '@converted.com',
                 'mobile' => $lead->lead_mobile,
-                'source_id' => $lead->source_id,
-                'agent_id' => $lead->agent_id,
                 'company_id' => $lead->company_id,
-                                'password' => str()->random(16),
+                'password' => str()->random(16),
             ], $clientData);
 
             $client = \App\Models\User::create($clientData);

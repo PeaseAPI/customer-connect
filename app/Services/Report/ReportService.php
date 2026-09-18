@@ -8,14 +8,13 @@ use App\Models\Expense;
 use App\Models\Task;
 use App\Models\Project;
 use App\Models\Lead;
-use App\Models\Client;
 use App\Models\Attendance;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class ReportService
 {
-    public function financeReport(int $companyId, array $filters = []): array
+        public function financeReport(int $companyId, array $filters = []): array
     {
         $year = $filters['year'] ?? now()->year;
         $month = $filters['month'] ?? null;
@@ -30,17 +29,17 @@ class ReportService
 
         // 月度收入趋势
         $monthlyRevenue = Payment::where('company_id', $companyId)
-            ->whereYear('paid_at', $year)
-            ->selectRaw('MONTH(paid_at) as month, SUM(amount) as total')
-            ->groupByRaw('MONTH(paid_at)')
+            ->whereYear('paid_on', $year)
+            ->selectRaw('MONTH(paid_on) as month, SUM(amount) as total')
+            ->groupByRaw('MONTH(paid_on)')
             ->pluck('total', 'month')
             ->toArray();
 
         // 月度支出趋势
         $monthlyExpenses = Expense::where('company_id', $companyId)
-            ->whereYear('expense_date', $year)
-            ->selectRaw('MONTH(expense_date) as month, SUM(amount) as total')
-            ->groupByRaw('MONTH(expense_date)')
+            ->whereYear('purchase_date', $year)
+            ->selectRaw('MONTH(purchase_date) as month, SUM(amount) as total')
+            ->groupByRaw('MONTH(purchase_date)')
             ->pluck('total', 'month')
             ->toArray();
 
@@ -51,16 +50,16 @@ class ReportService
             'invoiced' => $invoiced,
             'monthly_revenue' => $monthlyRevenue,
             'monthly_expenses' => $monthlyExpenses,
-            'expense_by_category' => Expense::where('company_id', $companyId)
-                ->whereYear('expense_date', $year)
+                        'expense_by_category' => Expense::where('company_id', $companyId)
+                ->whereYear('purchase_date', $year)
                 ->selectRaw('category_id, SUM(amount) as total')
                 ->groupBy('category_id')
-                ->with('category:id,name')
+                ->with('category:id,category_name')
                 ->get(),
         ];
     }
 
-    public function salesReport(int $companyId, array $filters = []): array
+        public function salesReport(int $companyId, array $filters = []): array
     {
         $startDate = $filters['start_date'] ?? now()->startOfYear()->toDateString();
         $endDate = $filters['end_date'] ?? now()->toDateString();
@@ -69,17 +68,18 @@ class ReportService
             ->whereBetween('created_at', [$startDate, $endDate]);
 
         $total = $leads->count();
-        $converted = (clone $leads)->where('status', 'converted')->count();
+        $converted = (clone $leads)->where('is_client', true)->count();
 
         return [
             'total_leads' => $total,
             'converted_leads' => $converted,
             'conversion_rate' => $total > 0 ? round(($converted / $total) * 100, 1) : 0,
-            'leads_by_source' => (clone $leads)->selectRaw('source_id, count(*) as count')
-                ->groupBy('source_id')->with('source:id,name')->get(),
-            'leads_by_status' => (clone $leads)->selectRaw('status, count(*) as count')
-                ->groupBy('status')->pluck('count', 'status')->toArray(),
-            'new_clients' => Client::where('company_id', $companyId)
+                        'leads_by_source' => (clone $leads)->selectRaw('source_id, count(*) as count')
+                ->groupBy('source_id')->with('source:id,source_name')->get(),
+            'leads_by_status' => (clone $leads)->selectRaw('status_id, count(*) as count')
+                ->groupBy('status_id')->pluck('count', 'status_id')->toArray(),
+            'new_clients' => \App\Models\User::where('company_id', $companyId)
+                ->whereHas('roles', fn($q) => $q->where('name', 'client'))
                 ->whereBetween('created_at', [$startDate, $endDate])->count(),
         ];
     }
@@ -107,7 +107,7 @@ class ReportService
         ];
     }
 
-    public function attendanceReport(int $companyId, string $month): array
+        public function attendanceReport(int $companyId, string $month): array
     {
         $startDate = Carbon::parse($month)->startOfMonth();
         $endDate = $startDate->copy()->endOfMonth();
@@ -115,15 +115,13 @@ class ReportService
         $attendances = Attendance::where('company_id', $companyId)
             ->whereBetween('date', [$startDate, $endDate])
             ->selectRaw('
-                employee_id,
+                user_id,
                 COUNT(*) as total_days,
-                SUM(CASE WHEN is_late = 1 THEN 1 ELSE 0 END) as late_count,
-                SUM(CASE WHEN is_early_leave = 1 THEN 1 ELSE 0 END) as early_leave_count,
-                SUM(worked_minutes) as total_worked_minutes,
-                SUM(overtime_minutes) as total_overtime_minutes
+                SUM(CASE WHEN late = "yes" THEN 1 ELSE 0 END) as late_count,
+                SUM(CASE WHEN half_day = "yes" THEN 1 ELSE 0 END) as half_day_count
             ')
-            ->groupBy('employee_id')
-            ->with('employee:id,name')
+            ->groupBy('user_id')
+            ->with('user:id,name')
             ->get();
 
         return [

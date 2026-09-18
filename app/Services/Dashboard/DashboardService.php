@@ -86,13 +86,13 @@ class DashboardService
         ];
     }
 
-    public function getFinanceStats(int $companyId): array
+        public function getFinanceStats(int $companyId): array
     {
         $totalRevenue = Payment::where('company_id', $companyId)
-            ->whereYear('paid_at', now()->year)
+            ->whereYear('paid_on', now()->year)
             ->sum('amount');
         $totalExpenses = Expense::where('company_id', $companyId)
-            ->whereYear('expense_date', now()->year)
+            ->whereYear('purchase_date', now()->year)
             ->sum('amount');
         $pendingInvoices = Invoice::where('company_id', $companyId)
             ->whereIn('status', ['sent', 'partial'])
@@ -125,14 +125,14 @@ class DashboardService
         ];
     }
 
-    private function getMonthlyRevenue(int $companyId): array
+        private function getMonthlyRevenue(int $companyId): array
     {
         $months = [];
         for ($i = 11; $i >= 0; $i--) {
             $date = now()->subMonths($i);
             $revenue = Payment::where('company_id', $companyId)
-                ->whereYear('paid_at', $date->year)
-                ->whereMonth('paid_at', $date->month)
+                ->whereYear('paid_on', $date->year)
+                ->whereMonth('paid_on', $date->month)
                 ->sum('amount');
             $months[] = [
                 'month' => $date->format('Y-m'),

@@ -28,22 +28,54 @@ class ClientService
         return $query->orderBy('created_at', 'desc')->paginate($perPage);
     }
 
-    public function create(array $data): User
+        public function create(array $data): User
     {
         return DB::transaction(function () use ($data) {
+            // Separate user fields from client detail fields
+            $userFields = collect($data)->only([
+                'name', 'email', 'mobile', 'password', 'company_id', 'status', 'image', 'gender',
+            ])->toArray();
+
+            $detailFields = collect($data)->only([
+                'company_name', 'address', 'website', 'note', 'shipping_address',
+                'category_id', 'sub_category_id',
+            ])->toArray();
+
             // Password is auto-hashed by User model's 'hashed' cast
-            $client = User::create($data);
+            $client = User::create($userFields);
             $client->assignRole('client');
+
+            if (!empty($detailFields)) {
+                $client->clientDetail()->create(array_merge($detailFields, [
+                    'company_id' => $client->company_id,
+                ]));
+            }
 
             event(new ClientCreated($client));
             return $client;
         });
     }
 
-    public function update(User $client, array $data): User
+        public function update(User $client, array $data): User
     {
         return DB::transaction(function () use ($client, $data) {
-            $client->update($data);
+            $userFields = collect($data)->only([
+                'name', 'mobile', 'status', 'image', 'gender',
+            ])->toArray();
+
+            $detailFields = collect($data)->only([
+                'company_name', 'address', 'website', 'note', 'shipping_address',
+                'category_id', 'sub_category_id',
+            ])->filter()->toArray();
+
+            if (!empty($userFields)) {
+                $client->update($userFields);
+            }
+
+            if (!empty($detailFields)) {
+                $client->clientDetail?->update($detailFields);
+            }
+
             return $client->fresh();
         });
     }

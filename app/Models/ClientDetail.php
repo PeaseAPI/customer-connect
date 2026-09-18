@@ -11,14 +11,18 @@ class ClientDetail extends Model
 {
     use HasFactory, HasCompanyScope;
 
-    protected $fillable = [
+        protected $fillable = [
         'company_id',
         'user_id',
         'category_id',
         'sub_category_id',
+        'company_name',
         'address',
-        'note',
         'shipping_address',
+        'website',
+        'note',
+        'skype',
+        'linkedin',
     ];
 
     protected $casts = ['note' => 'encrypted'];

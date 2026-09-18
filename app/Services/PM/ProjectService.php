@@ -91,7 +91,7 @@ class ProjectService
         return round(($completed / $total) * 100, 2);
     }
 
-    public function getStatistics(Project $project): array
+        public function getStatistics(Project $project): array
     {
         $tasks = $project->tasks;
         return [
@@ -100,8 +100,8 @@ class ProjectService
             'in_progress_tasks' => $tasks->where('status', 'in_progress')->count(),
             'overdue_tasks' => $tasks->where('due_date', '<', now())
                 ->whereNotIn('status', ['completed', 'cancelled'])->count(),
-            'total_hours' => $tasks->sum('estimated_hours'),
-            'logged_hours' => $project->timeLogs()->sum('hours'),
+            'total_hours' => $tasks->sum('estimate_hours'),
+            'logged_hours' => $project->timelogs()->sum('total_hours'),
             'progress' => $this->getProgress($project),
         ];
     }

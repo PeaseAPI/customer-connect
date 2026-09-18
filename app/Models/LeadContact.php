@@ -11,13 +11,14 @@ class LeadContact extends Model
 {
     use HasCompanyScope, HasFactory;
 
-    protected $fillable = [
+        protected $fillable = [
         'company_id',
         'lead_id',
         'contact_name',
         'email',
         'phone',
         'is_primary',
+        'added_by',
     ];
 
     protected $casts = ['is_primary' => 'boolean'];

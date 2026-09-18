@@ -2,8 +2,9 @@
 
 namespace App\Services\HRM;
 
+use App\Enums\ApprovalStatus;
 use App\Models\Leave;
-use App\Models\LeaveBalance;
+use App\Models\EmployeeLeaveQuota;
 use App\Events\LeaveStatusChanged;
 use Illuminate\Support\Facades\DB;
 
@@ -35,8 +36,7 @@ class LeaveService
     public function create(array $data): Leave
     {
         return DB::transaction(function () use ($data) {
-            $leave = Leave::create($data);
-            return $leave;
+            return Leave::create($data);
         });
     }
 
@@ -45,7 +45,7 @@ class LeaveService
         return DB::transaction(function () use ($leave, $approverId, $comment) {
             $oldStatus = $leave->status?->value ?? (string) $leave->getRawOriginal('status');
             $leave->update([
-                'status' => 'approved',
+                'status' => ApprovalStatus::Approved,
                 'approved_by' => $approverId,
             ]);
             $this->deductLeaveBalance($leave);
@@ -58,7 +58,7 @@ class LeaveService
     {
         $oldStatus = $leave->status?->value ?? (string) $leave->getRawOriginal('status');
         $leave->update([
-            'status' => 'rejected',
+            'status' => ApprovalStatus::Rejected,
             'approved_by' => $approverId,
         ]);
         event(new LeaveStatusChanged($leave, $oldStatus, 'rejected'));
@@ -68,7 +68,7 @@ class LeaveService
     public function cancel(Leave $leave): Leave
     {
         $oldStatus = $leave->status?->value ?? (string) $leave->getRawOriginal('status');
-        $leave->update(['status' => 'cancelled']);
+                $leave->update(['status' => ApprovalStatus::Canceled]);
         if ($oldStatus === 'approved') {
             $this->restoreLeaveBalance($leave);
         }
@@ -91,47 +91,40 @@ class LeaveService
         return $leave->delete();
     }
 
-    public function getLeaveBalance(int $userId, int $leaveTypeId, ?string $year = null): LeaveBalance
+    public function getLeaveBalance(int $userId, int $leaveTypeId, ?string $year = null): ?EmployeeLeaveQuota
     {
         $year = $year ?? now()->year;
-        return LeaveBalance::firstOrCreate([
-            'user_id' => $userId,
-            'leave_type_id' => $leaveTypeId,
-            'year' => $year,
-        ]);
+        return EmployeeLeaveQuota::where('user_id', $userId)
+            ->where('leave_type_id', $leaveTypeId)
+            ->where('cycle', $year)
+            ->first();
     }
 
     private function deductLeaveBalance(Leave $leave): void
     {
-        try {
-            $balance = LeaveBalance::where('user_id', $leave->user_id)
-                ->where('leave_type_id', $leave->leave_type_id)
-                ->where('year', now()->year)
-                ->first();
+        $quota = EmployeeLeaveQuota::where('user_id', $leave->user_id)
+            ->where('leave_type_id', $leave->leave_type_id)
+            ->where('cycle', now()->year)
+            ->first();
 
-            if ($balance) {
-                $balance->increment('used_days', $leave->duration ? (float) $leave->duration : 1);
-            }
-        } catch (\Throwable $e) {
-            // LeaveBalance model/table may not exist yet
-            report($e);
+        if ($quota) {
+            $used = $leave->duration?->value ? (float) $leave->duration->value : 1;
+            $quota->increment('leaves_used', $used);
+            $quota->decrement('leaves_remaining', $used);
         }
     }
 
     private function restoreLeaveBalance(Leave $leave): void
     {
-        try {
-            $balance = LeaveBalance::where('user_id', $leave->user_id)
-                ->where('leave_type_id', $leave->leave_type_id)
-                ->where('year', now()->year)
-                ->first();
+        $quota = EmployeeLeaveQuota::where('user_id', $leave->user_id)
+            ->where('leave_type_id', $leave->leave_type_id)
+            ->where('cycle', now()->year)
+            ->first();
 
-            if ($balance) {
-                $balance->decrement('used_days', $leave->duration ? (float) $leave->duration : 1);
-            }
-        } catch (\Throwable $e) {
-            // LeaveBalance model/table may not exist yet
-            report($e);
+        if ($quota) {
+            $used = $leave->duration?->value ? (float) $leave->duration->value : 1;
+            $quota->decrement('leaves_used', $used);
+            $quota->increment('leaves_remaining', $used);
         }
     }
 }

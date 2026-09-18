@@ -72,7 +72,7 @@ class TicketService
         });
     }
 
-    public function listReplies(int $ticketId, int $perPage = 15)
+        public function listReplies(int $ticketId, int $perPage = 15)
     {
         return TicketReply::where('ticket_id', $ticketId)
             ->with(['user', 'creator'])
