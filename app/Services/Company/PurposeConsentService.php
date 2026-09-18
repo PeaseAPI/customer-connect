@@ -2,6 +2,7 @@
 
 namespace App\Services\Company;
 
+use App\Enums\ApprovalStatus;
 use App\Models\PurposeConsent;
 use App\Models\PurposeConsentUser;
 use App\Models\PurposeConsentLead;
@@ -78,10 +79,10 @@ class PurposeConsentService
         return RemovalRequest::create($data);
     }
 
-    public function approveRemovalRequest(RemovalRequest $removalRequest, int $approvedBy): RemovalRequest
+        public function approveRemovalRequest(RemovalRequest $removalRequest, int $approvedBy): RemovalRequest
     {
         $removalRequest->update([
-            'status' => 'approved',
+            'status' => ApprovalStatus::Approved,
             'approved_by' => $approvedBy,
             'approved_at' => now(),
         ]);
@@ -91,7 +92,7 @@ class PurposeConsentService
     public function rejectRemovalRequest(RemovalRequest $removalRequest, int $approvedBy): RemovalRequest
     {
         $removalRequest->update([
-            'status' => 'rejected',
+            'status' => ApprovalStatus::Rejected,
             'approved_by' => $approvedBy,
             'approved_at' => now(),
         ]);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\ApprovalStatus;
 use App\Events\LeaveRequested;
 use App\Models\Leave;
 use App\Services\HRM\LeaveService;
@@ -29,7 +30,7 @@ class LeaveController extends BaseApiController
 
         $validated['user_id'] = Auth::id();
         $validated['company_id'] = $request->attributes->get('company_id');
-        $validated['status'] = 'pending';
+                $validated['status'] = ApprovalStatus::Pending;
 
         $leave = $this->leaveService->create($validated);
 

@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Enums\RecurringStatus;
 use App\Models\Project;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -23,7 +24,7 @@ class ProcessRecurringInvoice implements ShouldQueue
         try {
             $recurring = \App\Models\RecurringInvoice::find($this->recurringInvoiceId);
 
-            if (!$recurring || $recurring->status !== 'active') {
+                        if (!$recurring || $recurring->status !== RecurringStatus::Active) {
                 return;
             }
 

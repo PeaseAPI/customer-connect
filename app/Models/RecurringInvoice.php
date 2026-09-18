@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\RecurringStatus;
 use App\Traits\HasCompanyScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -30,6 +31,7 @@ class RecurringInvoice extends Model
         'total' => 'decimal:2',
         'tax' => 'decimal:2',
         'enable_auto_pay' => 'boolean',
+        'status' => RecurringStatus::class,
     ];
 
     public function client(): BelongsTo { return $this->belongsTo(User::class, 'client_id'); }

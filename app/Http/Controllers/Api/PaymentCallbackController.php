@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\PaymentStatus;
 use App\Services\Payment\PaymentManager;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -67,13 +68,13 @@ class PaymentCallbackController extends BaseApiController
             ->header('Content-Type', 'text/xml');
     }
 
-    private function handlePaymentSuccess(string $outTradeNo, string $gateway, string $transactionId): void
+        private function handlePaymentSuccess(string $outTradeNo, string $gateway, string $transactionId): void
     {
         $payment = \App\Models\Payment::where('transaction_id', $outTradeNo)->first();
 
-        if ($payment && $payment->status !== 'completed') {
+        if ($payment && $payment->status !== PaymentStatus::Completed) {
             $payment->update([
-                'status' => 'completed',
+                'status' => PaymentStatus::Completed,
                 'gateway' => $gateway,
                 'gateway_transaction_id' => $transactionId,
                 'paid_at' => now(),

@@ -67,12 +67,12 @@ class TaskService
         return $task->delete();
     }
 
-    public function changeStatus(Task $task, string $newStatus): Task
+        public function changeStatus(Task $task, string $newStatus): Task
     {
         $oldStatus = $task->status?->value ?? (string) $task->getRawOriginal('status');
         $task->update(['status' => $newStatus]);
 
-        if ($newStatus === 'completed') {
+        if ($newStatus === TaskStatus::Completed->value) {
             $task->update(['completed_at' => now()]);
         }
 

@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Enums\SubscriptionStatus;
 use App\Enums\CompanyStatus;
 use App\Models\Company;
 use App\Models\Subscription;
@@ -15,15 +16,15 @@ class CleanupExpiredSubscriptions implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function handle(): void
+        public function handle(): void
     {
         // 查找所有过期的订阅
-        $expiredSubscriptions = Subscription::where('status', 'active')
+        $expiredSubscriptions = Subscription::where('status', SubscriptionStatus::Active)
             ->where('end_date', '<', now())
             ->get();
 
         foreach ($expiredSubscriptions as $subscription) {
-            $subscription->update(['status' => 'expired']);
+            $subscription->update(['status' => SubscriptionStatus::Expired]);
 
             // 停用对应的公司
             if ($subscription->company) {
@@ -32,7 +33,7 @@ class CleanupExpiredSubscriptions implements ShouldQueue
         }
 
         // 即将到期的订阅提醒（7天内）
-        $expiringSubscriptions = Subscription::where('status', 'active')
+        $expiringSubscriptions = Subscription::where('status', SubscriptionStatus::Active)
             ->where('end_date', '<=', now()->addDays(7))
             ->where('end_date', '>=', now())
             ->with('company')

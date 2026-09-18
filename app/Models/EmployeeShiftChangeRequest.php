@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ApprovalStatus;
 use App\Traits\HasCompanyScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -19,6 +20,7 @@ class EmployeeShiftChangeRequest extends Model
     protected $casts = [
         'effective_date' => 'date',
         'approved_at' => 'datetime',
+        'status' => ApprovalStatus::class,
     ];
 
     public function user(): BelongsTo { return $this->belongsTo(User::class); }

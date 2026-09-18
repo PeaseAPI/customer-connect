@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\ApprovalStatus;
 use App\Models\EmployeeShiftChangeRequest;
 use App\Services\HRM\EmployeeShiftChangeRequestService;
 use Illuminate\Http\Request;
@@ -27,7 +28,7 @@ class EmployeeShiftChangeRequestController extends BaseApiController
             'reason' => 'nullable|string',
         ]);
 
-        $validated['status'] = 'pending';
+                $validated['status'] = ApprovalStatus::Pending;
         $validated['company_id'] = $request->attributes->get('company_id');
 
         return $this->success(

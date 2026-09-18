@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ApprovalStatus;
 use App\Traits\HasCompanyScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,6 +17,7 @@ class RemovalRequestLead extends Model
 
     protected $casts = [
         'approved_at' => 'datetime',
+        'status' => ApprovalStatus::class,
     ];
 
     public function lead(): BelongsTo { return $this->belongsTo(Lead::class); }

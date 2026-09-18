@@ -40,7 +40,7 @@ class LeaveService
         });
     }
 
-    public function approve(Leave $leave, int $approverId, ?string $comment = null): Leave
+        public function approve(Leave $leave, int $approverId, ?string $comment = null): Leave
     {
         return DB::transaction(function () use ($leave, $approverId, $comment) {
             $oldStatus = $leave->status?->value ?? (string) $leave->getRawOriginal('status');
@@ -49,7 +49,7 @@ class LeaveService
                 'approved_by' => $approverId,
             ]);
             $this->deductLeaveBalance($leave);
-            event(new LeaveStatusChanged($leave, $oldStatus, 'approved'));
+            event(new LeaveStatusChanged($leave, $oldStatus, ApprovalStatus::Approved->value));
             return $leave->fresh();
         });
     }
@@ -61,7 +61,7 @@ class LeaveService
             'status' => ApprovalStatus::Rejected,
             'approved_by' => $approverId,
         ]);
-        event(new LeaveStatusChanged($leave, $oldStatus, 'rejected'));
+        event(new LeaveStatusChanged($leave, $oldStatus, ApprovalStatus::Rejected->value));
         return $leave->fresh();
     }
 
@@ -69,10 +69,10 @@ class LeaveService
     {
         $oldStatus = $leave->status?->value ?? (string) $leave->getRawOriginal('status');
                 $leave->update(['status' => ApprovalStatus::Canceled]);
-        if ($oldStatus === 'approved') {
+        if ($oldStatus === ApprovalStatus::Approved->value) {
             $this->restoreLeaveBalance($leave);
         }
-        event(new LeaveStatusChanged($leave, $oldStatus, 'cancelled'));
+        event(new LeaveStatusChanged($leave, $oldStatus, ApprovalStatus::Canceled->value));
         return $leave->fresh();
     }
 

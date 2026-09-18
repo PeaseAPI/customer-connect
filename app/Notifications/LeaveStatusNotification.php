@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Enums\ApprovalStatus;
 use App\Models\Leave;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -21,10 +22,10 @@ class LeaveStatusNotification extends Notification implements ShouldBroadcast
 
     public function toDatabase(object $notifiable): array
     {
-        $statusText = match ($this->status) {
-            'approved' => '已批准',
-            'rejected' => '已拒绝',
-            'cancelled' => '已取消',
+                $statusText = match ($this->status) {
+            ApprovalStatus::Approved->value => '已批准',
+            ApprovalStatus::Rejected->value => '已拒绝',
+            ApprovalStatus::Canceled->value => '已取消',
             default => $this->status,
         };
 

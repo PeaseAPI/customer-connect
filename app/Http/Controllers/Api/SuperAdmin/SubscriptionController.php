@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\SuperAdmin;
 
+use App\Enums\SubscriptionStatus;
 use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Subscription;
 use App\Models\Company;
@@ -28,14 +29,14 @@ class SubscriptionController extends BaseApiController
         return $this->success($subscriptions);
     }
 
-    public function store(Request $request): JsonResponse
+        public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
             'company_id' => 'required|exists:companies,id',
-            'package_id' => 'required|exists:subscription_packages,id',
+            'package_id' => 'required|exists:packages,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
-            'status' => 'in:active,trial,expired,cancelled',
+            'status' => 'in:active,trial,expired,canceled',
         ]);
 
         $subscription = Subscription::create($validated);
@@ -47,13 +48,13 @@ class SubscriptionController extends BaseApiController
         return $this->success($subscription->load(['company', 'package', 'payments']));
     }
 
-    public function update(Request $request, Subscription $subscription): JsonResponse
+        public function update(Request $request, Subscription $subscription): JsonResponse
     {
         $validated = $request->validate([
-            'package_id' => 'sometimes|exists:subscription_packages,id',
+            'package_id' => 'sometimes|exists:packages,id',
             'start_date' => 'sometimes|date',
             'end_date' => 'sometimes|date|after:start_date',
-            'status' => 'sometimes|in:active,trial,expired,cancelled',
+            'status' => 'sometimes|in:active,trial,expired,canceled',
         ]);
 
         $subscription->update($validated);
@@ -77,9 +78,9 @@ class SubscriptionController extends BaseApiController
             'end_date' => 'required|date|after:' . $subscription->end_date->toDateString(),
         ]);
 
-        $subscription->update([
+                $subscription->update([
             'end_date' => $validated['end_date'],
-            'status' => 'active',
+            'status' => SubscriptionStatus::Active,
         ]);
 
         return $this->success($subscription->fresh(), '订阅续费成功');

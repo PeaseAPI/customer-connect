@@ -2,6 +2,7 @@
 
 namespace App\Services\HRM;
 
+use App\Enums\ApprovalStatus;
 use App\Models\EmployeeShiftChangeRequest;
 
 class EmployeeShiftChangeRequestService
@@ -31,7 +32,7 @@ class EmployeeShiftChangeRequestService
     public function approve(EmployeeShiftChangeRequest $shiftChangeRequest, int $approvedBy): EmployeeShiftChangeRequest
     {
         $shiftChangeRequest->update([
-            'status' => 'approved',
+            'status' => ApprovalStatus::Approved,
             'approved_by' => $approvedBy,
             'approved_at' => now(),
         ]);
@@ -41,7 +42,7 @@ class EmployeeShiftChangeRequestService
     public function reject(EmployeeShiftChangeRequest $shiftChangeRequest, int $approvedBy): EmployeeShiftChangeRequest
     {
         $shiftChangeRequest->update([
-            'status' => 'rejected',
+            'status' => ApprovalStatus::Rejected,
             'approved_by' => $approvedBy,
             'approved_at' => now(),
         ]);

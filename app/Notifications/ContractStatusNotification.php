@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Enums\ContractStatus;
 use App\Models\Contract;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -21,11 +22,10 @@ class ContractStatusNotification extends Notification implements ShouldBroadcast
 
     public function toDatabase(object $notifiable): array
     {
-        $statusText = match ($this->status) {
-            'active' => '已生效',
-            'completed' => '已完成',
-            'expired' => '已过期',
-            'terminated' => '已终止',
+                $statusText = match ($this->status) {
+            ContractStatus::Active->value => '已生效',
+            ContractStatus::Expired->value => '已过期',
+            ContractStatus::Canceled->value => '已终止',
             default => $this->status,
         };
 

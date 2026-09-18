@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\ApprovalStatus;
 use App\Http\Requests\StorePurposeConsentRequest;
 use App\Http\Requests\UpdatePurposeConsentRequest;
 use App\Http\Requests\ConsentUserRequest;
@@ -81,7 +82,7 @@ class PurposeConsentController extends BaseApiController
     public function storeRemovalRequest(StoreRemovalRequestRequest $request)
     {
         $v = $request->validated();
-                $v['status'] = 'pending';
+        $v['status'] = ApprovalStatus::Pending;
         $v['company_id'] = $request->attributes->get('company_id');
         return $this->success($this->purposeConsentService->storeRemovalRequest($v), '数据删除请求创建成功', 201);
     }
@@ -108,7 +109,7 @@ class PurposeConsentController extends BaseApiController
     public function storeLeadRemovalRequest(StoreLeadRemovalRequestRequest $request)
     {
         $v = $request->validated();
-                $v['status'] = 'pending';
+        $v['status'] = ApprovalStatus::Pending;
         $v['company_id'] = $request->attributes->get('company_id');
         return $this->success($this->purposeConsentService->storeLeadRemovalRequest($v), '线索数据删除请求创建成功', 201);
     }

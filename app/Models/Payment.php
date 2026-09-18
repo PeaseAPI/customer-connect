@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\PaymentGateway;
+use App\Enums\PaymentStatus;
 use App\Traits\HasCompanyScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -20,6 +21,7 @@ class Payment extends Model
 
     protected $casts = [
         'amount' => 'decimal:2', 'paid_on' => 'date', 'gateway' => PaymentGateway::class,
+        'status' => PaymentStatus::class,
     ];
 
     public function invoice(): BelongsTo { return $this->belongsTo(Invoice::class); }
