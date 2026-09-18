@@ -12,20 +12,33 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('client_details', function (Blueprint $table) {
-            $table->string('company_name')->nullable()->after('sub_category_id');
-            $table->string('website')->nullable()->after('shipping_address');
-            $table->string('skype')->nullable()->after('website');
-            $table->string('linkedin')->nullable()->after('skype');
+            if (!Schema::hasColumn('client_details', 'company_name')) {
+                $table->string('company_name')->nullable()->after('sub_category_id');
+            }
+            if (!Schema::hasColumn('client_details', 'website')) {
+                $table->string('website')->nullable()->after('shipping_address');
+            }
+            if (!Schema::hasColumn('client_details', 'skype')) {
+                $table->string('skype')->nullable()->after('website');
+            }
+            if (!Schema::hasColumn('client_details', 'linkedin')) {
+                $table->string('linkedin')->nullable()->after('skype');
+            }
         });
     }
 
     /**
      * Reverse the migrations.
      */
-    public function down(): void
+        public function down(): void
     {
         Schema::table('client_details', function (Blueprint $table) {
-            $table->dropColumn(['company_name', 'website', 'skype', 'linkedin']);
+            $columns = ['company_name', 'website', 'skype', 'linkedin'];
+            foreach ($columns as $column) {
+                if (Schema::hasColumn('client_details', $column)) {
+                    $table->dropColumn($column);
+                }
+            }
         });
     }
 };
