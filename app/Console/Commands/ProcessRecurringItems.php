@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 
 class ProcessRecurringItems extends Command
 {
-    protected $signature = 'kht:process-recurring';
+        protected $signature = 'cc:process-recurring';
     protected $description = '处理循环任务和循环事件，生成下一周期的实例';
 
     public function handle(RecurringTaskService $recurringTaskService, RecurringEventService $recurringEventService): int

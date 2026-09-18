@@ -31,7 +31,7 @@ class ApiKey extends Model
      */
     public static function generateKey(): string
     {
-        return 'kht_' . Str::random(48);
+        return 'cc_' . Str::random(48);
     }
 
     public function user(): BelongsTo

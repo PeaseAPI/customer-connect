@@ -15,8 +15,8 @@ class AuthenticateApiKey
     /**
      * Authenticate via API Key.
      * Supports two methods:
-     * 1. Header: X-API-Key: kht_xxxxx
-     * 2. Query: ?api_key=kht_xxxxx
+     * 1. Header: X-API-Key: cc_xxxxx
+     * 2. Query: ?api_key=cc_xxxxx
      */
     public function handle(Request $request, Closure $next, string ...$permissions): Response
     {

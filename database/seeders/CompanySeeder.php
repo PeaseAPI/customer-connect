@@ -13,9 +13,9 @@ class CompanySeeder extends Seeder
         $companies = [
             [
                 'company_name' => '客户通科技有限公司',
-                'company_email' => 'admin@kht.com',
+                'company_email' => 'admin@example.com',
                 'company_phone' => '400-888-9999',
-                'subdomain' => 'kht',
+                'subdomain' => 'demo',
                 'status' => CompanyStatus::Active,
                 'package_id' => 1,
                 'license_type' => 'regular',
@@ -23,7 +23,7 @@ class CompanySeeder extends Seeder
             ],
             [
                 'company_name' => '演示企业',
-                'company_email' => 'demo@kht.com',
+                'company_email' => 'demo@example.com',
                 'company_phone' => '400-666-8888',
                 'subdomain' => 'demo',
                 'status' => CompanyStatus::Active,
@@ -37,6 +37,6 @@ class CompanySeeder extends Seeder
             Company::create($company);
         }
 
-        $this->command->info('已创建 ' . count($companies) . ' 家公司');
+        $this->command->info('Created ' . count($companies) . ' 家公司');
     }
 }

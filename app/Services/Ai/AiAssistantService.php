@@ -27,7 +27,7 @@ class AiAssistantService
         $conversation = AiConversation::findOrFail($conversationId);
 
         if ($conversation->user_id !== $userId) {
-            throw new \Exception('无权访问此对话');
+            throw new \Exception('Access denied to this conversation');
         }
 
         AiMessage::create([
@@ -49,7 +49,7 @@ class AiAssistantService
             ],
         ]);
 
-        if ($conversation->messages()->count() <= 2 && $conversation->title === '新对话') {
+        if ($conversation->messages()->count() <= 2 && $conversation->title === 'New Conversation') {
             $conversation->update([
                 'title' => mb_substr($userMessage, 0, 50) . (mb_strlen($userMessage) > 50 ? '...' : ''),
             ]);
@@ -91,7 +91,7 @@ class AiAssistantService
         ];
 
         if ($conversation->context) {
-            $contextStr = "当前上下文: " . json_encode($conversation->context, JSON_UNESCAPED_UNICODE);
+            $contextStr = "Current context: " . json_encode($conversation->context, JSON_UNESCAPED_UNICODE);
             $messages[] = ['role' => 'system', 'content' => $contextStr];
         }
 
@@ -111,12 +111,12 @@ class AiAssistantService
 
     protected function getSystemPrompt(): string
     {
-        return "你是 KHT CRM 系统的 AI 助手。你可以帮助用户：
-1. 查询和理解 CRM 系统中的数据（客户、项目、任务、发票等）
-2. 提供业务建议和最佳实践
-3. 协助生成报告和分析
-4. 解答系统使用问题
-请用简洁专业的中文回答。";
+        return "You are the Customer Connect CRM AI assistant. You can help users with:
+1. Querying and understanding CRM data (clients, projects, tasks, invoices, etc.)
+2. Providing business advice and best practices
+3. Generating reports and analysis
+4. Answering system usage questions
+Please respond in a concise and professional manner.";
     }
 
     protected function callAiApi(string $model, array $messages): array
@@ -140,11 +140,11 @@ class AiAssistantService
 
             $data = $response->json();
             return [
-                'content' => $data['choices'][0]['message']['content'] ?? '抱歉，无法生成回复。',
+                'content' => $data['choices'][0]['message']['content'] ?? 'Sorry, unable to generate a response.',
                 'usage' => $data['usage'] ?? null,
             ];
         } catch (\Exception $e) {
-            return ['content' => 'AI 服务暂时不可用，请稍后再试。', 'usage' => null];
+            return ['content' => 'AI service is temporarily unavailable. Please try again later.', 'usage' => null];
         }
     }
 
@@ -153,12 +153,12 @@ class AiAssistantService
         $lastUserMsg = collect($messages)->where('role', 'user')->last();
         $question = $lastUserMsg['content'] ?? '';
 
-        if (str_contains($question, '客户')) {
-            return "关于客户管理，您可以通过以下 API 端点操作：\n- GET /api/crm/clients - 获取客户列表\n- POST /api/crm/clients - 创建新客户";
+        if (str_contains(strtolower($question), 'client') || str_contains(strtolower($question), 'customer')) {
+            return "For client management, you can use the following API endpoints:\n- GET /api/crm/clients - Get client list\n- POST /api/crm/clients - Create a new client";
         }
-        if (str_contains($question, 'Project') || str_contains($question, '任务')) {
-            return "关于项目/任务管理：\n- GET /api/pm/projects - 项目列表\n- GET /api/pm/tasks/calendar - 任务日历视图";
+        if (str_contains(strtolower($question), 'project') || str_contains(strtolower($question), 'task')) {
+            return "For project/task management:\n- GET /api/pm/projects - Project list\n- GET /api/pm/tasks/calendar - Task calendar view";
         }
-        return "您好！我是 KHT CRM 的 AI 助手。请告诉我您需要什么帮助？";
+        return "Hello! I'm the Customer Connect CRM AI assistant. How can I help you today?";
     }
 }

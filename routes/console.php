@@ -29,7 +29,7 @@ Schedule::call(function () {
 })->hourly()->name('process-recurring-invoices');
 
 // 每日处理循环任务和循环事件
-Schedule::command('kht:process-recurring')->dailyAt('06:00')->name('process-recurring-items');
+Schedule::command('cc:process-recurring')->dailyAt('06:00')->name('process-recurring-items');
 
 // 每5分钟处理事件提醒
 Schedule::call(function () {

@@ -54,7 +54,7 @@ class StorageSettingService
         try {
             $disk = \Illuminate\Support\Facades\Storage::disk($setting->default_driver);
             $testFile = 'test_' . time() . '.txt';
-            $disk->put($testFile, 'KHT Storage Test');
+                        $disk->put($testFile, 'Customer Connect Storage Test');
             $exists = $disk->exists($testFile);
             $disk->delete($testFile);
 

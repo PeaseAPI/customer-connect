@@ -11,52 +11,52 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->command->info('🌱 开始填充数据库...');
+        $this->command->info('Seeding database...');
 
-        // 1. 基础数据（无依赖）
+        // 1. Base data (no dependencies)
         $this->call([
             PackageSeeder::class,
             CountryCurrencySeeder::class,
             RolePermissionSeeder::class,
         ]);
 
-        // 2. 公司和组织设置
+        // 2. Companies and organization settings
         $this->call([
             CompanySeeder::class,
             OrganisationSettingSeeder::class,
         ]);
 
-        // 3. 组织架构
+        // 3. Organization structure
         $this->call([
             DepartmentDesignationSeeder::class,
         ]);
 
-        // 4. 用户和权限
+        // 4. Users and permissions
         $this->call([
             UserSeeder::class,
         ]);
 
-        // 5. 模块配置
+        // 5. Module configuration
         $this->call([
             ModuleConfigSeeder::class,
         ]);
 
-                // 6. Module default data
+        // 6. Module default data
         $this->call([
             ModuleDataSeeder::class,
         ]);
 
         $this->command->info('');
-        $this->command->info('✅ 数据库填充完成！');
+        $this->command->info('Database seeding complete!');
         $this->command->info('');
-        $this->command->info('📋 测试账号：');
-        $this->command->info('  超级管理员: admin@kht.com / 123456');
-        $this->command->info('  管理员:     manager@kht.com / 123456');
-        $this->command->info('  HR经理:     hr@kht.com / 123456');
-        $this->command->info('  销售经理:   sales@kht.com / 123456');
-        $this->command->info('  项目经理:   pm@kht.com / 123456');
-        $this->command->info('  财务经理:   finance@kht.com / 123456');
-        $this->command->info('  演示账号:   demo@kht.com / 123456');
+        $this->command->info('Test Accounts:');
+        $this->command->info('  Super Admin:  admin@example.com / 123456');
+        $this->command->info('  Admin:        manager@example.com / 123456');
+        $this->command->info('  HR Manager:   hr@example.com / 123456');
+        $this->command->info('  Sales Mgr:    sales@example.com / 123456');
+        $this->command->info('  Project Mgr:  pm@example.com / 123456');
+        $this->command->info('  Finance Mgr:  finance@example.com / 123456');
+        $this->command->info('  Demo:         demo@example.com / 123456');
     }
 }
 

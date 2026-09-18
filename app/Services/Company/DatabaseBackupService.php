@@ -101,7 +101,7 @@ class DatabaseBackupService
             'leaves', 'tickets', 'notifications', 'events',
         ];
 
-        $dump = "-- KHT CRM Database Backup\n-- Company ID: {$companyId}\n-- Date: " . now()->toDateTimeString() . "\n\n";
+        $dump = "-- Customer Connect Database Backup\n-- Company ID: {$companyId}\n-- Date: " . now()->toDateTimeString() . "\n\n";
 
         foreach ($tables as $table) {
             if (!\Illuminate\Support\Facades\Schema::hasTable($table)) {

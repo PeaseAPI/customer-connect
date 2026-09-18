@@ -13,7 +13,7 @@ class OrganisationSettingSeeder extends Seeder
             [
                 'company_id' => 1,
                 'company_name' => '客户通科技有限公司',
-                'company_email' => 'admin@kht.com',
+                'company_email' => 'admin@example.com',
                 'company_phone' => '400-888-9999',
                 'logo' => null,
                 'currency_id' => 1,
@@ -30,7 +30,7 @@ class OrganisationSettingSeeder extends Seeder
             [
                 'company_id' => 2,
                 'company_name' => '演示企业',
-                'company_email' => 'demo@kht.com',
+                'company_email' => 'demo@example.com',
                 'company_phone' => '400-666-8888',
                 'logo' => null,
                 'currency_id' => 1,
@@ -50,7 +50,7 @@ class OrganisationSettingSeeder extends Seeder
             OrganisationSetting::create($setting);
         }
 
-        $this->command->info('已创建 ' . count($settings) . ' 条组织设置');
+        $this->command->info('Created ' . count($settings) . ' 条组织设置');
     }
 }
 

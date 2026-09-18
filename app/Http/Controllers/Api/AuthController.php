@@ -113,7 +113,7 @@ class AuthController extends BaseApiController
         Cache::put("2fa_setup:{$user->id}", $secret, now()->addMinutes(10));
 
         $qrCodeUrl = $google2fa->getQRCodeUrl(
-            config('app.name', 'KHT'),
+                        config('app.name', 'Customer Connect'),
             $user->email,
             $secret
         );
