@@ -4,50 +4,130 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 
 class FinanceController extends Controller
 {
-    protected function api(Request $request, string $url)
-    {
-        $token = $request->user()->createToken('web-session')->plainTextToken;
-        return Http::withToken($token)
-            ->withHeaders([
-                'X-Company-Id' => $request->user()->company_id ?? 1,
-                'Accept' => 'application/json',
-            ])
-            ->get(url($url));
-    }
+    use HasCrudActions;
 
     public function invoices(Request $request)
     {
-        $response = $this->api($request, '/api/finance/invoices');
+        $response = $this->apiGet($request, '/api/finance/invoices');
         return view('finance.invoices', [
             'invoices' => $response->json('data', []),
         ]);
     }
 
+    public function storeInvoice(Request $request)
+    {
+        $response = $this->apiPost($request, '/api/finance/invoices', $request->all());
+        if ($response->successful()) {
+            return redirect()->route('finance.invoices')->with('success', 'Invoice created successfully');
+        }
+        return back()->withErrors($response->json('errors', []))->withInput();
+    }
+
+    public function updateInvoice(Request $request, $id)
+    {
+        $response = $this->apiPut($request, "/api/finance/invoices/{$id}", $request->all());
+        if ($response->successful()) {
+            return redirect()->route('finance.invoices')->with('success', 'Invoice updated successfully');
+        }
+        return back()->withErrors($response->json('errors', []))->withInput();
+    }
+
+    public function destroyInvoice(Request $request, $id)
+    {
+        $this->apiDelete($request, "/api/finance/invoices/{$id}");
+        return redirect()->route('finance.invoices')->with('success', 'Invoice deleted successfully');
+    }
+
     public function estimates(Request $request)
     {
-        $response = $this->api($request, '/api/finance/estimates');
+        $response = $this->apiGet($request, '/api/finance/estimates');
         return view('finance.estimates', [
             'estimates' => $response->json('data', []),
         ]);
     }
 
+    public function storeEstimate(Request $request)
+    {
+        $response = $this->apiPost($request, '/api/finance/estimates', $request->all());
+        if ($response->successful()) {
+            return redirect()->route('finance.estimates')->with('success', 'Estimate created successfully');
+        }
+        return back()->withErrors($response->json('errors', []))->withInput();
+    }
+
+    public function updateEstimate(Request $request, $id)
+    {
+        $response = $this->apiPut($request, "/api/finance/estimates/{$id}", $request->all());
+        if ($response->successful()) {
+            return redirect()->route('finance.estimates')->with('success', 'Estimate updated successfully');
+        }
+        return back()->withErrors($response->json('errors', []))->withInput();
+    }
+
+    public function destroyEstimate(Request $request, $id)
+    {
+        $this->apiDelete($request, "/api/finance/estimates/{$id}");
+        return redirect()->route('finance.estimates')->with('success', 'Estimate deleted successfully');
+    }
+
     public function payments(Request $request)
     {
-        $response = $this->api($request, '/api/finance/payments');
+        $response = $this->apiGet($request, '/api/finance/payments');
         return view('finance.payments', [
             'payments' => $response->json('data', []),
         ]);
     }
 
+    public function storePayment(Request $request)
+    {
+        $response = $this->apiPost($request, '/api/finance/payments', $request->all());
+        if ($response->successful()) {
+            return redirect()->route('finance.payments')->with('success', 'Payment recorded successfully');
+        }
+        return back()->withErrors($response->json('errors', []))->withInput();
+    }
+
     public function expenses(Request $request)
     {
-        $response = $this->api($request, '/api/finance/expenses');
+        $response = $this->apiGet($request, '/api/finance/expenses');
         return view('finance.expenses', [
             'expenses' => $response->json('data', []),
         ]);
+    }
+
+    public function storeExpense(Request $request)
+    {
+        $response = $this->apiPost($request, '/api/finance/expenses', $request->all());
+        if ($response->successful()) {
+            return redirect()->route('finance.expenses')->with('success', 'Expense created successfully');
+        }
+        return back()->withErrors($response->json('errors', []))->withInput();
+    }
+
+    public function updateExpense(Request $request, $id)
+    {
+        $response = $this->apiPut($request, "/api/finance/expenses/{$id}", $request->all());
+        if ($response->successful()) {
+            return redirect()->route('finance.expenses')->with('success', 'Expense updated successfully');
+        }
+        return back()->withErrors($response->json('errors', []))->withInput();
+    }
+
+    public function destroyExpense(Request $request, $id)
+    {
+        $this->apiDelete($request, "/api/finance/expenses/{$id}");
+        return redirect()->route('finance.expenses')->with('success', 'Expense deleted successfully');
+    }
+
+    public function approveExpense(Request $request, $id)
+    {
+        $response = $this->apiPost($request, "/api/finance/expenses/{$id}/approve");
+        if ($response->successful()) {
+            return back()->with('success', 'Expense approved');
+        }
+        return back()->with('error', 'Failed to approve expense');
     }
 }
