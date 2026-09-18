@@ -6,7 +6,7 @@ use App\Enums\CompanyStatus;
 use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Company;
 use App\Models\Subscription;
-use App\Models\SubscriptionPackage;
+use App\Models\Package;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -43,7 +43,7 @@ class CompanyController extends BaseApiController
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
             'short_name' => 'sometimes|string|max:100',
-            'status' => 'sometimes|in:active,inactive,suspended',
+                        'status' => 'sometimes|in:active,inactive,suspended,expired',
             'max_users' => 'sometimes|integer|min:1',
             'expire_at' => 'sometimes|date',
         ]);

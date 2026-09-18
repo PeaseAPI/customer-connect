@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\SuperAdmin;
 
 use App\Http\Controllers\Api\BaseApiController;
-use App\Models\SubscriptionPackage;
+use App\Models\Package;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -11,7 +11,7 @@ class PackageController extends BaseApiController
 {
     public function index(Request $request): JsonResponse
     {
-        $packages = SubscriptionPackage::orderBy('sort_order')
+                $packages = Package::orderBy('sort_order')
             ->orderBy('price')
             ->paginate($request->per_page ?? 20);
 
@@ -22,7 +22,7 @@ class PackageController extends BaseApiController
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'code' => 'required|string|max:50|unique:subscription_packages',
+            'code' => 'required|string|max:50|unique:packages',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'billing_cycle' => 'required|in:monthly,yearly',
@@ -35,20 +35,20 @@ class PackageController extends BaseApiController
             'is_active' => 'boolean',
         ]);
 
-        $package = SubscriptionPackage::create($validated);
+                $package = Package::create($validated);
         return $this->success($package, '套餐创建成功', 201);
     }
 
-    public function show(SubscriptionPackage $package): JsonResponse
+        public function show(Package $package): JsonResponse
     {
         return $this->success($package);
     }
 
-    public function update(Request $request, SubscriptionPackage $package): JsonResponse
+        public function update(Request $request, Package $package): JsonResponse
     {
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
-            'code' => 'sometimes|string|max:50|unique:subscription_packages,code,' . $package->id,
+                        'code' => 'sometimes|string|max:50|unique:packages,code,' . $package->id,
             'description' => 'nullable|string',
             'price' => 'sometimes|numeric|min:0',
             'billing_cycle' => 'sometimes|in:monthly,yearly',
@@ -64,7 +64,7 @@ class PackageController extends BaseApiController
         return $this->success($package->fresh());
     }
 
-    public function destroy(SubscriptionPackage $package): JsonResponse
+        public function destroy(Package $package): JsonResponse
     {
         $package->update(['is_active' => false]);
         return $this->success(null, '套餐已停用');

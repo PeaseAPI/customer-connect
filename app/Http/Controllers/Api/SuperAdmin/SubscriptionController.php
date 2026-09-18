@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\SuperAdmin;
 use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Subscription;
 use App\Models\Company;
-use App\Models\SubscriptionPackage;
+use App\Models\Package;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -60,7 +60,7 @@ class SubscriptionController extends BaseApiController
 
         // 如果升级套餐，同步更新公司的限制
         if (isset($validated['package_id'])) {
-            $package = SubscriptionPackage::find($validated['package_id']);
+            $package = Package::find($validated['package_id']);
             if ($package) {
                 $subscription->company->update([
                     'max_users' => $package->max_users,
