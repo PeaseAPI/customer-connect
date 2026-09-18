@@ -70,9 +70,72 @@ class EmployeeController extends BaseApiController
         return $this->success($employee->load(['employeeDetail.department', 'employeeDetail.designation', 'roles']), '更新成功');
     }
 
-    public function destroy(User $employee)
+        public function destroy(User $employee)
     {
         $this->employeeService->delete($employee);
         return $this->success(null, '删除成功');
+    }
+
+    /**
+     * 邮件邀请员工
+     */
+    public function invite(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => 'required|email|unique:users,email',
+            'name' => 'required|string|max:191',
+            'department_id' => 'nullable|exists:departments,id',
+            'designation_id' => 'nullable|exists:designations,id',
+            'role' => 'nullable|in:employee,manager',
+        ]);
+
+        $companyId = $request->attributes->get('company_id');
+        $inviterName = $request->user()->name;
+        $companyName = $request->attributes->get('company_name', '');
+
+        // 生成邀请令牌
+        $token = \Illuminate\Support\Str::random(40);
+        \Illuminate\Support\Facades\Cache::put("employee_invite:{$token}", [
+            'email' => $validated['email'],
+            'name' => $validated['name'],
+            'company_id' => $companyId,
+            'department_id' => $validated['department_id'] ?? null,
+            'designation_id' => $validated['designation_id'] ?? null,
+            'role' => $validated['role'] ?? 'employee',
+            'invited_by' => $request->user()->id,
+        ], now()->addDays(7));
+
+        // 发送邀请邮件
+        \Illuminate\Support\Facades\Mail::to($validated['email'])->queue(
+            new \App\Mail\EmployeeInvitationMail(
+                $validated['name'],
+                $inviterName,
+                $companyName,
+                $token
+            )
+        );
+
+        return $this->success(['token' => $token], '邀请已发送', 201);
+    }
+
+    /**
+     * 员工批量导入（CSV/Excel）
+     */
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls,csv',
+        ]);
+
+        $path = $request->file('file')->store('imports');
+        $companyId = $request->attributes->get('company_id');
+
+        \App\Jobs\ImportDataJob::dispatch(
+            new \App\Imports\EmployeeImport($companyId),
+            $path,
+            $request->user()->id
+        );
+
+        return $this->success(null, '导入任务已提交，完成后将通知您');
     }
 }

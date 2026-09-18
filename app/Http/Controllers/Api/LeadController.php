@@ -109,4 +109,25 @@ class LeadController extends BaseApiController
 
         return $this->success(['file_path' => $filePath], '导出任务已提交，完成后将通知您');
     }
+
+    /**
+     * 线索导入（CSV/Excel）
+     */
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls,csv',
+        ]);
+
+        $path = $request->file('file')->store('imports');
+        $companyId = $request->attributes->get('company_id');
+
+        \App\Jobs\ImportDataJob::dispatch(
+            new \App\Imports\LeadImport($companyId),
+            $path,
+            $request->user()->id
+        );
+
+        return $this->success(null, '导入任务已提交，完成后将通知您');
+    }
 }

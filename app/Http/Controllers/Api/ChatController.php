@@ -76,4 +76,41 @@ class ChatController extends BaseApiController
         $this->chatService->removeParticipant($chat, $userId);
         return $this->success(null, '参与者移除成功');
     }
+
+    /**
+     * 搜索消息
+     */
+    public function search(Request $request)
+    {
+        $validated = $request->validate([
+            'keyword' => 'required|string|min:1|max:100',
+            'chat_id' => 'nullable|exists:chats,id',
+            'user_id' => 'nullable|exists:users,id',
+            'date_from' => 'nullable|date',
+            'date_to' => 'nullable|date|after_or_equal:date_from',
+            'per_page' => 'nullable|integer|min:1|max:100',
+        ]);
+
+        $query = \App\Models\ChatMessage::with(['user', 'chat'])
+            ->where('company_id', $request->attributes->get('company_id'))
+            ->where('message', 'like', "%{$validated['keyword']}%");
+
+        if (!empty($validated['chat_id'])) {
+            $query->where('chat_id', $validated['chat_id']);
+        }
+        if (!empty($validated['user_id'])) {
+            $query->where('user_id', $validated['user_id']);
+        }
+        if (!empty($validated['date_from'])) {
+            $query->where('created_at', '>=', $validated['date_from']);
+        }
+        if (!empty($validated['date_to'])) {
+            $query->where('created_at', '<=', $validated['date_to']);
+        }
+
+        $messages = $query->orderBy('created_at', 'desc')
+            ->paginate($validated['per_page'] ?? 20);
+
+        return $this->paginated($messages);
+    }
 }

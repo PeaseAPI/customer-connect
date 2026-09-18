@@ -127,4 +127,44 @@ class ExpenseController extends BaseApiController
             'skipped' => $skipped,
         ], "已审批 {$approved} 项，跳过 {$skipped} 项");
     }
+
+    /**
+     * 费用导入（CSV/Excel）
+     */
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls,csv',
+        ]);
+
+        $path = $request->file('file')->store('imports');
+        $companyId = $request->attributes->get('company_id');
+        $userId = $request->user()->id;
+
+        \App\Jobs\ImportDataJob::dispatch(
+            new \App\Imports\ExpenseImport($companyId, $userId),
+            $path,
+            $userId
+        );
+
+        return $this->success(null, '导入任务已提交，完成后将通知您');
+    }
+
+    /**
+     * 费用导出
+     */
+    public function export(Request $request)
+    {
+        $filters = $request->only(['status', 'category_id', 'project_id', 'start_date', 'end_date']);
+        $companyId = $request->attributes->get('company_id');
+        $filePath = 'exports/expenses_' . now()->format('YmdHis') . '.xlsx';
+
+        \App\Jobs\ExportDataJob::dispatch(
+            new \App\Exports\ExpenseExport($filters, $companyId),
+            $filePath,
+            $request->user()->id
+        );
+
+        return $this->success(['file_path' => $filePath], '导出任务已提交，完成后将通知您');
+    }
 }

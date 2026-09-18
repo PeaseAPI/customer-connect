@@ -75,6 +75,7 @@ use App\Http\Controllers\Api\InvoiceSettingController;
 use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\NotificationSettingController;
+use App\Http\Controllers\Api\ProjectTemplateController;
 use Illuminate\Support\Facades\Route;
 
 // 公开API（无需认证）
@@ -92,6 +93,9 @@ Route::prefix('auth')->group(function () {
     Route::post('verify-2fa', [AuthController::class, 'verify2fa']);
     Route::post('register-with-invite', [AuthController::class, 'registerWithInvite']);
 });
+
+// 员工邀请接受路由（无需认证）
+Route::post('accept-employee-invite', [AuthController::class, 'acceptEmployeeInvite']);
 
 // 需要认证的API
 Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function () {
@@ -128,6 +132,8 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
     // HRM模块
     Route::middleware('module:hrm')->prefix('hrm')->group(function () {
         Route::apiResource('employees', EmployeeController::class);
+        Route::post('employees/invite', [EmployeeController::class, 'invite']);
+        Route::post('employees/import', [EmployeeController::class, 'import']);
         Route::apiResource('departments', \App\Http\Controllers\Api\DepartmentController::class);
         Route::apiResource('designations', \App\Http\Controllers\Api\DesignationController::class);
         Route::apiResource('attendances', AttendanceController::class);
@@ -159,12 +165,16 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
 
     // CRM模块
     Route::middleware('module:crm')->prefix('crm')->group(function () {
-        Route::apiResource('clients', ClientController::class);
+                Route::apiResource('clients', ClientController::class);
         Route::get('clients/export', [ClientController::class, 'export']);
         Route::post('clients/import', [ClientController::class, 'import']);
-        Route::apiResource('leads', LeadController::class);
+        Route::post('clients/batch-delete', [ClientController::class, 'batchDelete']);
+        Route::post('clients/batch-change-category', [ClientController::class, 'batchChangeCategory']);
+        Route::post('clients/batch-change-status', [ClientController::class, 'batchChangeStatus']);
+                Route::apiResource('leads', LeadController::class);
         Route::post('leads/{lead}/convert', [LeadController::class, 'convert']);
         Route::get('leads/export', [LeadController::class, 'export']);
+        Route::post('leads/import', [LeadController::class, 'import']);
         Route::apiResource('leads.follow-ups', \App\Http\Controllers\Api\LeadFollowUpController::class)->only(['index', 'store', 'update', 'destroy']);
                 Route::apiResource('contacts', \App\Http\Controllers\Api\LeadContactController::class);
                 Route::apiResource('products', ProductController::class);
@@ -196,8 +206,17 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
         Route::apiResource('projects', ProjectController::class);
         Route::post('projects/{project}/members', [ProjectController::class, 'addMember']);
         Route::delete('projects/{project}/members/{user}', [ProjectController::class, 'removeMember']);
-        Route::apiResource('projects.tasks', TaskController::class);
+                Route::apiResource('projects.tasks', TaskController::class);
         Route::post('tasks/reorder', [TaskController::class, 'reorder']);
+        Route::post('tasks/{task}/toggle-pin', [TaskController::class, 'togglePin']);
+        Route::get('tasks/calendar', [TaskController::class, 'calendar']);
+        Route::post('tasks/{task}/files', [TaskController::class, 'uploadFile']);
+        Route::get('tasks/{task}/files', [TaskController::class, 'listFiles']);
+        Route::delete('tasks/{task}/files/{fileId}', [TaskController::class, 'deleteFile']);
+        // 项目模板
+        Route::apiResource('project-templates', ProjectTemplateController::class);
+        Route::post('projects/{project}/create-template', [ProjectTemplateController::class, 'createFromProject']);
+        Route::post('project-templates/{projectTemplate}/create-project', [ProjectTemplateController::class, 'createProject']);
         Route::apiResource('milestones', \App\Http\Controllers\Api\MilestoneController::class);
         Route::apiResource('timelogs', \App\Http\Controllers\Api\TimelogController::class);
         Route::apiResource('task-categories', TaskCategoryController::class);
@@ -226,10 +245,17 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
         Route::apiResource('expenses', ExpenseController::class);
         Route::post('expenses/{expense}/approve', [ExpenseController::class, 'approve']);
         Route::post('expenses/{expense}/reject', [ExpenseController::class, 'reject']);
-        Route::post('expenses/batch-approve', [ExpenseController::class, 'batchApprove']);
+                Route::post('expenses/batch-approve', [ExpenseController::class, 'batchApprove']);
+        Route::post('expenses/import', [ExpenseController::class, 'import']);
+        Route::get('expenses/export', [ExpenseController::class, 'export']);
         Route::apiResource('expense-categories', ExpenseCategoryController::class);
                 Route::apiResource('contracts', ContractController::class);
-        Route::post('contracts/{contract}/renew', [ContractController::class, 'renew']);
+                Route::post('contracts/{contract}/renew', [ContractController::class, 'renew']);
+        Route::post('contracts/{contract}/files', [ContractController::class, 'uploadFile']);
+        Route::get('contracts/{contract}/files', [ContractController::class, 'listFiles']);
+        Route::delete('contracts/{contract}/files/{fileId}', [ContractController::class, 'deleteFile']);
+        Route::post('contracts/{contract}/discussions', [ContractController::class, 'addDiscussion']);
+        Route::get('contracts/{contract}/discussions', [ContractController::class, 'listDiscussions']);
         Route::apiResource('contract-types', ContractTypeController::class);
                 Route::apiResource('estimates', \App\Http\Controllers\Api\EstimateController::class);
         Route::post('estimates/{estimate}/send', [\App\Http\Controllers\Api\EstimateController::class, 'send']);
@@ -313,10 +339,17 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
         Route::get('leaves', [ReportController::class, 'leaves']);
     });
 
-    // 设置
+        // 设置
     Route::prefix('settings')->group(function () {
+        Route::get('/', [SettingController::class, 'index']);
         Route::get('organisation', [SettingController::class, 'getOrganisation']);
         Route::put('organisation', [SettingController::class, 'updateOrganisation']);
+        Route::get('gdpr', [SettingController::class, 'getGdpr']);
+        Route::put('gdpr', [SettingController::class, 'updateGdpr']);
+        Route::get('notifications', [SettingController::class, 'getNotifications']);
+        Route::put('notifications/{type}', [SettingController::class, 'updateNotification']);
+        Route::get('module/{module}', [SettingController::class, 'getModuleSetting']);
+        Route::put('module/{module}', [SettingController::class, 'updateModuleSetting']);
         Route::apiResource('custom-fields', \App\Http\Controllers\Api\CustomFieldController::class);
         Route::apiResource('tax-settings', \App\Http\Controllers\Api\TaxSettingController::class);
     });
@@ -350,7 +383,35 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
     Route::get('chats/{chat}/messages', [ChatController::class, 'messages']);
     Route::post('chats/{chat}/messages', [ChatController::class, 'sendMessage']);
     Route::post('chats/{chat}/add-participants', [ChatController::class, 'addParticipants']);
-    Route::delete('chats/{chat}/participants/{userId}', [ChatController::class, 'removeParticipant']);
+        Route::delete('chats/{chat}/participants/{userId}', [ChatController::class, 'removeParticipant']);
+        Route::get('chats/search', [ChatController::class, 'search']);
+
+    // 薪资管理
+    Route::middleware('module:salary')->prefix('salary')->group(function () {
+        Route::apiResource('structures', \App\Http\Controllers\Api\SalaryStructureController::class);
+        Route::apiResource('payslips', \App\Http\Controllers\Api\PayslipController::class)->only(['index', 'show']);
+        Route::post('payslips/generate', [\App\Http\Controllers\Api\PayslipController::class, 'generate']);
+        Route::post('payslips/batch-generate', [\App\Http\Controllers\Api\PayslipController::class, 'batchGenerate']);
+        Route::post('payslips/{payslip}/send', [\App\Http\Controllers\Api\PayslipController::class, 'send']);
+    });
+
+    // 资产管理
+    Route::middleware('module:asset')->prefix('assets')->group(function () {
+        Route::apiResource('items', \App\Http\Controllers\Api\AssetController::class);
+        Route::post('items/{asset}/allocate', [\App\Http\Controllers\Api\AssetController::class, 'allocate']);
+        Route::post('items/{asset}/return', [\App\Http\Controllers\Api\AssetController::class, 'returnAsset']);
+        Route::get('items/{asset}/depreciation', [\App\Http\Controllers\Api\AssetController::class, 'calculateDepreciation']);
+        Route::post('items/{asset}/maintenance', [\App\Http\Controllers\Api\AssetController::class, 'addMaintenanceRecord']);
+        Route::get('items/{asset}/maintenance', [\App\Http\Controllers\Api\AssetController::class, 'listMaintenanceRecords']);
+    });
+
+    // 采购管理
+    Route::middleware('module:procurement')->prefix('procurement')->group(function () {
+        Route::apiResource('vendors', \App\Http\Controllers\Api\VendorController::class);
+        Route::apiResource('purchase-requests', \App\Http\Controllers\Api\PurchaseRequestController::class);
+        Route::post('purchase-requests/{purchaseRequest}/approve', [\App\Http\Controllers\Api\PurchaseRequestController::class, 'approve']);
+        Route::post('purchase-requests/{purchaseRequest}/reject', [\App\Http\Controllers\Api\PurchaseRequestController::class, 'reject']);
+    });
 });
 
 // ===== 账户管理路由（需认证+公司上下文） =====

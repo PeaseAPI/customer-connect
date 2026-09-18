@@ -92,4 +92,82 @@ class ContractController extends BaseApiController
 
         return $this->success($contract->load(['renewHistory']), '续约成功');
     }
+
+    /**
+     * 上传合同文件
+     */
+    public function uploadFile(Request $request, Contract $contract)
+    {
+        $validated = $request->validate([
+            'file' => 'required|file|max:20480',
+        ]);
+
+        $uploadedFile = $validated['file'];
+        $path = $uploadedFile->store("contract_files/{$contract->id}", 'local');
+
+        $file = $contract->files()->create([
+            'company_id' => $contract->company_id,
+            'user_id' => $request->user()->id,
+            'filename' => $uploadedFile->getClientOriginalName(),
+            'hashname' => basename($path),
+            'size' => $uploadedFile->getSize(),
+            'disk' => 'local',
+            'path' => $path,
+        ]);
+
+        return $this->success($file, '文件上传成功', 201);
+    }
+
+    /**
+     * 获取合同文件列表
+     */
+    public function listFiles(Contract $contract)
+    {
+        return $this->success($contract->files()->with('user')->orderBy('created_at', 'desc')->get(), '获取成功');
+    }
+
+    /**
+     * 删除合同文件
+     */
+    public function deleteFile(Contract $contract, $fileId)
+    {
+        $file = $contract->files()->where('id', $fileId)->first();
+        if (!$file) {
+            return $this->error('文件不存在', 404);
+        }
+
+        \Illuminate\Support\Facades\Storage::disk($file->disk)->delete($file->path);
+        $file->delete();
+
+        return $this->success(null, '文件删除成功');
+    }
+
+    /**
+     * 添加合同讨论
+     */
+    public function addDiscussion(Request $request, Contract $contract)
+    {
+        $validated = $request->validate([
+            'content' => 'required|string|max:2000',
+        ]);
+
+        $discussion = $contract->discussions()->create([
+            'company_id' => $contract->company_id,
+            'content' => $validated['content'],
+            'created_by' => $request->user()->id,
+        ]);
+
+        return $this->success($discussion->load('creator'), '讨论添加成功', 201);
+    }
+
+    /**
+     * 获取合同讨论列表
+     */
+    public function listDiscussions(Contract $contract)
+    {
+        return $this->success(
+            $contract->discussions()->with('creator')->orderBy('created_at', 'desc')->paginate(15),
+            '获取成功'
+        );
+    }
 }

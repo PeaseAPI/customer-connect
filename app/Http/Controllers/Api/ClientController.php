@@ -104,4 +104,67 @@ class ClientController extends BaseApiController
 
         return $this->success(null, '导入任务已提交，完成后将通知您');
     }
+
+    /**
+     * 批量删除客户
+     */
+    public function batchDelete(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'required|exists:users,id',
+        ]);
+
+        $deleted = 0;
+        foreach ($validated['ids'] as $id) {
+            $client = User::find($id);
+            if ($client && $client->hasRole('client')) {
+                $this->clientService->delete($client);
+                $deleted++;
+            }
+        }
+
+        return $this->success(['deleted' => $deleted], "已删除 {$deleted} 个客户");
+    }
+
+    /**
+     * 批量变更客户分类
+     */
+    public function batchChangeCategory(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'required|exists:users,id',
+            'category_id' => 'required|exists:client_categories,id',
+        ]);
+
+        $updated = 0;
+        foreach ($validated['ids'] as $id) {
+            $client = User::find($id);
+            if ($client && $client->hasRole('client') && $client->clientDetail) {
+                $client->clientDetail->update(['category_id' => $validated['category_id']]);
+                $updated++;
+            }
+        }
+
+        return $this->success(['updated' => $updated], "已更新 {$updated} 个客户分类");
+    }
+
+    /**
+     * 批量变更客户状态
+     */
+    public function batchChangeStatus(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'required|exists:users,id',
+            'status' => 'required|in:active,deactive',
+        ]);
+
+        $updated = User::whereIn('id', $validated['ids'])
+            ->whereHas('roles', fn($q) => $q->where('name', 'client'))
+            ->update(['status' => $validated['status']]);
+
+        return $this->success(['updated' => $updated], "已更新 {$updated} 个客户状态");
+    }
 }

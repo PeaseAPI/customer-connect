@@ -433,5 +433,46 @@ class AuthController extends BaseApiController
 
     public function logout(Request $request): JsonResponse { $request->user()->currentAccessToken()->delete(); return $this->success(null, '已退出登录'); }
     public function logoutAll(Request $request): JsonResponse { $request->user()->tokens()->delete(); return $this->success(null, '已退出所有设备'); }
+
+    /**
+     * 接受员工邀请 — 设置密码并激活账户
+     */
+    public function acceptEmployeeInvite(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'token' => 'required|string',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $inviteData = Cache::get("employee_invite:{$validated['token']}");
+        if (!$inviteData) {
+            return $this->error('邀请链接无效或已过期', 400);
+        }
+
+        $user = User::create([
+            'name' => $inviteData['name'],
+            'email' => $inviteData['email'],
+            'password' => $validated['password'],
+            'company_id' => $inviteData['company_id'],
+            'status' => UserStatus::Active,
+        ]);
+
+        if (!empty($inviteData['department_id']) || !empty($inviteData['designation_id'])) {
+            $user->employeeDetail()->create([
+                'department_id' => $inviteData['department_id'] ?? null,
+                'designation_id' => $inviteData['designation_id'] ?? null,
+            ]);
+        }
+
+        $user->assignRole($inviteData['role'] ?? 'employee');
+        Cache::forget("employee_invite:{$validated['token']}");
+
+        $token = $user->createToken('auth-token')->plainTextToken;
+        return $this->success([
+            'user' => $user->load(['employeeDetail', 'roles', 'permissions']),
+            'token' => $token,
+            'token_type' => 'Bearer',
+        ], '账户激活成功');
+    }
 }
 
