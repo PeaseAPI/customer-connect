@@ -54,7 +54,7 @@ class EmployeeController extends BaseApiController
         $validated = $request->validate([
             'name' => 'sometimes|string|max:191',
             'mobile' => 'sometimes|string|max:20',
-            'status' => 'sometimes|in:active,inactive',
+                        'status' => 'sometimes|in:active,deactive',
             'department_id' => 'nullable|exists:departments,id',
             'designation_id' => 'nullable|exists:designations,id',
             'joining_date' => 'nullable|date',

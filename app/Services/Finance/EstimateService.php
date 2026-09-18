@@ -4,6 +4,7 @@ namespace App\Services\Finance;
 
 use App\Models\Estimate;
 use App\Models\EstimateItem;
+use App\Enums\EstimateStatus;
 use Illuminate\Support\Facades\DB;
 
 class EstimateService
@@ -82,7 +83,7 @@ class EstimateService
 
     public function send(Estimate $estimate): Estimate
     {
-        $estimate->update(['status' => 'sent', 'sent_on' => now()]);
+                $estimate->update(['status' => EstimateStatus::Sent, 'sent_on' => now()]);
         return $estimate->fresh();
     }
 }

@@ -9,6 +9,7 @@ use App\Models\Task;
 use App\Models\Project;
 use App\Models\Lead;
 use App\Models\Attendance;
+use App\Enums\TaskStatus;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -100,9 +101,9 @@ class ReportService
                 ->groupBy('status')->pluck('count', 'status')->toArray(),
             'by_priority' => (clone $tasks)->selectRaw('priority, count(*) as count')
                 ->groupBy('priority')->pluck('count', 'priority')->toArray(),
-            'overdue' => (clone $tasks)->where('due_date', '<', now())
-                ->whereNotIn('status', ['completed', 'cancelled'])->count(),
-            'completed_on_time' => (clone $tasks)->where('status', 'completed')
+                        'overdue' => (clone $tasks)->where('due_date', '<', now())
+                ->whereNotIn('status', [TaskStatus::Completed->value, TaskStatus::Cancelled->value])->count(),
+            'completed_on_time' => (clone $tasks)->where('status', TaskStatus::Completed)
                 ->whereColumn('completed_at', '<=', 'due_date')->count(),
         ];
     }

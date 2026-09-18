@@ -10,17 +10,22 @@ use App\Models\Project;
 use App\Models\Task;
 use App\Models\Payment;
 use App\Models\Expense;
+use App\Enums\UserStatus;
+use App\Enums\ProjectStatus;
+use App\Enums\TaskStatus;
+use App\Enums\InvoiceStatus;
+use App\Enums\ContractStatus;
 use Illuminate\Support\Facades\DB;
 
 class DashboardService
 {
-    public function getOverview(int $companyId): array
+        public function getOverview(int $companyId): array
     {
         return [
             'projects_count' => Project::where('company_id', $companyId)->count(),
             'tasks_count' => Task::where('company_id', $companyId)->count(),
             'pending_tasks' => Task::where('company_id', $companyId)
-                ->whereNotIn('status', ['completed', 'cancelled'])->count(),
+                ->whereNotIn('status', [TaskStatus::Completed->value, TaskStatus::Cancelled->value])->count(),
             'invoices_count' => Invoice::where('company_id', $companyId)->count(),
             'leads_count' => Lead::where('company_id', $companyId)->count(),
             'tickets_count' => 0,
@@ -46,42 +51,42 @@ class DashboardService
         ];
     }
 
-    public function getClientStats(int $companyId): array
+        public function getClientStats(int $companyId): array
     {
         $query = User::where('company_id', $companyId)
             ->whereHas('roles', fn($q) => $q->where('name', 'client'));
         return [
             'total' => $query->count(),
             'this_month' => (clone $query)->whereMonth('created_at', now()->month)->count(),
-            'active' => (clone $query)->where('status', 'active')->count(),
+            'active' => (clone $query)->where('status', UserStatus::Active)->count(),
         ];
     }
 
-    public function getProjectStats(int $companyId): array
+        public function getProjectStats(int $companyId): array
     {
         $query = Project::where('company_id', $companyId);
         return [
             'total' => $query->count(),
-            'in_progress' => (clone $query)->where('status', 'in_progress')->count(),
-            'completed' => (clone $query)->where('status', 'completed')->count(),
+            'in_progress' => (clone $query)->where('status', ProjectStatus::InProgress)->count(),
+            'completed' => (clone $query)->where('status', ProjectStatus::Completed)->count(),
             'overdue' => (clone $query)->where('deadline', '<', now())
-                ->whereNotIn('status', ['completed', 'cancelled'])->count(),
+                ->whereNotIn('status', [ProjectStatus::Completed->value, ProjectStatus::Canceled->value])->count(),
         ];
     }
 
-    public function getTaskStats(int $companyId): array
+        public function getTaskStats(int $companyId): array
     {
         $query = Task::where('company_id', $companyId);
         $myTasks = (clone $query)->where('assign_to', auth()->id())
-            ->whereNotIn('status', ['completed', 'cancelled'])->count();
+            ->whereNotIn('status', [TaskStatus::Completed->value, TaskStatus::Cancelled->value])->count();
 
         return [
             'total' => $query->count(),
-            'pending' => (clone $query)->where('status', 'pending')->count(),
-            'in_progress' => (clone $query)->where('status', 'in_progress')->count(),
-            'completed' => (clone $query)->where('status', 'completed')->count(),
+            'pending' => (clone $query)->where('status', TaskStatus::Pending)->count(),
+            'in_progress' => (clone $query)->where('status', TaskStatus::InProgress)->count(),
+            'completed' => (clone $query)->where('status', TaskStatus::Completed)->count(),
             'overdue' => (clone $query)->where('due_date', '<', now())
-                ->whereNotIn('status', ['completed', 'cancelled'])->count(),
+                ->whereNotIn('status', [TaskStatus::Completed->value, TaskStatus::Cancelled->value])->count(),
             'my_tasks' => $myTasks,
         ];
     }
@@ -94,12 +99,12 @@ class DashboardService
         $totalExpenses = Expense::where('company_id', $companyId)
             ->whereYear('purchase_date', now()->year)
             ->sum('amount');
-        $pendingInvoices = Invoice::where('company_id', $companyId)
-            ->whereIn('status', ['sent', 'partial'])
+                $pendingInvoices = Invoice::where('company_id', $companyId)
+            ->whereIn('status', [InvoiceStatus::Sent->value, InvoiceStatus::Partial->value])
             ->sum('total');
         $overdueInvoices = Invoice::where('company_id', $companyId)
             ->where('due_date', '<', now())
-            ->whereIn('status', ['sent', 'partial'])
+            ->whereIn('status', [InvoiceStatus::Sent->value, InvoiceStatus::Partial->value])
             ->sum('total');
 
         return [
@@ -114,14 +119,14 @@ class DashboardService
 
     public function getContractStats(int $companyId): array
     {
-        $query = Contract::where('company_id', $companyId);
+                $query = Contract::where('company_id', $companyId);
         return [
             'total' => $query->count(),
-            'active' => (clone $query)->where('status', 'active')->count(),
-            'expiring_soon' => (clone $query)->where('status', 'active')
+            'active' => (clone $query)->where('status', ContractStatus::Active)->count(),
+            'expiring_soon' => (clone $query)->where('status', ContractStatus::Active)
                 ->where('end_date', '<=', now()->addDays(30))
                 ->where('end_date', '>=', now())->count(),
-            'total_value' => (clone $query)->where('status', 'active')->sum('amount'),
+            'total_value' => (clone $query)->where('status', ContractStatus::Active)->sum('value'),
         ];
     }
 

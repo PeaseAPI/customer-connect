@@ -2,6 +2,8 @@
 
 namespace App\Observers;
 
+use App\Enums\ProjectStatus;
+use App\Enums\TaskStatus;
 use App\Models\Task;
 use App\Models\Project;
 
@@ -29,16 +31,16 @@ class TaskObserver
         if (!$project) return;
 
         $total = $project->tasks()->count();
-        $completed = $project->tasks()->where('status', 'completed')->count();
+        $completed = $project->tasks()->where('status', TaskStatus::Completed)->count();
 
         $progress = $total > 0 ? round(($completed / $total) * 100, 2) : 0;
         $project->update(['progress' => $progress]);
 
         // 如果所有任务完成，自动更新项目状态
         if ($total > 0 && $completed === $total) {
-            $project->update(['status' => 'completed']);
-        } elseif ($project->status === 'completed' && $completed < $total) {
-            $project->update(['status' => 'in_progress']);
+            $project->update(['status' => ProjectStatus::Completed]);
+        } elseif ($project->status === ProjectStatus::Completed && $completed < $total) {
+            $project->update(['status' => ProjectStatus::InProgress]);
         }
     }
 }

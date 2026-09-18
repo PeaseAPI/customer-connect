@@ -3,6 +3,7 @@
 namespace App\Services\Finance;
 
 use App\Models\Payment;
+use App\Enums\InvoiceStatus;
 use Illuminate\Support\Facades\DB;
 
 class PaymentService
@@ -39,10 +40,10 @@ class PaymentService
             if ($payment->invoice_id) {
                 $invoice = $payment->invoice;
                 $totalPaid = $invoice->payments()->sum('amount');
-                if ($totalPaid >= $invoice->total) {
-                    $invoice->update(['status' => 'paid']);
+                                if ($totalPaid >= $invoice->total) {
+                    $invoice->update(['status' => InvoiceStatus::Paid]);
                 } elseif ($totalPaid > 0) {
-                    $invoice->update(['status' => 'partial']);
+                    $invoice->update(['status' => InvoiceStatus::Partial]);
                 }
             }
 

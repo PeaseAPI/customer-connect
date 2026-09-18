@@ -5,6 +5,7 @@ namespace App\Services\Finance;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\Payment;
+use App\Enums\InvoiceStatus;
 use App\Events\InvoiceCreated;
 use App\Events\PaymentReceived;
 use Illuminate\Support\Str;
@@ -43,7 +44,7 @@ class InvoiceService
             unset($data['items']);
 
             $data['invoice_number'] = $data['invoice_number'] ?? $this->generateInvoiceNumber();
-            $data['status'] = $data['status'] ?? 'draft';
+                        $data['status'] = $data['status'] ?? InvoiceStatus::Draft;
             $data['hash'] = $data['hash'] ?? Str::random(32);
 
             $invoice = Invoice::create($data);
@@ -120,11 +121,11 @@ class InvoiceService
                 'company_id' => $invoice->company_id,
             ]));
 
-            $totalPaid = $invoice->payments()->sum('amount');
+                        $totalPaid = $invoice->payments()->sum('amount');
             if ($totalPaid >= $invoice->total) {
-                $invoice->update(['status' => 'paid']);
+                $invoice->update(['status' => InvoiceStatus::Paid]);
             } elseif ($totalPaid > 0) {
-                $invoice->update(['status' => 'partial']);
+                $invoice->update(['status' => InvoiceStatus::Partial]);
             }
 
             event(new PaymentReceived($payment));
@@ -139,13 +140,13 @@ class InvoiceService
 
     public function cancel(Invoice $invoice): Invoice
     {
-        $invoice->update(['status' => 'canceled']);
+                $invoice->update(['status' => InvoiceStatus::Canceled]);
         return $invoice->fresh();
     }
 
     public function sendInvoice(Invoice $invoice): Invoice
     {
-        $invoice->update(['status' => 'sent', 'sent_on' => now()]);
+                $invoice->update(['status' => InvoiceStatus::Sent, 'sent_on' => now()]);
         return $invoice->fresh();
     }
 

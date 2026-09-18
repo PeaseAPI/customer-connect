@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Enums\ContractStatus;
 use App\Models\Contract;
 use App\Notifications\ContractExpiringNotification;
 use Illuminate\Bus\Queueable;
@@ -18,7 +19,7 @@ class CheckExpiringContracts implements ShouldQueue
 
     public function handle(): void
     {
-        $contracts = Contract::where('status', 'active')
+        $contracts = Contract::where('status', ContractStatus::Active)
             ->where('end_date', '<=', now()->addDays($this->days))
             ->where('end_date', '>=', now())
             ->with(['owner', 'client'])

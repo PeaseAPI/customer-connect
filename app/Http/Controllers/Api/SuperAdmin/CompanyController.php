@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\SuperAdmin;
 
+use App\Enums\CompanyStatus;
 use App\Http\Controllers\Api\BaseApiController;
 use App\Models\Company;
 use App\Models\Subscription;
@@ -53,19 +54,19 @@ class CompanyController extends BaseApiController
 
     public function destroy(Company $company): JsonResponse
     {
-        $company->update(['status' => 'inactive']);
+        $company->update(['status' => CompanyStatus::Inactive]);
         return $this->success(null, '公司已停用');
     }
 
     public function activate(Company $company): JsonResponse
     {
-        $company->update(['status' => 'active']);
+        $company->update(['status' => CompanyStatus::Active]);
         return $this->success(null, '公司已启用');
     }
 
     public function suspend(Company $company): JsonResponse
     {
-        $company->update(['status' => 'suspended']);
+        $company->update(['status' => CompanyStatus::Suspended]);
         return $this->success(null, '公司已暂停');
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Enums\CompanyStatus;
 use App\Models\Company;
 use App\Models\Subscription;
 use Illuminate\Bus\Queueable;
@@ -26,7 +27,7 @@ class CleanupExpiredSubscriptions implements ShouldQueue
 
             // 停用对应的公司
             if ($subscription->company) {
-                $subscription->company->update(['status' => 'inactive']);
+                $subscription->company->update(['status' => CompanyStatus::Expired]);
             }
         }
 

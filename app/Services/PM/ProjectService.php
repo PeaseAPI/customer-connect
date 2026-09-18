@@ -2,6 +2,7 @@
 
 namespace App\Services\PM;
 
+use App\Enums\TaskStatus;
 use App\Models\Project;
 use App\Models\Task;
 use App\Events\TaskAssigned;
@@ -87,7 +88,7 @@ class ProjectService
     {
         $total = $project->tasks()->count();
         if ($total === 0) return 0;
-        $completed = $project->tasks()->where('status', 'completed')->count();
+        $completed = $project->tasks()->where('status', TaskStatus::Completed)->count();
         return round(($completed / $total) * 100, 2);
     }
 
@@ -96,10 +97,10 @@ class ProjectService
         $tasks = $project->tasks;
         return [
             'total_tasks' => $tasks->count(),
-            'completed_tasks' => $tasks->where('status', 'completed')->count(),
-            'in_progress_tasks' => $tasks->where('status', 'in_progress')->count(),
+            'completed_tasks' => $tasks->where('status', TaskStatus::Completed)->count(),
+            'in_progress_tasks' => $tasks->where('status', TaskStatus::InProgress)->count(),
             'overdue_tasks' => $tasks->where('due_date', '<', now())
-                ->whereNotIn('status', ['completed', 'cancelled'])->count(),
+                ->whereNotIn('status', [TaskStatus::Completed->value, TaskStatus::Cancelled->value])->count(),
             'total_hours' => $tasks->sum('estimate_hours'),
             'logged_hours' => $project->timelogs()->sum('total_hours'),
             'progress' => $this->getProgress($project),

@@ -52,7 +52,7 @@ class ClientController extends BaseApiController
         $validated = $request->validate([
             'name' => 'sometimes|string|max:191',
             'mobile' => 'sometimes|string|max:20',
-            'status' => 'sometimes|in:active,inactive',
+            'status' => 'sometimes|in:active,deactive',
             'company_name' => 'nullable|string|max:191',
             'address' => 'nullable|string',
             'website' => 'nullable|url|max:191',

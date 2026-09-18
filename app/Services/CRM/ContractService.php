@@ -3,6 +3,7 @@
 namespace App\Services\CRM;
 
 use App\Models\Contract;
+use App\Enums\ContractStatus;
 use App\Events\ContractCreated;
 use App\Events\ContractStatusChanged;
 use Illuminate\Support\Str;
@@ -68,7 +69,7 @@ class ContractService
     public function renew(Contract $contract, array $data, int $userId): Contract
     {
         return DB::transaction(function () use ($contract, $data, $userId) {
-            $contract->update(['status' => 'expired']);
+            $contract->update(['status' => ContractStatus::Expired]);
 
             $newContract = Contract::create([
                 'client_id' => $contract->client_id,
@@ -100,22 +101,22 @@ class ContractService
 
     public function getExpiringSoon(int $days = 30)
     {
-        return Contract::where('status', 'active')
+                return Contract::where('status', ContractStatus::Active)
             ->where('end_date', '<=', now()->addDays($days))
             ->where('end_date', '>=', now())
             ->with(['client', 'creator'])
             ->get();
     }
 
-    public function getTotalAmountByPeriod(?string $startDate = null, ?string $endDate = null): float
+        public function getTotalAmountByPeriod(?string $startDate = null, ?string $endDate = null): float
     {
-        $query = Contract::where('status', 'active');
+        $query = Contract::where('status', ContractStatus::Active);
         if ($startDate) {
             $query->where('start_date', '>=', $startDate);
         }
         if ($endDate) {
             $query->where('end_date', '<=', $endDate);
         }
-        return $query->sum('amount');
+        return $query->sum('value');
     }
 }

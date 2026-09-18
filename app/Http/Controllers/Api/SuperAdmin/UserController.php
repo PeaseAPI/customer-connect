@@ -45,7 +45,7 @@ class UserController extends BaseApiController
             'name' => 'sometimes|string|max:255',
             'email' => 'sometimes|email|unique:users,email,' . $user->id,
             'mobile' => 'sometimes|string|max:20',
-            'status' => 'sometimes|in:active,inactive',
+            'status' => 'sometimes|in:active,deactive',
         ]);
 
         $user->update($validated);

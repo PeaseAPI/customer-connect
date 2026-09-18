@@ -4,6 +4,7 @@ namespace App\Services\PM;
 
 use App\Models\Task;
 use App\Models\TaskComment;
+use App\Enums\TaskStatus;
 use App\Events\TaskAssigned;
 use App\Events\TaskStatusChanged;
 use Illuminate\Support\Facades\DB;
@@ -32,9 +33,9 @@ class TaskService
         if (!empty($filters['keyword'])) {
             $query->where('title', 'like', "%{$filters['keyword']}%");
         }
-        if (!empty($filters['overdue'])) {
+                if (!empty($filters['overdue'])) {
             $query->where('due_date', '<', now())
-                ->whereNotIn('status', ['completed', 'cancelled']);
+                ->whereNotIn('status', [TaskStatus::Completed->value, TaskStatus::Cancelled->value]);
         }
 
         return $query->orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->paginate($perPage);

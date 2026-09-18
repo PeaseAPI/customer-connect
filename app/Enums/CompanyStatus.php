@@ -6,6 +6,7 @@ enum CompanyStatus: string
 {
     case Active = 'active';
     case Inactive = 'inactive';
+    case Suspended = 'suspended';
     case Expired = 'expired';
 
     public function label(): string
@@ -13,6 +14,7 @@ enum CompanyStatus: string
         return match ($this) {
             self::Active => '正常',
             self::Inactive => '停用',
+            self::Suspended => '暂停',
             self::Expired => '已过期',
         };
     }
