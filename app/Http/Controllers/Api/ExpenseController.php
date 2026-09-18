@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\ExpenseStatus;
 use App\Models\Expense;
 use App\Services\Finance\ExpenseService;
 use Illuminate\Http\Request;
@@ -33,7 +34,7 @@ class ExpenseController extends BaseApiController
         $validated['created_by'] = $request->user()->id;
         $validated['company_id'] = $request->attributes->get('company_id');
         $validated['user_id'] = $request->user()->id;
-        $validated['status'] = 'pending';
+        $validated['status'] = ExpenseStatus::Pending;
 
         $expense = $this->expenseService->create($validated);
 

@@ -2,9 +2,10 @@
 
 namespace App\Services\Approval;
 
-use App\Models\Approval;
-use App\Models\ApprovalStep;
-use App\Models\ApprovalNode;
+use App\Enums\ApprovalStatus;
+use App\Models\ApprovalFlow;
+use App\Models\ApprovalRequest;
+use App\Models\ApprovalRecord;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -14,37 +15,46 @@ class InternalApprovalService implements ApprovalServiceInterface
     {
         try {
             DB::beginTransaction();
-            $approval = Approval::create([
-                'company_id' => $data['company_id'],
-                'title' => $data['title'],
-                'type' => $data['type'],
-                'applicant_id' => $data['applicant_id'],
-                'form_data' => $data['form_data'] ?? [],
-                'status' => 'pending',
-                'flow_config' => $data['flow_config'] ?? [],
-            ]);
-            $steps = $data['flow_config']['steps'] ?? [];
-            foreach ($steps as $index => $step) {
-                $approvalStep = ApprovalStep::create([
-                    'approval_id' => $approval->id,
+
+            // Find or create an ApprovalFlow for this company + type
+            $flow = ApprovalFlow::firstOrCreate(
+                [
                     'company_id' => $data['company_id'],
-                    'step_number' => $index + 1,
-                    'step_name' => $step['name'] ?? '步骤' . ($index + 1),
-                    'approval_type' => $step['type'] ?? 'or',
-                    'status' => $index === 0 ? 'active' : 'pending',
-                ]);
+                    'external_type' => $data['type'] ?? 'internal',
+                ],
+                [
+                    'steps' => $data['flow_config']['steps'] ?? [],
+                    'is_active' => true,
+                    'config' => $data['flow_config'] ?? [],
+                ]
+            );
+
+            // Create the approval request
+            $approvalRequest = ApprovalRequest::create([
+                'company_id' => $data['company_id'],
+                'flow_id' => $flow->id,
+                'user_id' => $data['applicant_id'],
+                'status' => ApprovalStatus::Pending,
+                'current_step' => 0,
+                'external_instance_id' => $data['external_instance_id'] ?? null,
+                'form_data' => $data['form_data'] ?? [],
+            ]);
+
+            // Create approval records for each approver in each step
+            $steps = $data['flow_config']['steps'] ?? [];
+            foreach ($steps as $stepIndex => $step) {
                 foreach ($step['approvers'] ?? [] as $approverId) {
-                    ApprovalNode::create([
-                        'approval_id' => $approval->id,
-                        'step_id' => $approvalStep->id,
+                    ApprovalRecord::create([
                         'company_id' => $data['company_id'],
+                        'request_id' => $approvalRequest->id,
                         'approver_id' => $approverId,
-                        'status' => 'pending',
+                        'step' => $stepIndex + 1,
                     ]);
                 }
             }
+
             DB::commit();
-            return (string) $approval->id;
+            return (string) $approvalRequest->id;
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('创建内部审批实例失败', ['error' => $e->getMessage()]);
@@ -54,8 +64,8 @@ class InternalApprovalService implements ApprovalServiceInterface
 
     public function getInstance(string $instanceId): array
     {
-        $approval = Approval::with(['steps.nodes', 'applicant'])->find($instanceId);
-        return $approval ? $approval->toArray() : [];
+        $approvalRequest = ApprovalRequest::with(['flow', 'user', 'records.approver'])->find($instanceId);
+        return $approvalRequest ? $approvalRequest->toArray() : [];
     }
 
     public function registerCallback(string $url): void

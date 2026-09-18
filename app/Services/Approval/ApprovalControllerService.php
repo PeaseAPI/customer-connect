@@ -2,6 +2,7 @@
 
 namespace App\Services\Approval;
 
+use App\Enums\ApprovalStatus;
 use App\Models\ApprovalFlow;
 use App\Models\ApprovalRequest;
 use App\Models\ApprovalRecord;
@@ -41,7 +42,7 @@ class ApprovalControllerService
             $totalSteps = $approvalRequest->records()->count();
 
             if ($nextStep >= $totalSteps) {
-                $approvalRequest->update(['current_step' => $nextStep, 'status' => 'approved']);
+                $approvalRequest->update(['current_step' => $nextStep, 'status' => ApprovalStatus::Approved]);
             } else {
                 $approvalRequest->update(['current_step' => $nextStep]);
             }
@@ -59,13 +60,13 @@ class ApprovalControllerService
                     'acted_at' => now(),
                 ]);
 
-            $approvalRequest->update(['status' => 'rejected']);
+            $approvalRequest->update(['status' => ApprovalStatus::Rejected]);
         });
     }
 
     public function getPendingForUser(int $userId, int $perPage = 15)
     {
-        return ApprovalRequest::where('status', 'pending')
+        return ApprovalRequest::where('status', ApprovalStatus::Pending)
             ->whereHas('records', fn($q) => $q->where('approver_id', $userId)->whereNull('acted_at'))
             ->with(['flow', 'user'])
             ->paginate($perPage);
