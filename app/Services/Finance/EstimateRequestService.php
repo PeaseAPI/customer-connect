@@ -2,6 +2,7 @@
 
 namespace App\Services\Finance;
 
+use App\Enums\EstimateRequestStatus;
 use App\Models\EstimateRequest;
 
 class EstimateRequestService
@@ -36,7 +37,7 @@ class EstimateRequestService
     public function convert(EstimateRequest $estimateRequest, int $estimateId): EstimateRequest
     {
         $estimateRequest->update([
-            'status' => 'converted',
+                        'status' => EstimateRequestStatus::Converted->value,
             'estimate_id' => $estimateId,
         ]);
         return $estimateRequest->fresh();

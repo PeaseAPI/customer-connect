@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\CreditNoteStatus;
 use App\Models\CreditNote;
 use App\Services\Finance\CreditNoteService;
 use Illuminate\Http\Request;
@@ -37,7 +38,7 @@ class CreditNoteController extends BaseApiController
         unset($validated['items']);
 
         $validated['cn_number'] = 'CN-' . str_pad(CreditNote::max('id') + 1, 6, '0', STR_PAD_LEFT);
-        $validated['status'] = 'open';
+                $validated['status'] = CreditNoteStatus::Open->value;
         $validated['added_by'] = $request->user()->id;
         $validated['company_id'] = $request->attributes->get('company_id');
 

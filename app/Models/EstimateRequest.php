@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\EstimateRequestStatus;
 use App\Traits\HasCompanyScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,6 +15,10 @@ class EstimateRequest extends Model
     protected $fillable = [
         'company_id', 'client_id', 'name', 'email', 'phone',
         'company_name', 'requirement', 'status', 'estimate_id', 'added_by',
+    ];
+
+    protected $casts = [
+        'status' => EstimateRequestStatus::class,
     ];
 
     public function client(): BelongsTo { return $this->belongsTo(User::class, 'client_id'); }

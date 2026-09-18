@@ -2,6 +2,8 @@
 
 namespace App\Services\Finance;
 
+use App\Enums\InvoiceStatus;
+use App\Enums\ProposalStatus;
 use App\Models\Proposal;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
@@ -79,7 +81,7 @@ class ProposalService
 
     public function send(Proposal $proposal): Proposal
     {
-        $proposal->update(['status' => 'sent', 'send_status' => true]);
+                $proposal->update(['status' => ProposalStatus::Sent->value, 'send_status' => true]);
         return $proposal->fresh();
     }
 
@@ -97,7 +99,7 @@ class ProposalService
                 'discount_type' => $proposal->discount_type,
                 'total' => $proposal->total,
                 'currency_id' => $proposal->currency_id,
-                'status' => 'draft',
+                                'status' => InvoiceStatus::Draft->value,
                 'hash' => md5(uniqid(mt_rand(), true)),
                 'note' => $proposal->note,
             ]);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\OrderStatus;
 use App\Models\Order;
 use App\Services\Finance\OrderService;
 use Illuminate\Http\Request;
@@ -21,7 +22,7 @@ class OrderController extends BaseApiController
         $v = $request->validate([
             'client_id' => 'required|exists:users,id',
             'order_number' => 'required|string|max:255',
-            'status' => 'nullable|string|max:50',
+                        'status' => 'nullable|in:pending,processing,completed,canceled',
             'sub_total' => 'nullable|numeric',
             'discount' => 'nullable|numeric',
             'discount_type' => 'nullable|in:percent,fixed',
@@ -53,7 +54,7 @@ class OrderController extends BaseApiController
         $v = $request->validate([
             'client_id' => 'sometimes|exists:users,id',
             'order_number' => 'sometimes|string|max:255',
-            'status' => 'nullable|string|max:50',
+            'status' => 'nullable|in:pending,processing,completed,canceled',
             'sub_total' => 'nullable|numeric',
             'discount' => 'nullable|numeric',
             'discount_type' => 'nullable|in:percent,fixed',

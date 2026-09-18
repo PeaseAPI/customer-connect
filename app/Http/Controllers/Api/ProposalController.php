@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\ProposalStatus;
 use App\Models\Proposal;
 use App\Services\Finance\ProposalService;
 use Illuminate\Http\Request;
@@ -39,7 +40,7 @@ class ProposalController extends BaseApiController
 
         $validated['proposal_number'] = 'PROP-' . str_pad(Proposal::max('id') + 1, 6, '0', STR_PAD_LEFT);
         $validated['hash'] = \Illuminate\Support\Str::uuid()->toString();
-        $validated['status'] = 'draft';
+        $validated['status'] = ProposalStatus::Draft->value;
         $validated['added_by'] = $request->user()->id;
         $validated['company_id'] = $request->attributes->get('company_id');
 
@@ -89,7 +90,7 @@ class ProposalController extends BaseApiController
 
     public function convertToInvoice(Proposal $proposal)
     {
-        if ($proposal->status !== 'accepted') {
+                if ($proposal->status !== ProposalStatus::Accepted) {
             return $this->error('只有已接受的提案可以转换为发票', 400);
         }
 
