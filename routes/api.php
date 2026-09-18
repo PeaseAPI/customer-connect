@@ -74,6 +74,7 @@ use App\Http\Controllers\Api\OfflinePaymentMethodController;
 use App\Http\Controllers\Api\InvoiceSettingController;
 use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\ChatController;
+use App\Http\Controllers\Api\NotificationSettingController;
 use Illuminate\Support\Facades\Route;
 
 // 公开API（无需认证）
@@ -83,8 +84,13 @@ Route::prefix('auth')->group(function () {
     Route::post('send-sms-code', [AuthController::class, 'sendSmsCode']);
     Route::post('login-with-sms', [AuthController::class, 'loginWithSms']);
     Route::post('login-with-wechat', [AuthController::class, 'loginWithWechat']);
+    Route::post('login-with-dingtalk', [AuthController::class, 'loginWithDingtalk']);
+    Route::post('login-with-feishu', [AuthController::class, 'loginWithFeishu']);
+    Route::post('login-with-wework', [AuthController::class, 'loginWithWework']);
     Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
     Route::post('reset-password', [AuthController::class, 'resetPassword']);
+    Route::post('verify-2fa', [AuthController::class, 'verify2fa']);
+    Route::post('register-with-invite', [AuthController::class, 'registerWithInvite']);
 });
 
 // 需要认证的API
@@ -95,7 +101,26 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
         Route::put('password', [AuthController::class, 'changePassword']);
         Route::post('logout', [AuthController::class, 'logout']);
         Route::post('logout-all', [AuthController::class, 'logoutAll']);
+
+        // 双因素认证
+        Route::post('2fa/enable', [AuthController::class, 'enable2fa']);
+        Route::post('2fa/confirm', [AuthController::class, 'confirm2fa']);
+        Route::post('2fa/disable', [AuthController::class, 'disable2fa']);
+
+        // 邮箱验证
+        Route::post('email/send-verification', [AuthController::class, 'sendEmailVerification']);
+        Route::post('email/verify', [AuthController::class, 'verifyEmail']);
+
+        // 多公司切换
+        Route::get('companies', [AuthController::class, 'companies']);
+        Route::post('switch-company', [AuthController::class, 'switchCompany']);
+
+        // 邀请注册
+        Route::post('invite', [AuthController::class, 'inviteUser']);
     });
+
+    // 管理员手动验证邮箱
+    Route::post('users/{user}/verify-email', [AuthController::class, 'adminVerifyEmail']);
         Route::get('dashboard', [DashboardController::class, 'index']);
     Route::get('dashboard/chart', [DashboardController::class, 'chartData']);
     Route::apiResource('companies', CompanyController::class);
@@ -199,8 +224,9 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
         Route::apiResource('invoices.payments', PaymentController::class)->only(['index', 'store']);
         Route::apiResource('payments', PaymentController::class);
         Route::apiResource('expenses', ExpenseController::class);
-                Route::post('expenses/{expense}/approve', [ExpenseController::class, 'approve']);
+        Route::post('expenses/{expense}/approve', [ExpenseController::class, 'approve']);
         Route::post('expenses/{expense}/reject', [ExpenseController::class, 'reject']);
+        Route::post('expenses/batch-approve', [ExpenseController::class, 'batchApprove']);
         Route::apiResource('expense-categories', ExpenseCategoryController::class);
                 Route::apiResource('contracts', ContractController::class);
         Route::post('contracts/{contract}/renew', [ContractController::class, 'renew']);
@@ -242,12 +268,20 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
     Route::post('approvals/{approvalRequest}/reject', [ApprovalController::class, 'reject']);
 
         // 日历事件
-    Route::apiResource('events', EventController::class);
+        Route::apiResource('events', EventController::class);
+    Route::post('events/{event}/participants', [EventController::class, 'addParticipants']);
+    Route::delete('events/{event}/participants/{user}', [EventController::class, 'removeParticipant']);
 
     // 通知
-    Route::apiResource('notifications', NotificationController::class)->only(['index', 'update', 'destroy']);
+        Route::apiResource('notifications', NotificationController::class)->only(['index', 'update', 'destroy']);
     Route::post('notifications/mark-all-read', [NotificationController::class, 'markAllRead']);
     Route::get('notifications/unread-count', [NotificationController::class, 'unreadCount']);
+
+    // 通知设置
+    Route::get('notification-settings', [NotificationSettingController::class, 'index']);
+    Route::put('notification-settings', [NotificationSettingController::class, 'update']);
+    Route::get('notification-settings/company', [NotificationSettingController::class, 'companySettings']);
+    Route::post('notification-settings/reset', [NotificationSettingController::class, 'reset']);
 
     // 公告
     Route::apiResource('notices', NoticeController::class);

@@ -16,7 +16,7 @@ class EventController extends BaseApiController
         return $this->paginated($events);
     }
 
-    public function store(Request $request)
+        public function store(Request $request)
     {
         $validated = $request->validate([
             'event_name' => 'required|string|max:191',
@@ -25,13 +25,38 @@ class EventController extends BaseApiController
             'location' => 'nullable|string|max:191',
             'description' => 'nullable|string',
             'label' => 'nullable|string|max:20',
+            'repeat' => 'sometimes|in:no,daily,weekly,monthly,yearly,custom',
+            'repeat_every' => 'nullable|integer|min:1',
+            'repeat_type' => 'nullable|in:daily,weekly,monthly,yearly',
+            'repeat_until' => 'nullable|date|after:end_date_time',
+            'reminder_minutes' => 'nullable|integer|in:5,10,15,30,60,1440',
+            'participant_ids' => 'nullable|array',
+            'participant_ids.*' => 'exists:users,id',
         ]);
 
         $validated['created_by'] = $request->user()->id;
         $validated['company_id'] = $request->attributes->get('company_id');
 
+        $participantIds = $validated['participant_ids'] ?? [];
+        unset($validated['participant_ids']);
+
+        $reminderMinutes = $validated['reminder_minutes'] ?? null;
+        unset($validated['reminder_minutes']);
+
+        $event = $this->eventService->create($validated);
+
+        // 同步参与者
+        if (!empty($participantIds)) {
+            $event->participants()->sync($participantIds);
+        }
+
+        // 设置提醒
+        if ($reminderMinutes) {
+            app(\App\Services\Event\RecurringEventService::class)->setReminder($event, $reminderMinutes);
+        }
+
         return $this->success(
-            $this->eventService->create($validated)->load(['creator']),
+            $event->load(['creator', 'participants']),
             '事件创建成功',
             201
         );
@@ -58,9 +83,34 @@ class EventController extends BaseApiController
         return $this->success($event->load(['creator']), '更新成功');
     }
 
-    public function destroy(Event $event)
+        public function destroy(Event $event)
     {
         $this->eventService->delete($event);
         return $this->success(null, '删除成功');
+    }
+
+    /**
+     * 添加参与者
+     */
+    public function addParticipants(Request $request, Event $event)
+    {
+        $validated = $request->validate([
+            'user_ids' => 'required|array',
+            'user_ids.*' => 'exists:users,id',
+        ]);
+
+        $event->participants()->syncWithoutDetaching($validated['user_ids']);
+
+        return $this->success($event->load(['creator', 'participants']), '参与者添加成功');
+    }
+
+    /**
+     * 移除参与者
+     */
+    public function removeParticipant(Event $event, $user)
+    {
+        $event->participants()->detach($user);
+
+        return $this->success(null, '参与者移除成功');
     }
 }

@@ -19,7 +19,7 @@ class Task extends Model
 {
     use HasCompanyScope, SoftDeletes, HasFiles, HasComments, HasCustomFields, HasFactory;
 
-    protected $fillable = [
+        protected $fillable = [
         'company_id',
         'project_id',
         'title',
@@ -36,14 +36,19 @@ class Task extends Model
         'is_pinned',
         'completed_at',
         'created_by',
+        'is_recurring',
+        'recurring_every',
+        'recurring_type',
+        'recurring_until',
+        'recurring_next_date',
     ];
 
-    protected $casts = [
+        protected $casts = [
         'start_date' => 'date', 'due_date' => 'date', 'recurring_next_date' => 'date',
         'is_recurring' => 'boolean', 'is_pinned' => 'boolean',
         'completion_percent' => 'integer', 'board_column' => 'integer',
         'status' => TaskStatus::class, 'priority' => Priority::class,
-        'completed_at' => 'datetime',
+        'completed_at' => 'datetime', 'recurring_every' => 'integer',
     ];
 
         public function project(): BelongsTo { return $this->belongsTo(Project::class); }

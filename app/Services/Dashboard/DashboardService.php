@@ -146,4 +146,113 @@ class DashboardService
         }
         return $months;
     }
+
+    /**
+     * 管理员仪表盘 — 快捷入口+数据卡片+待办+图表
+     */
+    public function getAdminDashboard(int $companyId, int $userId): array
+    {
+        $overview = $this->getOverview($companyId);
+        $finance = $this->getFinanceStats($companyId);
+
+        $pendingApprovals = \App\Models\ApprovalRequest::where('company_id', $companyId)->where('status', 'pending')->count();
+        $expiringContracts = Contract::where('company_id', $companyId)->where('status', ContractStatus::Active)->where('end_date', '<=', now()->addDays(30))->count();
+        $overdueInvoices = Invoice::where('company_id', $companyId)->where('due_date', '<', now())->whereIn('status', [InvoiceStatus::Sent->value, InvoiceStatus::Partial->value])->count();
+        $pendingTickets = Ticket::where('company_id', $companyId)->where('status', 'open')->count();
+        $overdueTasks = Task::where('company_id', $companyId)->where('due_date', '<', now())->whereNotIn('status', [TaskStatus::Completed->value, TaskStatus::Cancelled->value])->count();
+
+        return array_merge($overview, $finance, [
+            'quick_entries' => [
+                ['label' => '创建项目', 'route' => 'projects.store'],
+                ['label' => '添加任务', 'route' => 'tasks.store'],
+                ['label' => '新建发票', 'route' => 'invoices.store'],
+                ['label' => '添加客户', 'route' => 'clients.store'],
+            ],
+            'todo' => [
+                ['type' => 'approval', 'label' => '待审批', 'count' => $pendingApprovals],
+                ['type' => 'contract', 'label' => '即将到期合同', 'count' => $expiringContracts],
+                ['type' => 'invoice', 'label' => '逾期发票', 'count' => $overdueInvoices],
+                ['type' => 'ticket', 'label' => '待处理工单', 'count' => $pendingTickets],
+                ['type' => 'task', 'label' => '逾期任务', 'count' => $overdueTasks],
+            ],
+            'charts' => [
+                'income_vs_expense' => $this->getIncomeVsExpenseChart($companyId),
+                'lead_funnel' => $this->getLeadStats($companyId),
+            ],
+        ]);
+    }
+
+    /**
+     * 员工仪表盘 — 我的项目/任务/工时/考勤
+     */
+    public function getEmployeeDashboard(int $companyId, int $userId): array
+    {
+        $myTasks = Task::where('company_id', $companyId)->where('assign_to', $userId)
+            ->whereNotIn('status', [TaskStatus::Completed->value, TaskStatus::Cancelled->value])
+            ->with(['project:id,project_name'])->orderBy('due_date')->limit(10)->get();
+
+        $myProjects = Project::where('company_id', $companyId)
+            ->whereHas('members', fn($q) => $q->where('user_id', $userId))
+            ->limit(5)->get();
+
+        $todayAttendance = Attendance::where('company_id', $companyId)
+            ->where('user_id', $userId)->whereDate('date', now()->toDateString())->first();
+
+        $pendingLeaves = Leave::where('company_id', $companyId)
+            ->where('user_id', $userId)->where('status', 'pending')->count();
+
+        $overdueTasks = Task::where('company_id', $companyId)->where('assign_to', $userId)
+            ->where('due_date', '<', now())->whereNotIn('status', [TaskStatus::Completed->value, TaskStatus::Cancelled->value])->count();
+
+        $thisWeekHours = \App\Models\Timelog::where('company_id', $companyId)->where('user_id', $userId)
+            ->whereBetween('start_time', [now()->startOfWeek(), now()->endOfWeek()])->sum('total_minutes');
+
+        return [
+            'my_tasks' => $myTasks,
+            'my_projects' => $myProjects,
+            'today_attendance' => $todayAttendance,
+            'pending_leaves' => $pendingLeaves,
+            'overdue_tasks' => $overdueTasks,
+            'this_week_hours' => round($thisWeekHours / 60, 1),
+            'quick_actions' => [
+                ['label' => '打卡', 'route' => 'attendance.clock-in'],
+                ['label' => '申请请假', 'route' => 'leaves.store'],
+                ['label' => '提交工时', 'route' => 'timelogs.store'],
+            ],
+        ];
+    }
+
+    /**
+     * 客户仪表盘 — 项目/发票/合同/工单
+     */
+    public function getClientDashboard(int $companyId, int $userId): array
+    {
+        $myProjects = Project::where('company_id', $companyId)->where('client_id', $userId)->with(['members'])->limit(10)->get();
+        $myInvoices = Invoice::where('company_id', $companyId)->where('client_id', $userId)
+            ->whereIn('status', [InvoiceStatus::Sent->value, InvoiceStatus::Partial->value, InvoiceStatus::Unpaid->value])
+            ->orderBy('due_date')->limit(5)->get();
+        $myContracts = Contract::where('company_id', $companyId)->where('client_id', $userId)->where('status', ContractStatus::Active)->get();
+        $myTickets = Ticket::where('company_id', $companyId)->where('user_id', $userId)->where('status', 'open')->count();
+
+        return [
+            'my_projects' => $myProjects,
+            'my_invoices' => $myInvoices,
+            'my_contracts' => $myContracts,
+            'open_tickets' => $myTickets,
+        ];
+    }
+
+    private function getIncomeVsExpenseChart(int $companyId): array
+    {
+        $months = [];
+        for ($i = 11; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $months[] = [
+                'month' => $date->format('Y-m'),
+                'income' => Payment::where('company_id', $companyId)->whereYear('paid_on', $date->year)->whereMonth('paid_on', $date->month)->sum('amount'),
+                'expense' => Expense::where('company_id', $companyId)->whereYear('purchase_date', $date->year)->whereMonth('purchase_date', $date->month)->sum('amount'),
+            ];
+        }
+        return $months;
+    }
 }

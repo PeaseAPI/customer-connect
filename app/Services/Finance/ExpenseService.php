@@ -53,15 +53,25 @@ class ExpenseService
         return $expense->delete();
     }
 
-        public function approve(Expense $expense): Expense
+                public function approve(Expense $expense, int $approvedBy, ?string $remark = null): Expense
     {
-        $expense->update(['status' => ExpenseStatus::Approved]);
+        $expense->update([
+            'status' => ExpenseStatus::Approved,
+            'approved_by' => $approvedBy,
+            'approved_at' => now(),
+            'approval_remark' => $remark,
+        ]);
         return $expense->fresh();
     }
 
-    public function reject(Expense $expense): Expense
+    public function reject(Expense $expense, int $rejectedBy, string $reason): Expense
     {
-        $expense->update(['status' => ExpenseStatus::Declined]);
+        $expense->update([
+            'status' => ExpenseStatus::Declined,
+            'approved_by' => $rejectedBy,
+            'approved_at' => now(),
+            'approval_remark' => $reason,
+        ]);
         return $expense->fresh();
     }
 }

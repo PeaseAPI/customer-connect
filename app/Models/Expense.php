@@ -15,7 +15,7 @@ class Expense extends Model
 {
     use HasCompanyScope, SoftDeletes, HasFiles, HasCustomFields, HasFactory;
 
-        protected $fillable = [
+                protected $fillable = [
         'company_id',
         'item_name',
         'purchase_from',
@@ -30,12 +30,16 @@ class Expense extends Model
         'note',
         'exchange_rate',
         'created_by',
+        'approved_by',
+        'approved_at',
+        'approval_remark',
     ];
 
     protected $casts = [
         'purchase_date' => 'date', 'amount' => 'decimal:2',
         'exchange_rate' => 'decimal:4',
         'billable' => 'boolean', 'status' => ExpenseStatus::class,
+        'approved_at' => 'datetime',
     ];
 
     public function project(): BelongsTo { return $this->belongsTo(Project::class); }
@@ -44,4 +48,5 @@ class Expense extends Model
     public function category(): BelongsTo { return $this->belongsTo(ExpenseCategory::class); }
     public function currency(): BelongsTo { return $this->belongsTo(Currency::class); }
     public function creator(): BelongsTo { return $this->belongsTo(User::class, 'created_by'); }
+    public function approver(): BelongsTo { return $this->belongsTo(User::class, 'approved_by'); }
 }

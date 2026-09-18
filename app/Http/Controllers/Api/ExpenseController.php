@@ -70,15 +70,61 @@ class ExpenseController extends BaseApiController
         return $this->success(null, '删除成功');
     }
 
-    public function approve(Expense $expense)
+    public function approve(Request $request, Expense $expense)
     {
-        $this->expenseService->approve($expense);
-        return $this->success(null, '审批通过');
+        if ($expense->status !== ExpenseStatus::Pending) {
+            return $this->error('只能审批待审批的费用', 400);
+        }
+
+        $validated = $request->validate([
+            'remark' => 'nullable|string|max:500',
+        ]);
+
+        $expense = $this->expenseService->approve($expense, $request->user()->id, $validated['remark'] ?? null);
+        return $this->success($expense->load(['user', 'project', 'category', 'currency', 'approver']), '审批通过');
     }
 
     public function reject(Request $request, Expense $expense)
     {
-        $this->expenseService->reject($expense);
-        return $this->success(null, '已拒绝');
+        if ($expense->status !== ExpenseStatus::Pending) {
+            return $this->error('只能拒绝待审批的费用', 400);
+        }
+
+        $validated = $request->validate([
+            'reason' => 'required|string|max:500',
+        ]);
+
+        $expense = $this->expenseService->reject($expense, $request->user()->id, $validated['reason']);
+        return $this->success($expense->load(['user', 'project', 'category', 'currency', 'approver']), '已拒绝');
+    }
+
+    /**
+     * 批量审批
+     */
+    public function batchApprove(Request $request)
+    {
+        $validated = $request->validate([
+            'expense_ids' => 'required|array',
+            'expense_ids.*' => 'required|exists:expenses,id',
+            'remark' => 'nullable|string|max:500',
+        ]);
+
+        $approved = 0;
+        $skipped = 0;
+
+        foreach ($validated['expense_ids'] as $expenseId) {
+            $expense = Expense::find($expenseId);
+            if ($expense && $expense->status === ExpenseStatus::Pending) {
+                $this->expenseService->approve($expense, $request->user()->id, $validated['remark'] ?? null);
+                $approved++;
+            } else {
+                $skipped++;
+            }
+        }
+
+        return $this->success([
+            'approved' => $approved,
+            'skipped' => $skipped,
+        ], "已审批 {$approved} 项，跳过 {$skipped} 项");
     }
 }

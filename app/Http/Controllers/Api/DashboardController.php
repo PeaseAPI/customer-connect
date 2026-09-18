@@ -12,7 +12,17 @@ class DashboardController extends BaseApiController
     public function index(Request $request)
     {
         $companyId = $request->attributes->get('company_id');
-        $data = $this->dashboardService->getOverview($companyId);
+        $user = $request->user();
+
+        // 根据角色返回不同的仪表盘视图
+        if ($user->isClient()) {
+            $data = $this->dashboardService->getClientDashboard($companyId, $user->id);
+        } elseif ($user->isAdmin()) {
+            $data = $this->dashboardService->getAdminDashboard($companyId, $user->id);
+        } else {
+            $data = $this->dashboardService->getEmployeeDashboard($companyId, $user->id);
+        }
+
         return $this->success($data);
     }
 

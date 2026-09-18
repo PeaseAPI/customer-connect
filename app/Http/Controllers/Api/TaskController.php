@@ -19,7 +19,7 @@ class TaskController extends BaseApiController
         return $this->paginated($tasks);
     }
 
-    public function store(Request $request, $projectId = null)
+        public function store(Request $request, $projectId = null)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:191',
@@ -32,6 +32,16 @@ class TaskController extends BaseApiController
             'start_date' => 'nullable|date',
             'category_id' => 'nullable|exists:task_categories,id',
             'board_column' => 'nullable|integer',
+            'is_pinned' => 'sometimes|boolean',
+            'milestone_id' => 'nullable|exists:milestones,id',
+            // 循环任务
+            'is_recurring' => 'sometimes|boolean',
+            'recurring_every' => 'nullable|integer|min:1',
+            'recurring_type' => 'nullable|in:daily,weekly,monthly,yearly,custom',
+            'recurring_until' => 'nullable|date|after:due_date',
+            // 标签
+            'label_ids' => 'nullable|array',
+            'label_ids.*' => 'exists:task_labels,id',
         ]);
 
         if ($projectId) {
@@ -41,9 +51,26 @@ class TaskController extends BaseApiController
         $validated['created_by'] = $request->user()->id;
         $validated['company_id'] = $request->attributes->get('company_id');
 
+        $labelIds = $validated['label_ids'] ?? [];
+        unset($validated['label_ids']);
+
         $task = $this->taskService->create($validated);
 
-        return $this->success($task->load(['assignee', 'project', 'creator']), '任务创建成功', 201);
+        // 同步标签
+        if (!empty($labelIds)) {
+            $task->labels()->sync($labelIds);
+        }
+
+        // 如果是循环任务，设置下次生成日期
+        if (!empty($validated['is_recurring'])) {
+            app(\App\Services\PM\RecurringTaskService::class)->setupRecurring($task, [
+                'every' => $validated['recurring_every'] ?? 1,
+                'type' => $validated['recurring_type'] ?? 'daily',
+                'until' => $validated['recurring_until'] ?? null,
+            ]);
+        }
+
+        return $this->success($task->load(['assignee', 'project', 'creator', 'labels']), '任务创建成功', 201);
     }
 
     public function show($projectId, Task $task)

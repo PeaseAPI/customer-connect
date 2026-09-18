@@ -38,17 +38,24 @@ class ReportController extends BaseApiController
         return $this->success($data);
     }
 
-    public function expenses(Request $request)
+        public function expenses(Request $request)
     {
         $companyId = $request->attributes->get('company_id');
-        $data = $this->reportService->financeReport($companyId, $request->only(['year']));
+        $data = $this->reportService->expenseReport($companyId, $request->only(['year', 'month']));
         return $this->success($data);
     }
 
     public function leaves(Request $request)
     {
         $companyId = $request->attributes->get('company_id');
-        $data = $this->reportService->attendanceReport($companyId, $request->input('month', now()->format('Y-m')));
+        $data = $this->reportService->leaveReport($companyId, $request->only(['year', 'month']));
+        return $this->success($data);
+    }
+
+    public function timelogs(Request $request)
+    {
+        $companyId = $request->attributes->get('company_id');
+        $data = $this->reportService->timelogReport($companyId, $request->only(['start_date', 'end_date', 'project_id', 'user_id']));
         return $this->success($data);
     }
 }
