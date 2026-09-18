@@ -19,8 +19,14 @@
             <option value="approved" {{ request('status') === 'approved' ? 'selected' : '' }}>Approved</option>
             <option value="declined" {{ request('status') === 'declined' ? 'selected' : '' }}>Declined</option>
         </select>
+        <select name="category_id" class="rounded-lg border border-gray-300 px-3 py-2 text-sm">
+            <option value="">All Categories</option>
+            @foreach($expenseCategories ?? [] as $category)
+            <option value="{{ $category['id'] }}" {{ request('category_id') == $category['id'] ? 'selected' : '' }}>{{ $category['category_name'] }}</option>
+            @endforeach
+        </select>
         <button type="submit" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500">Filter</button>
-        @if(request('search') || request('status'))
+        @if(request('search') || request('status') || request('category_id'))
         <a href="{{ route('finance.expenses') }}" class="text-sm text-gray-500 hover:text-gray-700">Clear</a>
         @endif
     </form>
@@ -81,8 +87,8 @@
                     <div class="space-y-4">
                         <div><label class="block text-sm font-medium text-gray-700 mb-1">Item Name *</label><input name="item_name" @if(old('item_name')) value="{{ old('item_name') }}" @else :value="editExpense?.item_name" @endif class="w-full rounded-lg border {{ $errors->has('item_name') ? 'border-red-500' : 'border-gray-300' }} px-3 py-2 text-sm" required>
                             @error('item_name')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror</div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Category</label><input name="category" @if(old('category')) value="{{ old('category') }}" @else :value="editExpense?.category" @endif class="w-full rounded-lg border {{ $errors->has('category') ? 'border-red-500' : 'border-gray-300' }} px-3 py-2 text-sm">
-                            @error('category')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror</div>
+                        <div><label class="block text-sm font-medium text-gray-700 mb-1">Category</label><select name="category_id" class="w-full rounded-lg border {{ $errors->has('category_id') ? 'border-red-500' : 'border-gray-300' }} px-3 py-2 text-sm"><option value="">-- None --</option>@foreach($expenseCategories ?? [] as $category)<option value="{{ $category['id'] }}" :selected="(editExpense?.category_id ?? '{{ old('category_id') }}') == {{ $category['id'] }}">{{ $category['category_name'] }}</option>@endforeach</select>
+                            @error('category_id')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror</div>
                         <div><label class="block text-sm font-medium text-gray-700 mb-1">Amount *</label><input name="amount" type="number" step="0.01" @if(old('amount')) value="{{ old('amount') }}" @else :value="editExpense?.amount" @endif class="w-full rounded-lg border {{ $errors->has('amount') ? 'border-red-500' : 'border-gray-300' }} px-3 py-2 text-sm" required>
                             @error('amount')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror</div>
                         <div><label class="block text-sm font-medium text-gray-700 mb-1">Purchase Date</label><input name="purchase_date" type="date" @if(old('purchase_date')) value="{{ old('purchase_date') }}" @else :value="editExpense?.purchase_date" @endif class="w-full rounded-lg border {{ $errors->has('purchase_date') ? 'border-red-500' : 'border-gray-300' }} px-3 py-2 text-sm">

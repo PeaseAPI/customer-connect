@@ -116,13 +116,15 @@ public function expenses(Request $request)
             'page' => $request->input('page', 1),
             'search' => $request->input('search'),
             'status' => $request->input('status'),
-            'category' => $request->input('category'),
+            'category_id' => $request->input('category_id'),
         ]);
         $response = $this->apiGet($request, '/api/finance/expenses?' . http_build_query($params));
         $data = $response->json();
+        $categories = $this->apiGet($request, '/api/finance/expense-categories?per_page=100')->json('data', []);
         return view('finance.expenses', [
             'expenses' => $data['data'] ?? [],
             'pagination' => $this->extractPagination($data),
+            'expenseCategories' => $categories,
         ]);
     }
 

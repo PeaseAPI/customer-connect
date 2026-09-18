@@ -15,6 +15,12 @@ class ExpenseService
         if (!empty($filters['status'])) {
             $query->where('status', $filters['status']);
         }
+        if (!empty($filters['search'])) {
+            $query->where(function ($q) use ($filters) {
+                $q->where('item_name', 'like', "%{$filters['search']}%")
+                  ->orWhere('purchase_from', 'like', "%{$filters['search']}%");
+            });
+        }
         if (!empty($filters['user_id'])) {
             $query->where('user_id', $filters['user_id']);
         }

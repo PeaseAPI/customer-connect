@@ -18,6 +18,15 @@ class LeadController extends BaseApiController
         return $this->paginated($leads);
     }
 
+    /**
+     * Lead stages for filter/option lists.
+     */
+    public function stages()
+    {
+        $stages = \App\Models\LeadStage::orderBy('priority')->get(['id', 'stage_name', 'label_color', 'is_default']);
+        return $this->success($stages);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -59,7 +68,7 @@ class LeadController extends BaseApiController
             'lead_address' => 'nullable|string',
             'agent_id' => 'nullable|exists:users,id',
             'source_id' => 'nullable|exists:lead_sources,id',
-            'status_id' => 'sometimes|exists:lead_stages,id',
+            'status_id' => 'sometimes|nullable|exists:lead_stages,id',
             'pipeline_stage_id' => 'nullable|exists:pipeline_stages,id',
             'value' => 'nullable|numeric',
             'next_follow_up' => 'nullable|date',
@@ -72,7 +81,7 @@ class LeadController extends BaseApiController
             $lead = $this->leadService->update($lead, $validated);
         }
 
-        if ($statusId) {
+        if (!empty($statusId)) {
             $lead = $this->leadService->changeStatus($lead, (int) $statusId);
         }
 

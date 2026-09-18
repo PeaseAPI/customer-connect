@@ -14,13 +14,15 @@ class CrmController extends Controller
         $params = array_filter([
             'page' => $request->input('page', 1),
             'search' => $request->input('search'),
-            'status' => $request->input('status'),
+            'status_id' => $request->input('status_id'),
         ]);
         $response = $this->apiGet($request, '/api/crm/leads?' . http_build_query($params));
         $data = $response->json();
+        $stages = $this->apiGet($request, '/api/crm/lead-stages')->json('data', []);
         return view('crm.leads', [
             'leads' => $data['data'] ?? [],
             'pagination' => $this->extractPagination($data),
+            'leadStages' => $stages,
         ]);
     }
 
@@ -100,13 +102,15 @@ class CrmController extends Controller
         $params = array_filter([
             'page' => $request->input('page', 1),
             'search' => $request->input('search'),
-            'status' => $request->input('status'),
+            'pipeline_stage_id' => $request->input('pipeline_stage_id'),
         ]);
         $response = $this->apiGet($request, '/api/crm/deals?' . http_build_query($params));
         $data = $response->json();
+        $pipelines = $this->apiGet($request, '/api/crm/pipelines')->json('data', []);
         return view('crm.deals', [
             'deals' => $data['data'] ?? [],
             'pagination' => $this->extractPagination($data),
+            'pipelines' => $pipelines,
         ]);
     }
 

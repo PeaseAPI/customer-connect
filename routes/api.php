@@ -195,6 +195,7 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
         Route::post('leads/{lead}/convert', [LeadController::class, 'convert']);
         Route::get('leads/export', [LeadController::class, 'export']);
         Route::post('leads/import', [LeadController::class, 'import']);
+        Route::get('lead-stages', [LeadController::class, 'stages']);
         Route::apiResource('leads.follow-ups', \App\Http\Controllers\Api\LeadFollowUpController::class)->only(['index', 'store', 'update', 'destroy']);
                 Route::apiResource('contacts', \App\Http\Controllers\Api\LeadContactController::class);
                 Route::apiResource('products', ProductController::class);

@@ -15,14 +15,18 @@ public function employees(Request $request)
         $params = array_filter([
             'page' => $request->input('page', 1),
             'search' => $request->input('search'),
-            'department' => $request->input('department'),
+            'department_id' => $request->input('department_id'),
             'status' => $request->input('status'),
         ]);
         $response = $this->apiGet($request, '/api/hrm/employees?' . http_build_query($params));
         $data = $response->json();
+        $departments = $this->apiGet($request, '/api/hrm/departments?per_page=100')->json('data', []);
+        $designations = $this->apiGet($request, '/api/hrm/designations?per_page=100')->json('data', []);
         return view('hrm.employees', [
             'employees' => $data['data'] ?? [],
             'pagination' => $this->extractPagination($data),
+            'departments' => $departments,
+            'designations' => $designations,
         ]);
     }
 
