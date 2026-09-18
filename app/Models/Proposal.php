@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ProposalStatus;
 use App\Traits\HasCompanyScope;
 use App\Traits\HasCustomFields;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,7 +24,7 @@ class Proposal extends Model
         'added_by', 'last_updated_by',
     ];
 
-    protected $casts = [
+        protected $casts = [
         'sub_total' => 'decimal:2',
         'total' => 'decimal:2',
         'discount' => 'decimal:2',
@@ -32,6 +33,7 @@ class Proposal extends Model
         'invoice_convert' => 'boolean',
         'send_status' => 'boolean',
         'signature_approval' => 'boolean',
+        'status' => ProposalStatus::class,
     ];
 
     public function lead(): BelongsTo { return $this->belongsTo(Lead::class); }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\MilestoneStatus;
 use App\Traits\HasCompanyScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,10 +17,11 @@ class ProjectMilestone extends Model
         'start_date', 'end_date', 'cost', 'status', 'added_by',
     ];
 
-    protected $casts = [
+        protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
         'cost' => 'decimal:2',
+        'status' => MilestoneStatus::class,
     ];
 
     public function project(): BelongsTo { return $this->belongsTo(Project::class); }

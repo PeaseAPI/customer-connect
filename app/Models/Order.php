@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\OrderStatus;
 use App\Traits\HasCompanyScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -19,10 +20,11 @@ class Order extends Model
         'company_address_id', 'project_id', 'created_by', 'last_updated_by',
     ];
 
-        protected $casts = [
+                protected $casts = [
         'sub_total' => 'decimal:2', 'discount' => 'decimal:2',
         'total' => 'decimal:2', 'due_amount' => 'decimal:2',
         'tax' => 'decimal:2', 'date' => 'date',
+        'status' => OrderStatus::class,
     ];
 
         public function client(): BelongsTo { return $this->belongsTo(User::class, 'client_id'); }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\CreditNoteStatus;
 use App\Traits\HasCompanyScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -20,11 +21,12 @@ class CreditNote extends Model
         'added_by', 'last_updated_by',
     ];
 
-    protected $casts = [
+        protected $casts = [
         'issue_date' => 'date',
         'discount' => 'decimal:2',
         'sub_total' => 'decimal:2',
         'total' => 'decimal:2',
+        'status' => CreditNoteStatus::class,
     ];
 
     public function client(): BelongsTo
