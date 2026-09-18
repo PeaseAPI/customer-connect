@@ -6,7 +6,6 @@ use App\Models\Client;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Concerns\WithValidation;
 use Illuminate\Support\Facades\Validator;
 
 class ClientImport implements ToCollection, WithHeadingRow
@@ -14,6 +13,8 @@ class ClientImport implements ToCollection, WithHeadingRow
     protected int $importedCount = 0;
     protected int $failedCount = 0;
     protected array $errors = [];
+
+    public function __construct(protected int $companyId) {}
 
     public function collection(Collection $rows): void
     {
@@ -36,7 +37,7 @@ class ClientImport implements ToCollection, WithHeadingRow
                     'contact_phone' => $row['联系电话'] ?? null,
                     'contact_email' => $row['邮箱'] ?? null,
                     'address' => $row['地址'] ?? null,
-                    'company_id' => \Illuminate\Support\Facades\Context::get('current_company_id'),
+                    'company_id' => $this->companyId,
                 ]);
 
                 $this->importedCount++;

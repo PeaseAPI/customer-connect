@@ -104,7 +104,7 @@ class LeadController extends BaseApiController
         ExportDataJob::dispatch(
             new LeadExport($filters, $request->attributes->get('company_id')),
             $filePath,
-            $request->user()
+            $request->user()->id
         );
 
         return $this->success(['file_path' => $filePath], '导出任务已提交，完成后将通知您');

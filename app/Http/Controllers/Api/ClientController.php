@@ -75,12 +75,13 @@ class ClientController extends BaseApiController
     public function export(Request $request)
     {
         $filters = $request->only(['status', 'search']);
+        $companyId = $request->attributes->get('company_id');
         $filePath = 'exports/clients_' . now()->format('YmdHis') . '.xlsx';
 
         ExportDataJob::dispatch(
-            new ClientExport($filters, $request->attributes->get('company_id')),
+            new ClientExport($filters, $companyId),
             $filePath,
-            $request->user()
+            $request->user()->id
         );
 
         return $this->success(['file_path' => $filePath], '导出任务已提交，完成后将通知您');
@@ -98,7 +99,7 @@ class ClientController extends BaseApiController
         ImportDataJob::dispatch(
             new ClientImport($companyId),
             $path,
-            $request->user()
+            $request->user()->id
         );
 
         return $this->success(null, '导入任务已提交，完成后将通知您');

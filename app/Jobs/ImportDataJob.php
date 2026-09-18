@@ -18,7 +18,7 @@ class ImportDataJob implements ShouldQueue
     public int $timeout = 300;
 
     public function __construct(
-        public string $importClass,
+        public object $import,
         public string $filePath,
         public int $userId
     ) {}
@@ -27,20 +27,19 @@ class ImportDataJob implements ShouldQueue
     {
         try {
             $user = User::find($this->userId);
-            $import = new $this->importClass;
 
-            Excel::import($import, $this->filePath, 'local');
+            Excel::import($this->import, $this->filePath, 'local');
 
-            if ($user) {
+            if ($user && method_exists($this->import, 'getImportedCount')) {
                 $user->notify(new \App\Notifications\ImportCompletedNotification(
-                    $import->getImportedCount(),
-                    $import->getFailedCount(),
-                    $import->getErrors()
+                    $this->import->getImportedCount(),
+                    $this->import->getFailedCount(),
+                    $this->import->getErrors()
                 ));
             }
         } catch (\Exception $e) {
             Log::error('导入数据Job失败', [
-                'import_class' => $this->importClass,
+                'import_class' => get_class($this->import),
                 'error' => $e->getMessage(),
             ]);
             $this->fail($e);

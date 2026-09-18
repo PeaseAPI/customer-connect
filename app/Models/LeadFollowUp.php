@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\LeadFollowUpStatus;
 use App\Traits\HasCompanyScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +17,11 @@ class LeadFollowUp extends Model
         'remark', 'next_follow_up', 'status', 'added_by',
     ];
 
-    protected $casts = ['follow_up_date' => 'date', 'next_follow_up' => 'date', 'status' => 'string'];
+    protected $casts = [
+        'follow_up_date' => 'date',
+        'next_follow_up' => 'date',
+        'status' => LeadFollowUpStatus::class,
+    ];
 
     public function lead(): BelongsTo { return $this->belongsTo(Lead::class); }
     public function addedBy(): BelongsTo { return $this->belongsTo(User::class, 'added_by'); }

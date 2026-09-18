@@ -18,8 +18,8 @@ class ExportDataJob implements ShouldQueue
     public int $timeout = 300;
 
     public function __construct(
-        public string $exportClass,
-        public array $filters,
+        public object $export,
+        public string $filePath,
         public int $userId
     ) {}
 
@@ -27,20 +27,18 @@ class ExportDataJob implements ShouldQueue
     {
         try {
             $user = User::find($this->userId);
-            $export = new $this->exportClass($this->filters);
 
-            $fileName = class_basename($this->exportClass) . '_' . now()->format('YmdHis') . '.xlsx';
-            $filePath = 'exports/' . $fileName;
+            Excel::store($this->export, $this->filePath, 'local');
 
-            Excel::store($export, $filePath, 'local');
+            $fileName = class_basename($this->export) . '_' . now()->format('YmdHis') . '.xlsx';
 
             // Notify user that export is ready
             if ($user) {
-                $user->notify(new \App\Notifications\ExportReadyNotification($filePath, $fileName));
+                $user->notify(new \App\Notifications\ExportReadyNotification($this->filePath, $fileName));
             }
         } catch (\Exception $e) {
             Log::error('导出数据Job失败', [
-                'export_class' => $this->exportClass,
+                'export_class' => get_class($this->export),
                 'error' => $e->getMessage(),
             ]);
             $this->fail($e);

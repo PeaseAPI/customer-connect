@@ -6,6 +6,7 @@ use App\Traits\HasCompanyScope;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Client extends Model
 {
@@ -31,9 +32,8 @@ class Client extends Model
         return $this->belongsTo(LeadSource::class, 'source_id');
     }
 
-    public function tags()
+    public function tags(): BelongsToMany
     {
-        // Tags relationship - placeholder until client_tags pivot table is created
-        return $this->belongsToMany(\Illuminate\Database\Eloquent\Model::class, 'client_tags', 'client_id', 'tag_id');
+        return $this->belongsToMany(Tag::class, 'client_tags', 'client_id', 'tag_id')->withTimestamps();
     }
 }

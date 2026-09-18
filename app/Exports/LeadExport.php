@@ -11,21 +11,37 @@ use Maatwebsite\Excel\Concerns\ShouldQueue;
 class LeadExport implements FromQuery, WithHeadings, WithMapping, ShouldQueue
 {
     protected array $filters;
+    protected int $companyId;
 
-    public function __construct(array $filters = [])
+    public function __construct(array $filters = [], int $companyId = 0)
     {
         $this->filters = $filters;
+        $this->companyId = $companyId;
     }
 
     public function query()
     {
         $query = Lead::with(['owner', 'source']);
 
-        if (!empty($this->filters['status'])) {
-            $query->where('status', $this->filters['status']);
+        if ($this->companyId) {
+            $query->where('company_id', $this->companyId);
         }
-        if (!empty($this->filters['owner_id'])) {
-            $query->where('owner_id', $this->filters['owner_id']);
+
+        if (!empty($this->filters['status_id'])) {
+            $query->where('status_id', $this->filters['status_id']);
+        }
+        if (!empty($this->filters['source_id'])) {
+            $query->where('source_id', $this->filters['source_id']);
+        }
+        if (!empty($this->filters['agent_id'])) {
+            $query->where('agent_id', $this->filters['agent_id']);
+        }
+        if (!empty($this->filters['search'])) {
+            $query->where(function ($q) {
+                $q->where('lead_name', 'like', "%{$this->filters['search']}%")
+                  ->orWhere('lead_email', 'like', "%{$this->filters['search']}%")
+                  ->orWhere('lead_mobile', 'like', "%{$this->filters['search']}%");
+            });
         }
 
         return $query;
@@ -40,13 +56,13 @@ class LeadExport implements FromQuery, WithHeadings, WithMapping, ShouldQueue
     {
         return [
             $lead->id,
-            $lead->name,
+            $lead->lead_name,
             $lead->company_name,
-            $lead->phone,
-            $lead->email,
-            $lead->status,
+            $lead->lead_mobile,
+            $lead->lead_email,
+            $lead->status?->stage_name,
             $lead->source?->name,
-            $lead->owner?->name,
+            $lead->agent?->name,
             $lead->created_at->format('Y-m-d H:i:s'),
         ];
     }

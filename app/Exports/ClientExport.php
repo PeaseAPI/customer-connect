@@ -11,15 +11,21 @@ use Maatwebsite\Excel\Concerns\ShouldQueue;
 class ClientExport implements FromQuery, WithHeadings, WithMapping, ShouldQueue
 {
     protected array $filters;
+    protected int $companyId;
 
-    public function __construct(array $filters = [])
+    public function __construct(array $filters = [], int $companyId = 0)
     {
         $this->filters = $filters;
+        $this->companyId = $companyId;
     }
 
     public function query()
     {
         $query = Client::with(['owner', 'level', 'source', 'tags']);
+
+        if ($this->companyId) {
+            $query->where('company_id', $this->companyId);
+        }
 
         if (!empty($this->filters['level_id'])) {
             $query->where('level_id', $this->filters['level_id']);
@@ -29,6 +35,13 @@ class ClientExport implements FromQuery, WithHeadings, WithMapping, ShouldQueue
         }
         if (!empty($this->filters['industry'])) {
             $query->where('industry', $this->filters['industry']);
+        }
+        if (!empty($this->filters['search'])) {
+            $query->where(function ($q) {
+                $q->where('name', 'like', "%{$this->filters['search']}%")
+                  ->orWhere('contact_name', 'like', "%{$this->filters['search']}%")
+                  ->orWhere('contact_email', 'like', "%{$this->filters['search']}%");
+            });
         }
 
         return $query;
@@ -49,7 +62,7 @@ class ClientExport implements FromQuery, WithHeadings, WithMapping, ShouldQueue
             $client->id,
             $client->name,
             $client->industry,
-            $client->level?->name,
+            $client->level?->category_name,
             $client->source?->name,
             $client->contact_name,
             $client->contact_phone,
