@@ -97,6 +97,20 @@ Route::prefix('auth')->group(function () {
 // 员工邀请接受路由（无需认证）
 Route::post('accept-employee-invite', [AuthController::class, 'acceptEmployeeInvite']);
 
+// ===== API Key 认证路由（通过 X-API-Key 头访问） =====
+Route::middleware(['api_key', 'company'])->prefix('external')->group(function () {
+    Route::get('me', function (\Illuminate\Http\Request $request) {
+        return response()->json([
+            'user' => $request->user(),
+            'company_id' => $request->attributes->get('company_id'),
+        ]);
+    });
+    Route::apiResource('clients', \App\Http\Controllers\Api\ClientController::class)->only(['index', 'show']);
+    Route::apiResource('projects', \App\Http\Controllers\Api\ProjectController::class)->only(['index', 'show']);
+    Route::apiResource('invoices', \App\Http\Controllers\Api\InvoiceController::class)->only(['index', 'show']);
+    Route::apiResource('leads', \App\Http\Controllers\Api\LeadController::class)->only(['index', 'show']);
+});
+
 // 需要认证的API
 Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function () {
     Route::prefix('user')->group(function () {
@@ -405,13 +419,66 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
         Route::get('items/{asset}/maintenance', [\App\Http\Controllers\Api\AssetController::class, 'listMaintenanceRecords']);
     });
 
-    // 采购管理
+        // 采购管理
     Route::middleware('module:procurement')->prefix('procurement')->group(function () {
         Route::apiResource('vendors', \App\Http\Controllers\Api\VendorController::class);
         Route::apiResource('purchase-requests', \App\Http\Controllers\Api\PurchaseRequestController::class);
         Route::post('purchase-requests/{purchaseRequest}/approve', [\App\Http\Controllers\Api\PurchaseRequestController::class, 'approve']);
         Route::post('purchase-requests/{purchaseRequest}/reject', [\App\Http\Controllers\Api\PurchaseRequestController::class, 'reject']);
     });
+
+    // ===== 存储设置 =====
+    Route::prefix('storage-settings')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Api\StorageSettingController::class, 'show']);
+        Route::put('/', [\App\Http\Controllers\Api\StorageSettingController::class, 'update']);
+        Route::post('test-connection', [\App\Http\Controllers\Api\StorageSettingController::class, 'testConnection']);
+    });
+
+    // ===== 数据库备份 =====
+    Route::apiResource('database-backups', \App\Http\Controllers\Api\DatabaseBackupController::class)->except(['update']);
+    Route::get('database-backups/{databaseBackup}/download', [\App\Http\Controllers\Api\DatabaseBackupController::class, 'download']);
+    Route::post('database-backups/{databaseBackup}/restore', [\App\Http\Controllers\Api\DatabaseBackupController::class, 'restore']);
+
+    // ===== API Key 管理 =====
+    Route::apiResource('api-keys', \App\Http\Controllers\Api\ApiKeyController::class)->except(['update']);
+    Route::post('api-keys/{apiKey}/revoke', [\App\Http\Controllers\Api\ApiKeyController::class, 'revoke']);
+
+    // ===== 自定义模块 =====
+    Route::apiResource('custom-modules', \App\Http\Controllers\Api\CustomModuleController::class);
+    Route::get('custom-modules/{customModule}/records', [\App\Http\Controllers\Api\CustomModuleController::class, 'listRecords']);
+    Route::post('custom-modules/{customModule}/records', [\App\Http\Controllers\Api\CustomModuleController::class, 'storeRecord']);
+    Route::put('custom-modules/{customModule}/records/{record}', [\App\Http\Controllers\Api\CustomModuleController::class, 'updateRecord']);
+    Route::delete('custom-modules/{customModule}/records/{record}', [\App\Http\Controllers\Api\CustomModuleController::class, 'destroyRecord']);
+
+    // ===== 自定义链接 =====
+    Route::apiResource('custom-links', \App\Http\Controllers\Api\CustomLinkController::class);
+    Route::get('custom-links/active', [\App\Http\Controllers\Api\CustomLinkController::class, 'activeLinks']);
+    Route::post('custom-links/reorder', [\App\Http\Controllers\Api\CustomLinkController::class, 'reorder']);
+
+        // ===== 发票模板 =====
+    Route::apiResource('invoice-templates', \App\Http\Controllers\Api\InvoiceTemplateController::class);
+    Route::post('invoice-templates/{invoiceTemplate}/set-default', [\App\Http\Controllers\Api\InvoiceTemplateController::class, 'setDefault']);
+    Route::get('invoice-templates/{invoiceTemplate}/preview', [\App\Http\Controllers\Api\InvoiceTemplateController::class, 'preview']);
+
+    // ===== AI 助手 =====
+    Route::prefix('ai')->group(function () {
+        Route::get('conversations', [\App\Http\Controllers\Api\AiAssistantController::class, 'index']);
+        Route::post('conversations', [\App\Http\Controllers\Api\AiAssistantController::class, 'store']);
+        Route::get('conversations/{conversation}', [\App\Http\Controllers\Api\AiAssistantController::class, 'show']);
+        Route::post('conversations/{conversation}/chat', [\App\Http\Controllers\Api\AiAssistantController::class, 'chat']);
+        Route::delete('conversations/{conversation}', [\App\Http\Controllers\Api\AiAssistantController::class, 'destroy']);
+        Route::post('quick-chat', [\App\Http\Controllers\Api\AiAssistantController::class, 'quickChat']);
+    });
+
+    // ===== 活动日志 =====
+    Route::get('activity-logs', [\App\Http\Controllers\Api\ActivityLogController::class, 'index']);
+    Route::get('activity-logs/{subjectType}/{subjectId}', [\App\Http\Controllers\Api\ActivityLogController::class, 'forSubject']);
+    Route::post('activity-logs/cleanup', [\App\Http\Controllers\Api\ActivityLogController::class, 'cleanup']);
+
+    // ===== Webhook =====
+    Route::apiResource('webhooks', \App\Http\Controllers\Api\WebhookController::class);
+    Route::get('webhooks/{webhook}/deliveries', [\App\Http\Controllers\Api\WebhookController::class, 'deliveries']);
+    Route::post('webhook-deliveries/{delivery}/retry', [\App\Http\Controllers\Api\WebhookController::class, 'retryDelivery']);
 });
 
 // ===== 账户管理路由（需认证+公司上下文） =====

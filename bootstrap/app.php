@@ -29,6 +29,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'subscription' => CheckSubscription::class,
             'module' => CheckModuleEnabled::class,
             'super_admin' => EnsureSuperAdmin::class,
+            'api_key' => \App\Http\Middleware\AuthenticateApiKey::class,
         ]);
 
         // 排除不需要多租户检查的路由
