@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -53,9 +53,9 @@
             <table class="invoice-table">
                 <thead>
                     <tr>
-                        <th>项目</th>
-                        <th class="text-right">数量</th>
-                        <th class="text-right">单价</th>
+                                                <th>Item</th>
+                        <th class="text-right">Quantity</th>
+                        <th class="text-right">Unit Price</th>
                         <th class="text-right">Amount</th>
                     </tr>
                 </thead>
