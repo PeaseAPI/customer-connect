@@ -1,58 +1,118 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <img src="https://img.shields.io/badge/Version-1.0.0-blue.svg" alt="Version">
+  <img src="https://img.shields.io/badge/License-Apache%202.0-green.svg" alt="License">
+  <img src="https://img.shields.io/badge/PHP-8.3+-purple.svg" alt="PHP">
+  <img src="https://img.shields.io/badge/Laravel-13-red.svg" alt="Laravel">
 </p>
 
-## About Laravel
+# Customer Connect
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+**Open-source CRM / HRM / Project Management SaaS Platform**
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Customer Connect is a comprehensive, multi-tenant SaaS platform built with Laravel that combines CRM, HRM, and Project Management into a unified solution.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Key Features
 
-## Learning Laravel
+### CRM (Customer Relationship Management)
+- **Lead Management** — Full pipeline with status tracking, source tracking, agent assignment
+- **Client Management** — Comprehensive client profiles with contact details, categories, and status
+- **Deal/Proposal Management** — Create proposals, track deals, convert to invoices
+- **Estimate Requests** — Receive and convert estimate requests to formal estimates
+- **Contact Management** — Rich contact profiles linked to clients and leads
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### HRM (Human Resource Management)
+- **Employee Management** — Full employee lifecycle with departments, designations, and roles
+- **Attendance Tracking** — Clock in/out with shift management and late marking
+- **Leave Management** — Leave types, applications, approvals, and balance tracking
+- **Payroll** — Salary structure, payslip generation, and payment tracking
+- **Holiday Calendar** — Company-wide and regional holiday management
+- **Performance Reviews** — Goal setting, reviews, and appraisal cycles
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Project Management
+- **Project Tracking** — Milestones, tasks, time logging, and budgeting
+- **Task Management** — Boards, priority, due dates, assignments, pinning
+- **Time Tracking** — Timelogs with project/task association and reporting
+- **Milestones** — Project milestone tracking with progress indicators
+- **File Management** — Project and task-level file attachments
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+### Finance
+- **Invoicing** — Create, send, and track invoices with items and taxes
+- **Estimates** — Prepare and send estimates, convert to invoices
+- **Payments** — Track payments (online and offline), partial payments
+- **Expenses** — Expense tracking with categories, approval workflow
+- **Credit Notes** — Issue and manage credit notes
+- **Tax Management** — Flexible tax configuration per company
 
-## Agentic Development
+### Contracts & Documents
+- **Contract Management** — Create, sign, and track contracts with renewal alerts
+- **Document Templates** — Reusable document templates
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### Support
+- **Ticket System** — Multi-channel support tickets with priority and groups
+- **Ticket Groups** — Organize tickets by team or department
+
+### Automation & Integration
+- **Webhooks** — Event-driven notifications with delivery tracking and retry
+- **API Keys** — Secure external API access with scoped permissions
+- **External API** — Read-only REST API for third-party integrations
+- **Custom Modules** — Build your own entities with dynamic field definitions
+- **Custom Links** — Configurable navigation links
+- **Activity Logs** — Comprehensive audit trail with entity-level tracking
+
+### Reporting & Analytics
+- **Dashboard** — Role-based dashboards (Admin, Employee, Client)
+- **Financial Reports** — Income vs expense, revenue trends
+- **Sales Reports** — Lead conversion, deal pipeline analytics
+- **Task Reports** — Productivity and completion metrics
+- **Attendance Reports** — Presence, absence, and overtime analytics
+
+### Administration
+- **Multi-tenancy** — Full company isolation with shared infrastructure
+- **Super Admin Dashboard** — Platform-wide company management
+- **Package/Subscription Management** — SaaS billing with feature tiers
+- **Role & Permission** — Granular RBAC with Spatie Laravel Permission
+- **Database Backup** — On-demand backup with download and restore
+- **Storage Settings** — Multi-driver file storage (Local, S3, OSS, COS)
+- **GDPR Compliance** — Data consent, right-to-be-forgotten, data export
+- **Invoice Templates** — Customizable invoice layout with HTML/CSS editing
+
+## Tech Stack
+
+| Component | Technology |
+|-----------|-----------|
+| Backend | PHP 8.3+ / Laravel 13 |
+| Database | MySQL 8.0+ |
+| Authentication | Laravel Sanctum |
+| Authorization | Spatie Laravel Permission |
+| Queue | Laravel Horizon (Redis) |
+| Real-time | Laravel Reverb (WebSocket) |
+| Excel Import/Export | Maatwebsite Excel |
+| Activity Logging | Spatie Activity Log |
+| 2FA | PragmaRX Google2FA |
+
+## Quick Start
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone https://github.com/PeaseAPI/customer-connect.git
+cd customer-connect
+composer install
+cp .env.example .env
+php artisan key:generate
+# Configure your database in .env, then:
+php artisan migrate
+php artisan db:seed
+php artisan serve
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+## API
+
+The platform provides 720+ REST API endpoints with Sanctum token authentication. Third-party integrations can use API Key authentication via `X-API-Key` header.
 
 ## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Copyright 2024-2026 PeaseAPI. Licensed under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
+

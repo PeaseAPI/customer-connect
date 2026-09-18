@@ -16,15 +16,15 @@ use App\Models\UnitType;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
-class WorksuiteSeeder extends Seeder
+class ModuleDataSeeder extends Seeder
 {
     /**
-     * Seed Worksuite sub-module default data for each company.
+     * Seed module default data for each company.
      * Run after CompanySeeder so companies exist.
      */
     public function run(): void
     {
-        $this->command->info('🔧 填充 Worksuite 子模块数据...');
+        $this->command->info('🔧 Seeding module data...');
 
         $companies = Company::all();
 
@@ -131,6 +131,6 @@ class WorksuiteSeeder extends Seeder
             }
         }
 
-        $this->command->info('✅ Worksuite 子模块数据填充完成！');
+        $this->command->info('✅ Module data seeding complete!');
     }
 }

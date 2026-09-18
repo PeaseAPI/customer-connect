@@ -1,10 +1,10 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "kht/kht",
+        "name": "peaseapi/customer-connect",
     "type": "project",
-    "description": "客户通 - 中国本地化 SaaS ERP 平台 (HRM+CRM+PM)",
-    "keywords": ["kht", "saas", "erp", "hrm", "crm", "pm", "laravel"],
-    "license": "MIT",
+    "description": "Customer Connect - Open Source CRM/HRM/PM SaaS Platform",
+    "keywords": ["crm", "hrm", "pm", "saas", "erp", "laravel"],
+    "license": "Apache-2.0",
     "require": {
         "php": "^8.3|^8.4|^8.5",
         "laravel/framework": "^13.17",

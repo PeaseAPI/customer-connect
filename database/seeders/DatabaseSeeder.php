@@ -41,9 +41,9 @@ class DatabaseSeeder extends Seeder
             ModuleConfigSeeder::class,
         ]);
 
-        // 6. Worksuite 子模块数据
+                // 6. Module default data
         $this->call([
-            WorksuiteSeeder::class,
+            ModuleDataSeeder::class,
         ]);
 
         $this->command->info('');
