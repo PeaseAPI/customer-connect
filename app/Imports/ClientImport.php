@@ -21,29 +21,29 @@ class ClientImport implements ToCollection, WithHeadingRow
         foreach ($rows as $index => $row) {
             try {
                 $validator = Validator::make($row->toArray(), [
-                    '客户名称' => 'required|string|max:255',
+                    'Client Name' => 'required|string|max:255',
                 ]);
 
                 if ($validator->fails()) {
                     $this->failedCount++;
-                    $this->errors[] = "第" . ($index + 2) . "行: " . implode(', ', $validator->errors()->all());
+                    $this->errors[] = "No." . ($index + 2) . "Row: " . implode(', ', $validator->errors()->all());
                     continue;
                 }
 
                 Client::create([
-                    'name' => $row['客户名称'],
-                    'industry' => $row['行业'] ?? null,
-                    'contact_name' => $row['联系人'] ?? null,
-                    'contact_phone' => $row['联系电话'] ?? null,
+                    'name' => $row['Client Name'],
+                    'industry' => $row['Industry'] ?? null,
+                    'contact_name' => $row['Contact'] ?? null,
+                    'contact_phone' => $row['Contact Phone'] ?? null,
                     'contact_email' => $row['Email'] ?? null,
-                    'address' => $row['地址'] ?? null,
+                    'address' => $row['Address'] ?? null,
                     'company_id' => $this->companyId,
                 ]);
 
                 $this->importedCount++;
             } catch (\Exception $e) {
                 $this->failedCount++;
-                $this->errors[] = "第" . ($index + 2) . "行: " . $e->getMessage();
+                $this->errors[] = "No." . ($index + 2) . "Row: " . $e->getMessage();
             }
         }
     }

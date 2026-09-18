@@ -55,10 +55,10 @@ class UserController extends BaseApiController
         public function destroy(User $user): JsonResponse
     {
         if ($user->isSuperAdmin()) {
-            return $this->error('无法删除超级管理员', 403);
+            return $this->error('Cannot delete super admin', 403);
         }
         $user->delete();
-        return $this->success(null, '用户已删除');
+        return $this->success(null, 'User deleted');
     }
 
     public function resetPassword(User $user): JsonResponse
@@ -68,6 +68,6 @@ class UserController extends BaseApiController
 
         return $this->success([
             'new_password' => $newPassword,
-        ], '密码已重置');
+        ], 'Password has been reset');
     }
 }

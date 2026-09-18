@@ -40,7 +40,7 @@ class InvoiceTemplate extends Model
     }
 
     /**
-     * 渲染发票 HTML
+     * Render invoice HTML
      */
     public function renderInvoice(Invoice $invoice): string
     {

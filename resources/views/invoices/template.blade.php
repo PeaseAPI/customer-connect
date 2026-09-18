@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>发票 #{{ $invoice->invoice_number ?? '' }}</title>
+    <title>Invoice #{{ $invoice->invoice_number ?? '' }}</title>
     <style>
         {{ $css }}
     </style>
@@ -21,7 +21,7 @@
                         @endif
                     </td>
                     <td class="text-right">
-                        <h2>发票</h2>
+                        <h2>Invoice</h2>
                         <p>#{{ $invoice->invoice_number ?? '' }}</p>
                     </td>
                 </tr>
@@ -37,13 +37,13 @@
                 <tr>
                     <td style="width: 50%;">
                         @if($settings['show_company_info'] ?? true)
-                            <strong>开票方:</strong><br>
+                            <strong>Biller:</strong><br>
                             {{ $invoice->company->company_name ?? '' }}<br>
                             {{ $invoice->company->company_email ?? '' }}
                         @endif
                     </td>
                     <td style="width: 50%;" class="text-right">
-                        <strong>客户:</strong><br>
+                        <strong>Client:</strong><br>
                         {{ $invoice->client->name ?? '' }}<br>
                         {{ $invoice->client->email ?? '' }}
                     </td>
@@ -56,7 +56,7 @@
                         <th>项目</th>
                         <th class="text-right">数量</th>
                         <th class="text-right">单价</th>
-                        <th class="text-right">金额</th>
+                        <th class="text-right">Amount</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -73,17 +73,17 @@
 
             <table style="width: 100%; margin-top: 20px;">
                 <tr>
-                    <td class="text-right">小计:</td>
+                    <td class="text-right">Subtotal:</td>
                     <td style="width: 150px;" class="text-right">{{ $invoice->sub_total ?? 0 }}</td>
                 </tr>
                 @if($invoice->tax_amount > 0)
                     <tr>
-                        <td class="text-right">税额:</td>
+                        <td class="text-right">Tax:</td>
                         <td class="text-right">{{ $invoice->tax_amount }}</td>
                     </tr>
                 @endif
                 <tr class="total-row">
-                    <td class="text-right">总计:</td>
+                    <td class="text-right">Total:</td>
                     <td class="text-right">{{ $invoice->total ?? 0 }}</td>
                 </tr>
             </table>
@@ -95,9 +95,9 @@
     @else
         <div class="invoice-footer" style="margin-top: 40px; border-top: 1px solid #e5e7eb; padding-top: 20px;">
             @if($settings['show_payment_details'] ?? true)
-                <p><strong>付款信息:</strong></p>
-                <p>银行: {{ $invoice->company->bank_name ?? '' }}</p>
-                <p>账号: {{ $invoice->company->bank_account ?? '' }}</p>
+                <p><strong>Payment Info:</strong></p>
+                <p>Bank: {{ $invoice->company->bank_name ?? '' }}</p>
+                <p>Account: {{ $invoice->company->bank_account ?? '' }}</p>
             @endif
         </div>
     @endif

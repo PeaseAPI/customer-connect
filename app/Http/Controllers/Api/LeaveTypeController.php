@@ -28,7 +28,7 @@ class LeaveTypeController extends BaseApiController
 
         $validated['company_id'] = $request->attributes->get('company_id');
 
-        return $this->success($this->leaveTypeService->create($validated), '假期类型创建成功', 201);
+        return $this->success($this->leaveTypeService->create($validated), 'Leave type created successfully', 201);
     }
 
     public function show(LeaveType $leaveType)

@@ -34,7 +34,7 @@ class CustomLinkService
     }
 
     /**
-     * 创建自定义链接
+     * Create custom link
      */
     public function create(int $companyId, array $data): CustomLink
     {
@@ -43,7 +43,7 @@ class CustomLinkService
     }
 
     /**
-     * 更新自定义链接
+     * Update custom link
      */
     public function update(CustomLink $link, array $data): CustomLink
     {
@@ -52,7 +52,7 @@ class CustomLinkService
     }
 
     /**
-     * 删除自定义链接
+     * Delete custom link
      */
     public function delete(CustomLink $link): void
     {

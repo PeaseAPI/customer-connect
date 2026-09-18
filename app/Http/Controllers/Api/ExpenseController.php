@@ -38,7 +38,7 @@ class ExpenseController extends BaseApiController
 
         $expense = $this->expenseService->create($validated);
 
-        return $this->success($expense->load(['user', 'project', 'category', 'currency']), '费用创建成功', 201);
+        return $this->success($expense->load(['user', 'project', 'category', 'currency']), 'Expense created successfully', 201);
     }
 
     public function show(Expense $expense)
@@ -73,7 +73,7 @@ class ExpenseController extends BaseApiController
     public function approve(Request $request, Expense $expense)
     {
         if ($expense->status !== ExpenseStatus::Pending) {
-            return $this->error('只能审批待审批的费用', 400);
+            return $this->error('Can only approve pending expenses', 400);
         }
 
         $validated = $request->validate([
@@ -81,13 +81,13 @@ class ExpenseController extends BaseApiController
         ]);
 
         $expense = $this->expenseService->approve($expense, $request->user()->id, $validated['remark'] ?? null);
-        return $this->success($expense->load(['user', 'project', 'category', 'currency', 'approver']), '审批通过');
+        return $this->success($expense->load(['user', 'project', 'category', 'currency', 'approver']), 'Approval approved');
     }
 
     public function reject(Request $request, Expense $expense)
     {
         if ($expense->status !== ExpenseStatus::Pending) {
-            return $this->error('只能拒绝待审批的费用', 400);
+            return $this->error('Can only reject pending expenses', 400);
         }
 
         $validated = $request->validate([
@@ -125,7 +125,7 @@ class ExpenseController extends BaseApiController
         return $this->success([
             'approved' => $approved,
             'skipped' => $skipped,
-        ], "已审批 {$approved} 项，跳过 {$skipped} 项");
+        ], "Approved {$approved} items, skipped {$skipped} items");
     }
 
     /**
@@ -147,7 +147,7 @@ class ExpenseController extends BaseApiController
             $userId
         );
 
-        return $this->success(null, '导入任务已提交，完成后将通知您');
+        return $this->success(null, 'Import task submitted, you will be notified when complete');
     }
 
     /**
@@ -165,6 +165,6 @@ class ExpenseController extends BaseApiController
             $request->user()->id
         );
 
-        return $this->success(['file_path' => $filePath], '导出任务已提交，完成后将通知您');
+        return $this->success(['file_path' => $filePath], 'Export task submitted, you will be notified when complete');
     }
 }

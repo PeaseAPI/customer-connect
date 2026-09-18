@@ -36,7 +36,7 @@ class WebhookController extends BaseApiController
         $companyId = $request->attributes->get('company_id');
         $webhook = $this->webhookService->create($companyId, $validated);
 
-        return $this->success($webhook, 'Webhook 创建成功', 201);
+        return $this->success($webhook, 'Webhook Created successfully', 201);
     }
 
     /**
@@ -70,7 +70,7 @@ class WebhookController extends BaseApiController
     public function destroy(Webhook $webhook)
     {
         $this->webhookService->delete($webhook);
-        return $this->success(null, 'Webhook 已删除');
+        return $this->success(null, 'Webhook deleted');
     }
 
     /**
@@ -91,6 +91,6 @@ class WebhookController extends BaseApiController
     public function retryDelivery(WebhookDelivery $delivery)
     {
         $this->webhookService->retryDelivery($delivery);
-        return $this->success(null, '重试已提交');
+        return $this->success(null, 'Retry submitted');
     }
 }

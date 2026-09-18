@@ -20,6 +20,6 @@ class GdprSettingController extends BaseApiController
     {
         $v = $request->validated();
         $setting = $this->gdprSettingService->update($request->user()->company_id, $v);
-        return $this->success($setting, 'GDPR设置更新成功');
+        return $this->success($setting, 'GDPR settings updated successfully');
     }
 }

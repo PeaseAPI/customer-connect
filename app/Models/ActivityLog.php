@@ -34,7 +34,7 @@ class ActivityLog extends Model
     }
 
     /**
-     * 记录活动日志
+     * 记录Activity log
      */
     public static function log(
         string $logName,

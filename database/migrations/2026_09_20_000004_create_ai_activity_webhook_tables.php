@@ -13,7 +13,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('company_id')->index();
             $table->unsignedBigInteger('user_id')->index();
-            $table->string('title')->default('新对话');
+            $table->string('title')->default('New conversation');
             $table->string('model', 50)->default('gpt-3.5-turbo');
             $table->json('context')->nullable(); // 上下文信息（当前模块、实体等）
             $table->timestamps();
@@ -34,7 +34,7 @@ return new class extends Migration
             $table->foreign('ai_conversation_id')->references('id')->on('ai_conversations')->cascadeOnDelete();
         });
 
-        // 活动日志表
+        // Activity log表
         Schema::create('activity_logs', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('company_id')->index();
@@ -59,7 +59,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('url');
             $table->string('secret', 64)->nullable(); // 用于签名验证
-            $table->json('events'); // 订阅的事件类型
+            $table->json('events'); // 订阅的Event type
             $table->boolean('is_active')->default(true);
             $table->timestamp('last_triggered_at')->nullable();
             $table->integer('failure_count')->default(0);

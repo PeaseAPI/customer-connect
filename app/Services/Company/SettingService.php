@@ -47,7 +47,7 @@ class SettingService
     }
 
     /**
-     * 获取所有设置汇总
+     * Get all settings summary
      */
     public function getAllSettings(int $companyId): array
     {
@@ -59,7 +59,7 @@ class SettingService
     }
 
     /**
-     * 获取模块特定设置
+     * Get module-specific settings
      */
     public function getModuleSetting(int $companyId, string $module): ?OrganisationSetting
     {

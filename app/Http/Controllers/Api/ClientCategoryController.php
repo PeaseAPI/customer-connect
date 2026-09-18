@@ -27,7 +27,7 @@ class ClientCategoryController extends BaseApiController
 
         return $this->success(
             $this->clientCategoryService->create($validated)->load(['subCategories']),
-            '客户分类创建成功',
+            'Client category created successfully',
             201
         );
     }

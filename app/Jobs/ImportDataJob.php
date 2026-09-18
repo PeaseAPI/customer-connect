@@ -38,7 +38,7 @@ class ImportDataJob implements ShouldQueue
                 ));
             }
         } catch (\Exception $e) {
-            Log::error('导入数据Job失败', [
+            Log::error('Import data job failed', [
                 'import_class' => get_class($this->import),
                 'error' => $e->getMessage(),
             ]);

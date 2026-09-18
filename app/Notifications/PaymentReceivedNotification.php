@@ -26,7 +26,7 @@ class PaymentReceivedNotification extends Notification implements ShouldBroadcas
             'payment_id' => $this->payment->id,
             'invoice_number' => $this->payment->invoice?->invoice_number,
             'amount' => $this->payment->amount,
-            'message' => "收到付款 ¥{$this->payment->amount}",
+            'message' => "Payment received: {$this->payment->amount}",
         ];
     }
 

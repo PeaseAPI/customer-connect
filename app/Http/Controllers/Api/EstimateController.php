@@ -48,7 +48,7 @@ class EstimateController extends BaseApiController
 
         $estimate = $this->estimateService->create($validated, $items);
 
-        return $this->success($estimate->load(['client', 'currency', 'items']), '报价创建成功', 201);
+        return $this->success($estimate->load(['client', 'currency', 'items']), 'Quote created successfully', 201);
     }
 
     public function show(Estimate $estimate)
@@ -93,6 +93,6 @@ class EstimateController extends BaseApiController
     public function send(Estimate $estimate)
     {
         $estimate = $this->estimateService->send($estimate);
-        return $this->success($estimate, '报价已发送');
+        return $this->success($estimate, 'Quote sent');
     }
 }

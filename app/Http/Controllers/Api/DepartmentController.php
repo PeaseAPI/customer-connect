@@ -26,7 +26,7 @@ class DepartmentController extends BaseApiController
 
         return $this->success(
             $this->departmentService->create($validated),
-            '部门创建成功',
+            'DepartmentCreated successfully',
             201
         );
     }

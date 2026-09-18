@@ -56,7 +56,7 @@ class FeishuLoginService implements SocialLoginInterface
                 'email' => $userData['email'] ?? '',
             ];
         } catch (\Exception $e) {
-            Log::error('飞书登录异常', ['error' => $e->getMessage()]);
+            Log::error('Feishu login error', ['error' => $e->getMessage()]);
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }

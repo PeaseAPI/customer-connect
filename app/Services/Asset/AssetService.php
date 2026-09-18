@@ -45,7 +45,7 @@ class AssetService
     }
 
     /**
-     * 分配资产给用户
+     * Assign asset给用户
      */
     public function allocate(Asset $asset, int $userId): Asset
     {

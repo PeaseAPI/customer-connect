@@ -29,7 +29,7 @@ class ExpenseImport implements ToCollection, WithHeadingRow
 
                 if ($validator->fails()) {
                     $this->failedCount++;
-                    $this->errors[] = "第" . ($index + 2) . "行: " . implode(', ', $validator->errors()->all());
+                    $this->errors[] = "No." . ($index + 2) . "Row: " . implode(', ', $validator->errors()->all());
                     continue;
                 }
 
@@ -49,7 +49,7 @@ class ExpenseImport implements ToCollection, WithHeadingRow
                 $this->importedCount++;
             } catch (\Exception $e) {
                 $this->failedCount++;
-                $this->errors[] = "第" . ($index + 2) . "行: " . $e->getMessage();
+                $this->errors[] = "No." . ($index + 2) . "Row: " . $e->getMessage();
             }
         }
     }

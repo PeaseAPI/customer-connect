@@ -32,7 +32,7 @@ class BankAccountController extends BaseApiController
                 $validated['added_by'] = $request->user()->id;
         $validated['company_id'] = $request->attributes->get('company_id');
         $account = $this->bankAccountService->create($validated);
-        return $this->success($account->load('currency'), '银行账户创建成功', 201);
+        return $this->success($account->load('currency'), 'Bank account created successfully', 201);
     }
 
     public function show(BankAccount $bankAccount)

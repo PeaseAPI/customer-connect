@@ -22,7 +22,7 @@ class ExportReadyNotification extends Notification
             'type' => 'export_ready',
             'file_name' => $this->fileName,
             'download_url' => url('/api/downloads/' . base64_encode($this->filePath)),
-            'message' => "导出文件 {$this->fileName} 已准备好",
+            'message' => "Export file {$this->fileName} is ready",
         ];
     }
 

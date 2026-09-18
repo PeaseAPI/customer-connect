@@ -33,7 +33,7 @@ class EmergencyContactController extends BaseApiController
 
         return $this->success(
             $this->emergencyContactService->create($validated)->load(['creator']),
-            '紧急联系人创建成功',
+            'Emergency contact created successfully',
             201
         );
     }

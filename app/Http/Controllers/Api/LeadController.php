@@ -39,7 +39,7 @@ class LeadController extends BaseApiController
 
         $lead = $this->leadService->create($validated);
 
-        return $this->success($lead->load(['agent', 'source', 'status', 'pipelineStage']), '线索创建成功', 201);
+        return $this->success($lead->load(['agent', 'source', 'status', 'pipelineStage']), 'Lead created successfully', 201);
     }
 
     public function show(Lead $lead)
@@ -88,12 +88,12 @@ class LeadController extends BaseApiController
     public function convert(Lead $lead)
     {
         if ($lead->is_client) {
-            return $this->error('该线索已转化', 400);
+            return $this->error('This lead has already been converted', 400);
         }
 
         $client = $this->leadService->convertToClient($lead);
 
-        return $this->success($client->load('clientDetail'), '线索已转化为客户', 201);
+        return $this->success($client->load('clientDetail'), 'Lead converted to client', 201);
     }
 
     public function export(Request $request)
@@ -107,7 +107,7 @@ class LeadController extends BaseApiController
             $request->user()->id
         );
 
-        return $this->success(['file_path' => $filePath], '导出任务已提交，完成后将通知您');
+        return $this->success(['file_path' => $filePath], 'Export task submitted, you will be notified when complete');
     }
 
     /**
@@ -128,6 +128,6 @@ class LeadController extends BaseApiController
             $request->user()->id
         );
 
-        return $this->success(null, '导入任务已提交，完成后将通知您');
+        return $this->success(null, 'Import task submitted, you will be notified when complete');
     }
 }

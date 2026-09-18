@@ -101,7 +101,7 @@ class EventController extends BaseApiController
 
         $event->participants()->syncWithoutDetaching($validated['user_ids']);
 
-        return $this->success($event->load(['creator', 'participants']), '参与者添加成功');
+        return $this->success($event->load(['creator', 'participants']), 'Participant added successfully');
     }
 
     /**
@@ -111,6 +111,6 @@ class EventController extends BaseApiController
     {
         $event->participants()->detach($user);
 
-        return $this->success(null, '参与者移除成功');
+        return $this->success(null, 'Participant removed successfully');
     }
 }

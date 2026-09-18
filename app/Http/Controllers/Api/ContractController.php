@@ -36,7 +36,7 @@ class ContractController extends BaseApiController
 
         $contract = $this->contractService->create($validated);
 
-        return $this->success($contract->load(['client', 'contractType', 'currency', 'creator']), '合同创建成功', 201);
+        return $this->success($contract->load(['client', 'contractType', 'currency', 'creator']), 'Contract created successfully', 201);
     }
 
     public function show(Contract $contract)
@@ -90,7 +90,7 @@ class ContractController extends BaseApiController
 
         $contract = $this->contractService->renew($contract, $validated, $request->user()->id);
 
-        return $this->success($contract->load(['renewHistory']), '续约成功');
+        return $this->success($contract->load(['renewHistory']), 'Renewal successful');
     }
 
     /**
@@ -115,7 +115,7 @@ class ContractController extends BaseApiController
             'path' => $path,
         ]);
 
-        return $this->success($file, '文件上传成功', 201);
+        return $this->success($file, 'File uploaded successfully', 201);
     }
 
     /**
@@ -127,19 +127,19 @@ class ContractController extends BaseApiController
     }
 
     /**
-     * 删除合同文件
+     * Delete contract文件
      */
     public function deleteFile(Contract $contract, $fileId)
     {
         $file = $contract->files()->where('id', $fileId)->first();
         if (!$file) {
-            return $this->error('文件不存在', 404);
+            return $this->error('File not found', 404);
         }
 
         \Illuminate\Support\Facades\Storage::disk($file->disk)->delete($file->path);
         $file->delete();
 
-        return $this->success(null, '文件删除成功');
+        return $this->success(null, 'File deleted successfully');
     }
 
     /**
@@ -157,7 +157,7 @@ class ContractController extends BaseApiController
             'created_by' => $request->user()->id,
         ]);
 
-        return $this->success($discussion->load('creator'), '讨论添加成功', 201);
+        return $this->success($discussion->load('creator'), 'Discussion added successfully', 201);
     }
 
     /**

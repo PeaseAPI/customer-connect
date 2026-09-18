@@ -26,7 +26,7 @@ class ApprovalController extends BaseApiController
         $validated['user_id'] = Auth::id();
         $validated['company_id'] = $request->attributes->get('company_id');
         $approval = $this->approvalService->create($validated);
-        return $this->success($approval, '审批申请提交成功', 201);
+        return $this->success($approval, 'Approval request submitted successfully', 201);
     }
 
     public function show(ApprovalRequest $approval)
@@ -43,7 +43,7 @@ class ApprovalController extends BaseApiController
     public function approve(Request $request, ApprovalRequest $approvalRequest)
     {
         $this->approvalService->approve($approvalRequest, $request->remark);
-        return $this->success(null, '审批通过');
+        return $this->success(null, 'Approval approved');
     }
 
     public function reject(Request $request, ApprovalRequest $approvalRequest)

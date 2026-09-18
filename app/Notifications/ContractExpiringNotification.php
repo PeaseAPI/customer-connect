@@ -25,7 +25,7 @@ class ContractExpiringNotification extends Notification
             'contract_title' => $this->contract->title,
             'client_name' => $this->contract->client?->name,
             'end_date' => $this->contract->end_date?->toDateString(),
-            'message' => "合同「{$this->contract->title}」将于{$this->days}天内到期",
+            'message' => "Contract "{$this->contract->title}" expires in {$this->days} days",
         ];
     }
 }

@@ -28,7 +28,7 @@ class PromotionController extends BaseApiController
         ]);
         $v['added_by'] = $request->user()->id;
         $v['company_id'] = $request->attributes->get('company_id');
-        return $this->success($this->promotionService->create($v)->load(['user', 'designation', 'department', 'creator']), '晋升记录创建成功', 201);
+        return $this->success($this->promotionService->create($v)->load(['user', 'designation', 'department', 'creator']), 'Promotion record created successfully', 201);
     }
 
     public function show(Promotion $promotion) { return $this->success($promotion->load(['user', 'designation', 'department', 'creator'])); }

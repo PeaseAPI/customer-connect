@@ -35,7 +35,7 @@ class ProductController extends BaseApiController
 
         return $this->success(
             $this->productService->create($validated)->load(['category', 'tax', 'creator']),
-            '产品创建成功',
+            'Product created successfully',
             201
         );
     }

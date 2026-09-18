@@ -39,7 +39,7 @@ class ClientController extends BaseApiController
 
         $client = $this->clientService->create($validated);
 
-        return $this->success($client->load('clientDetail'), '客户创建成功', 201);
+        return $this->success($client->load('clientDetail'), 'ClientCreated successfully', 201);
     }
 
     public function show(User $client)
@@ -84,7 +84,7 @@ class ClientController extends BaseApiController
             $request->user()->id
         );
 
-        return $this->success(['file_path' => $filePath], '导出任务已提交，完成后将通知您');
+        return $this->success(['file_path' => $filePath], 'Export task submitted, you will be notified when complete');
     }
 
     public function import(Request $request)
@@ -102,11 +102,11 @@ class ClientController extends BaseApiController
             $request->user()->id
         );
 
-        return $this->success(null, '导入任务已提交，完成后将通知您');
+        return $this->success(null, 'Import task submitted, you will be notified when complete');
     }
 
     /**
-     * 批量删除客户
+     * 批量删除Client
      */
     public function batchDelete(Request $request)
     {
@@ -124,11 +124,11 @@ class ClientController extends BaseApiController
             }
         }
 
-        return $this->success(['deleted' => $deleted], "已删除 {$deleted} 个客户");
+        return $this->success(['deleted' => $deleted], "Deleted {$deleted} clients");
     }
 
     /**
-     * 批量变更客户分类
+     * 批量变更Client分类
      */
     public function batchChangeCategory(Request $request)
     {
@@ -147,11 +147,11 @@ class ClientController extends BaseApiController
             }
         }
 
-        return $this->success(['updated' => $updated], "已更新 {$updated} 个客户分类");
+        return $this->success(['updated' => $updated], "Updated {$updated} client categories");
     }
 
     /**
-     * 批量变更客户状态
+     * 批量变更ClientStatus
      */
     public function batchChangeStatus(Request $request)
     {
@@ -165,6 +165,6 @@ class ClientController extends BaseApiController
             ->whereHas('roles', fn($q) => $q->where('name', 'client'))
             ->update(['status' => $validated['status']]);
 
-        return $this->success(['updated' => $updated], "已更新 {$updated} 个客户状态");
+        return $this->success(['updated' => $updated], "Updated {$updated} client statuses");
     }
 }

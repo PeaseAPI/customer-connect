@@ -27,7 +27,7 @@ class ImportCompletedNotification extends Notification
             'imported_count' => $this->importedCount,
             'failed_count' => $this->failedCount,
             'errors' => array_slice($this->errors, 0, 10),
-            'message' => "导入完成：成功 {$this->importedCount} 条，失败 {$this->failedCount} 条",
+            'message' => "Import completed: {$this->importedCount} succeeded, {$this->failedCount} failed",
         ];
     }
 

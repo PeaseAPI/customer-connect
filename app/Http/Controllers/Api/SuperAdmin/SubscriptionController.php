@@ -40,7 +40,7 @@ class SubscriptionController extends BaseApiController
         ]);
 
         $subscription = Subscription::create($validated);
-        return $this->success($subscription->load(['company', 'package']), '订阅创建成功', 201);
+        return $this->success($subscription->load(['company', 'package']), 'Subscription created successfully', 201);
     }
 
     public function show(Subscription $subscription): JsonResponse
@@ -83,6 +83,6 @@ class SubscriptionController extends BaseApiController
             'status' => SubscriptionStatus::Active,
         ]);
 
-        return $this->success($subscription->fresh(), '订阅续费成功');
+        return $this->success($subscription->fresh(), 'Subscription renewed successfully');
     }
 }

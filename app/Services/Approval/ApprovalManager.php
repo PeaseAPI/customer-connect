@@ -12,7 +12,7 @@ class ApprovalManager
         return match ($provider) {
             'dingtalk' => new DingtalkApprovalService(),
             'internal' => new InternalApprovalService(),
-            default => throw new \InvalidArgumentException("不支持的审批服务: {$provider}"),
+            default => throw new \InvalidArgumentException("Unsupported approval service: {$provider}"),
         };
     }
 
@@ -21,7 +21,7 @@ class ApprovalManager
         try {
             return $this->driver($provider)->createInstance($data);
         } catch (\Exception $e) {
-            Log::error('创建审批实例失败', ['provider' => $provider, 'error' => $e->getMessage()]);
+            Log::error('Failed to create approval instance', ['provider' => $provider, 'error' => $e->getMessage()]);
             return '';
         }
     }

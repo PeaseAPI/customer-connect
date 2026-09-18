@@ -24,15 +24,15 @@ class AuthController extends BaseApiController
         $throttleKey = Str::transliterate(Str::lower($request->input('email')).'|'.$request->ip());
         if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
             $seconds = RateLimiter::availableIn($throttleKey);
-            throw ValidationException::withMessages(['email' => ["登录尝试次数过多，请 {$seconds} 秒后再试"]]);
+            throw ValidationException::withMessages(['email' => ["Too many login attempts, please {$seconds} seconds before trying again"]]);
         }
         $user = User::where('email', $request->email)->first();
         if (!$user || !Hash::check($request->password, $user->password)) {
             RateLimiter::hit($throttleKey);
-            throw ValidationException::withMessages(['email' => ['邮箱或密码错误']]);
+            throw ValidationException::withMessages(['email' => ['Email or password is incorrect']]);
         }
         if ($user->status !== UserStatus::Active) {
-            throw ValidationException::withMessages(['email' => ['账户已被禁用']]);
+            throw ValidationException::withMessages(['email' => ['Account has been disabled']]);
         }
 
         // 如果用户启用了2FA，返回需要验证2FA的响应
@@ -42,14 +42,14 @@ class AuthController extends BaseApiController
             return $this->success([
                 'requires_2fa' => true,
                 'temp_token' => $tempToken,
-            ], '请输入双因素认证验证码');
+            ], 'Please enter two-factor authentication code');
         }
 
         RateLimiter::clear($throttleKey);
         $user->update(['last_login' => now()]);
         Context::add('current_company_id', $user->company_id);
         $token = $user->createToken('auth-token')->plainTextToken;
-        return $this->success(['user' => $user->load(['company', 'employeeDetail', 'roles', 'permissions']), 'token' => $token, 'token_type' => 'Bearer'], '登录成功');
+        return $this->success(['user' => $user->load(['company', 'employeeDetail', 'roles', 'permissions']), 'token' => $token, 'token_type' => 'Bearer'], 'Login successful');
     }
 
     /**
@@ -64,12 +64,12 @@ class AuthController extends BaseApiController
 
         $userId = Cache::get("2fa_pending:{$request->temp_token}");
         if (!$userId) {
-            return $this->error('验证令牌已过期，请重新登录', 400);
+            return $this->error('Verification token expired, please log in again', 400);
         }
 
         $user = User::find($userId);
         if (!$user) {
-            return $this->error('用户不存在', 404);
+            return $this->error('User not found', 404);
         }
 
         // 支持恢复码
@@ -89,7 +89,7 @@ class AuthController extends BaseApiController
             }
 
             if (!$valid) {
-                return $this->error('验证码错误', 400);
+                return $this->error('Verification code is incorrect', 400);
             }
         }
 
@@ -97,7 +97,7 @@ class AuthController extends BaseApiController
         $user->update(['last_login' => now()]);
         Context::add('current_company_id', $user->company_id);
         $token = $user->createToken('auth-token')->plainTextToken;
-        return $this->success(['user' => $user->load(['company', 'employeeDetail', 'roles', 'permissions']), 'token' => $token, 'token_type' => 'Bearer'], '登录成功');
+        return $this->success(['user' => $user->load(['company', 'employeeDetail', 'roles', 'permissions']), 'token' => $token, 'token_type' => 'Bearer'], 'Login successful');
     }
 
     /**
@@ -121,7 +121,7 @@ class AuthController extends BaseApiController
         return $this->success([
             'secret' => $secret,
             'qr_code_url' => $qrCodeUrl,
-        ], '请使用认证器App扫描二维码');
+        ], 'Please scan the QR code with your authenticator app');
     }
 
     /**
@@ -135,12 +135,12 @@ class AuthController extends BaseApiController
         $secret = Cache::get("2fa_setup:{$user->id}");
 
         if (!$secret) {
-            return $this->error('设置会话已过期，请重新初始化', 400);
+            return $this->error('Setup session expired, please re-initialize', 400);
         }
 
         $google2fa = new Google2FA();
         if (!$google2fa->verifyKey($secret, $request->code)) {
-            return $this->error('验证码错误', 400);
+            return $this->error('Verification code is incorrect', 400);
         }
 
         $user->update([
@@ -156,7 +156,7 @@ class AuthController extends BaseApiController
 
         return $this->success([
             'recovery_codes' => $recoveryCodes,
-        ], '双因素认证已启用，请妥善保存恢复码');
+        ], 'Two-factor authentication enabled, please save your recovery codes');
     }
 
     /**
@@ -168,7 +168,7 @@ class AuthController extends BaseApiController
 
         $user = $request->user();
         if (!Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages(['password' => ['密码错误']]);
+            throw ValidationException::withMessages(['password' => ['Password is incorrect']]);
         }
 
         $user->update([
@@ -178,7 +178,7 @@ class AuthController extends BaseApiController
 
         Cache::forget("2fa_recovery:{$user->id}");
 
-        return $this->success(null, '双因素认证已禁用');
+        return $this->success(null, 'Two-factor authentication disabled');
     }
 
     public function register(Request $request): JsonResponse
@@ -195,65 +195,65 @@ class AuthController extends BaseApiController
         \App\Models\OrganisationSetting::create(['company_id' => $company->id, 'company_name' => $validated['company_name'], 'company_email' => $validated['company_email']]);
         Context::add('current_company_id', $company->id);
         $token = $user->createToken('auth-token')->plainTextToken;
-                return $this->success(['user' => $user->load(['company', 'roles']), 'token' => $token], '注册成功', 201);
+                return $this->success(['user' => $user->load(['company', 'roles']), 'token' => $token], 'Registration successful', 201);
     }
 
     public function sendSmsCode(Request $request): JsonResponse
     {
         $request->validate(['mobile' => 'required|string|max:20', 'purpose' => 'required|in:login,register,reset_password']);
         $throttleKey = 'sms:'.$request->mobile;
-        if (RateLimiter::tooManyAttempts($throttleKey, 1)) { return $this->error('发送过于频繁', 429); }
+        if (RateLimiter::tooManyAttempts($throttleKey, 1)) { return $this->error('Sent too frequently', 429); }
         $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
         cache()->put("sms_code:{$request->mobile}:{$request->purpose}", $code, now()->addMinutes(5));
         RateLimiter::hit($throttleKey, 60);
-        return $this->success(null, '验证码已发送');
+        return $this->success(null, 'Verification code sent');
     }
 
     public function loginWithSms(Request $request): JsonResponse
     {
         $request->validate(['mobile' => 'required|string|max:20', 'code' => 'required|string|size:6']);
         $cachedCode = cache()->get("sms_code:{$request->mobile}:login");
-        if (!$cachedCode || $cachedCode !== $request->code) { return $this->error('验证码错误', 400); }
+        if (!$cachedCode || $cachedCode !== $request->code) { return $this->error('Verification code is incorrect', 400); }
         cache()->forget("sms_code:{$request->mobile}:login");
         $user = User::where('mobile', $request->mobile)->first();
-        if (!$user) return $this->error('该手机号未注册', 404);
-        if ($user->status !== UserStatus::Active) return $this->error('账户已被禁用', 403);
+        if (!$user) return $this->error('This phone number is not registered', 404);
+        if ($user->status !== UserStatus::Active) return $this->error('Account has been disabled', 403);
         $user->update(['last_login' => now()]);
         Context::add('current_company_id', $user->company_id);
         $token = $user->createToken('auth-token')->plainTextToken;
-        return $this->success(['user' => $user->load(['company', 'roles']), 'token' => $token], '登录成功');
+        return $this->success(['user' => $user->load(['company', 'roles']), 'token' => $token], 'Login successful');
     }
 
-    public function loginWithWechat(Request $request): JsonResponse { return $this->error('微信登录暂未开放', 501); }
-    public function loginWithDingtalk(Request $request): JsonResponse { return $this->error('钉钉登录暂未开放', 501); }
-    public function loginWithFeishu(Request $request): JsonResponse { return $this->error('飞书登录暂未开放', 501); }
-    public function loginWithWework(Request $request): JsonResponse { return $this->error('企微登录暂未开放', 501); }
+    public function loginWithWechat(Request $request): JsonResponse { return $this->error('WeChat login not yet available', 501); }
+    public function loginWithDingtalk(Request $request): JsonResponse { return $this->error('DingTalk login not yet available', 501); }
+    public function loginWithFeishu(Request $request): JsonResponse { return $this->error('Feishu login not yet available', 501); }
+    public function loginWithWework(Request $request): JsonResponse { return $this->error('WeCom login not yet available', 501); }
 
     /**
-     * 发送邮箱验证码
+     * 发送Email验证码
      */
     public function sendEmailVerification(Request $request): JsonResponse
     {
         $user = $request->user();
         if ($user->hasVerifiedEmail()) {
-            return $this->error('邮箱已验证', 400);
+            return $this->error('Email verified', 400);
         }
         $throttleKey = "email_verify:{$user->id}";
         if (RateLimiter::tooManyAttempts($throttleKey, 3)) {
-            return $this->error('发送过于频繁，请稍后再试', 429);
+            return $this->error('Sent too frequently, please try again later', 429);
         }
         $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
         Cache::put("email_verify:{$user->id}", $code, now()->addMinutes(10));
         Mail::raw(
-            "您的邮箱验证码是：{$code}，10分钟内有效。",
-            fn($message) => $message->to($user->email)->subject('邮箱验证 - ' . config('app.name'))
+            "Your email verification code is：{$code}，Valid for 10 minutes.",
+            fn($message) => $message->to($user->email)->subject('Email Verification - ' . config('app.name'))
         );
         RateLimiter::hit($throttleKey, 60);
-        return $this->success(null, '验证邮件已发送');
+        return $this->success(null, 'Verification email sent');
     }
 
     /**
-     * 验证邮箱
+     * 验证Email
      */
     public function verifyEmail(Request $request): JsonResponse
     {
@@ -261,23 +261,23 @@ class AuthController extends BaseApiController
         $user = $request->user();
         $cachedCode = Cache::get("email_verify:{$user->id}");
         if (!$cachedCode || $cachedCode !== $request->code) {
-            return $this->error('验证码错误', 400);
+            return $this->error('Verification code is incorrect', 400);
         }
         $user->markEmailAsVerified();
         Cache::forget("email_verify:{$user->id}");
-        return $this->success(null, '邮箱验证成功');
+        return $this->success(null, 'Email verified successfully');
     }
 
     /**
-     * 管理员手动验证用户邮箱
+     * Admin手动验证用户Email
      */
     public function adminVerifyEmail(Request $request, User $user): JsonResponse
     {
         if (!$request->user()->isAdmin() && !$request->user()->isSuperAdmin()) {
-            return $this->error('无权操作', 403);
+            return $this->error('No permission to operate', 403);
         }
         $user->markEmailAsVerified();
-        return $this->success(null, '邮箱已手动验证');
+        return $this->success(null, 'Email manually verified');
     }
         public function forgotPassword(Request $request): JsonResponse
     {
@@ -290,11 +290,11 @@ class AuthController extends BaseApiController
             ], now()->addHour());
             $resetUrl = config('app.frontend_url') . "/reset-password?token={$resetToken}";
             Mail::raw(
-                "您正在重置密码，请点击链接：\n\n{$resetUrl}\n\n此链接1小时内有效。",
-                fn($message) => $message->to($user->email)->subject('密码重置 - ' . config('app.name'))
+                "You are resetting your password, please click the link:\n\n{$resetUrl}\n\nThis link is valid for 1 hour.",
+                fn($message) => $message->to($user->email)->subject('Password Reset - ' . config('app.name'))
             );
         }
-        return $this->success(null, '如果该邮箱已注册，重置邮件已发送');
+        return $this->success(null, 'If this email is registered, a reset email has been sent');
     }
 
     public function resetPassword(Request $request): JsonResponse
@@ -305,14 +305,14 @@ class AuthController extends BaseApiController
         ]);
         $resetData = Cache::get("password_reset:{$validated['token']}");
         if (!$resetData) {
-            return $this->error('重置链接已过期或无效', 400);
+            return $this->error('Reset link has expired or is invalid', 400);
         }
         $user = User::find($resetData['user_id']);
-        if (!$user) { return $this->error('用户不存在', 404); }
+        if (!$user) { return $this->error('User not found', 404); }
         $user->update(['password' => $validated['password']]);
         $user->tokens()->delete();
         Cache::forget("password_reset:{$validated['token']}");
-        return $this->success(null, '密码重置成功');
+        return $this->success(null, 'Password reset successfully');
     }
 
     /**
@@ -345,7 +345,7 @@ class AuthController extends BaseApiController
         $user = $request->user();
         $companyId = $request->input('company_id');
         $userAuth = $user->userAuths()->where('company_id', $companyId)->first();
-        if (!$userAuth) { return $this->error('您不属于该公司', 403); }
+        if (!$userAuth) { return $this->error('You do not belong to this company', 403); }
         $user->update(['company_id' => $companyId]);
         Context::add('current_company_id', $companyId);
         $user->tokens()->delete();
@@ -353,11 +353,11 @@ class AuthController extends BaseApiController
         return $this->success([
             'user' => $user->fresh()->load(['company', 'employeeDetail', 'roles', 'permissions']),
             'token' => $token, 'token_type' => 'Bearer',
-        ], '公司切换成功');
+        ], 'Company switched successfully');
     }
 
     /**
-     * 邀请用户注册
+     * Invite user to register
      */
     public function inviteUser(Request $request): JsonResponse
     {
@@ -375,14 +375,14 @@ class AuthController extends BaseApiController
         ], now()->addDays(7));
         $inviteUrl = config('app.frontend_url') . "/register?invite_token={$inviteToken}";
         Mail::raw(
-            "您已被邀请加入 {$user->company?->company_name}，请点击链接完成注册：\n\n{$inviteUrl}\n\n此链接7天内有效。",
-            fn($message) => $message->to($validated['email'])->subject('加入邀请 - ' . config('app.name'))
+            "You have been invited to join {$user->company?->company_name}，Please click the link to complete registration：\n\n{$inviteUrl}\n\nThis link is valid for 7 days.",
+            fn($message) => $message->to($validated['email'])->subject('Invitation to join - ' . config('app.name'))
         );
-        return $this->success(['invite_token' => $inviteToken], '邀请邮件已发送');
+        return $this->success(['invite_token' => $inviteToken], 'Invitation email sent');
     }
 
     /**
-     * 通过邀请链接注册
+     * Register via invitation link
      */
     public function registerWithInvite(Request $request): JsonResponse
     {
@@ -392,9 +392,9 @@ class AuthController extends BaseApiController
             'mobile' => 'nullable|string|max:20',
         ]);
         $inviteData = Cache::get("invite:{$validated['invite_token']}");
-        if (!$inviteData) { return $this->error('邀请链接已过期或无效', 400); }
+        if (!$inviteData) { return $this->error('Invitation link has expired or is invalid', 400); }
         if (User::where('email', $inviteData['email'])->exists()) {
-            return $this->error('该邮箱已注册', 400);
+            return $this->error('This email is already registered', 400);
         }
         $user = User::create([
             'company_id' => $inviteData['company_id'], 'name' => $inviteData['name'],
@@ -406,7 +406,7 @@ class AuthController extends BaseApiController
         Cache::forget("invite:{$validated['invite_token']}");
         Context::add('current_company_id', $inviteData['company_id']);
         $token = $user->createToken('auth-token')->plainTextToken;
-        return $this->success(['user' => $user->load(['company', 'roles']), 'token' => $token], '注册成功', 201);
+        return $this->success(['user' => $user->load(['company', 'roles']), 'token' => $token], 'Registration successful', 201);
     }
 
     public function profile(Request $request): JsonResponse
@@ -425,17 +425,17 @@ class AuthController extends BaseApiController
     {
         $request->validate(['current_password' => 'required|string', 'password' => 'required|string|min:8|confirmed']);
         if (!Hash::check($request->current_password, $request->user()->password)) {
-            throw ValidationException::withMessages(['current_password' => ['当前密码错误']]);
+            throw ValidationException::withMessages(['current_password' => ['Current password is incorrect']]);
         }
                 $request->user()->update(['password' => $request->password]);
-        return $this->success(null, '密码修改成功');
+        return $this->success(null, 'Password changed successfully');
     }
 
-    public function logout(Request $request): JsonResponse { $request->user()->currentAccessToken()->delete(); return $this->success(null, '已退出登录'); }
-    public function logoutAll(Request $request): JsonResponse { $request->user()->tokens()->delete(); return $this->success(null, '已退出所有设备'); }
+    public function logout(Request $request): JsonResponse { $request->user()->currentAccessToken()->delete(); return $this->success(null, 'Logged out successfully'); }
+    public function logoutAll(Request $request): JsonResponse { $request->user()->tokens()->delete(); return $this->success(null, 'Logged out from all devices'); }
 
     /**
-     * 接受员工邀请 — 设置密码并激活账户
+     * Accept employee invitation - set password and activate account
      */
     public function acceptEmployeeInvite(Request $request): JsonResponse
     {
@@ -446,7 +446,7 @@ class AuthController extends BaseApiController
 
         $inviteData = Cache::get("employee_invite:{$validated['token']}");
         if (!$inviteData) {
-            return $this->error('邀请链接无效或已过期', 400);
+            return $this->error('Invitation link is invalid or expired', 400);
         }
 
         $user = User::create([
@@ -472,7 +472,7 @@ class AuthController extends BaseApiController
             'user' => $user->load(['employeeDetail', 'roles', 'permissions']),
             'token' => $token,
             'token_type' => 'Bearer',
-        ], '账户激活成功');
+        ], 'Account activated successfully');
     }
 }
 

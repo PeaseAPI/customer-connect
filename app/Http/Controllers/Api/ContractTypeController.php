@@ -25,7 +25,7 @@ class ContractTypeController extends BaseApiController
 
         $validated['company_id'] = $request->attributes->get('company_id');
 
-        return $this->success($this->contractTypeService->create($validated), '合同类型创建成功', 201);
+        return $this->success($this->contractTypeService->create($validated), 'Contract type created successfully', 201);
     }
 
     public function show(ContractType $contractType)

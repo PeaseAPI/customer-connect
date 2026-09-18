@@ -29,7 +29,7 @@ class CompanyAddressController extends BaseApiController
 
         $validated['company_id'] = $request->user()->company_id;
 
-        return $this->success($this->companyAddressService->create($validated), '公司地址创建成功', 201);
+        return $this->success($this->companyAddressService->create($validated), 'Company address created successfully', 201);
     }
 
     public function show(CompanyAddress $companyAddress)

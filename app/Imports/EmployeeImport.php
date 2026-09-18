@@ -30,35 +30,35 @@ class EmployeeImport implements ToCollection, WithHeadingRow
 
                 if ($validator->fails()) {
                     $this->failedCount++;
-                    $this->errors[] = "第" . ($index + 2) . "行: " . implode(', ', $validator->errors()->all());
+                    $this->errors[] = "No." . ($index + 2) . "Row: " . implode(', ', $validator->errors()->all());
                     continue;
                 }
 
                 $user = User::create([
                     'name' => $row['name'],
                     'email' => $row['email'],
-                    'mobile' => $row['mobile'] ?? $row['手机号'] ?? null,
+                    'mobile' => $row['mobile'] ?? $row['Phone number'] ?? null,
                     'password' => Str::random(12),
                     'status' => UserStatus::Active,
                     'company_id' => $this->companyId,
                 ]);
 
                 $user->employeeDetail()->create([
-                    'department_id' => $row['department_id'] ?? $row['部门ID'] ?? null,
-                    'designation_id' => $row['designation_id'] ?? $row['职位ID'] ?? null,
-                    'joining_date' => $row['joining_date'] ?? $row['入职日期'] ?? null,
+                    'department_id' => $row['department_id'] ?? $row['DepartmentID'] ?? null,
+                    'designation_id' => $row['designation_id'] ?? $row['PositionID'] ?? null,
+                    'joining_date' => $row['joining_date'] ?? $row['Join Date'] ?? null,
                     'salary' => $row['salary'] ?? $row['salary'] ?? null,
-                    'hourly_rate' => $row['hourly_rate'] ?? $row['时薪'] ?? null,
-                    'date_of_birth' => $row['date_of_birth'] ?? $row['出生日期'] ?? null,
-                    'gender' => $row['gender'] ?? $row['性别'] ?? null,
-                    'address' => $row['address'] ?? $row['地址'] ?? null,
+                    'hourly_rate' => $row['hourly_rate'] ?? $row['Hourly rate'] ?? null,
+                    'date_of_birth' => $row['date_of_birth'] ?? $row['Date of Birth'] ?? null,
+                    'gender' => $row['gender'] ?? $row['Gender'] ?? null,
+                    'address' => $row['address'] ?? $row['Address'] ?? null,
                 ]);
 
                 $user->assignRole('employee');
                 $this->importedCount++;
             } catch (\Exception $e) {
                 $this->failedCount++;
-                $this->errors[] = "第" . ($index + 2) . "行: " . $e->getMessage();
+                $this->errors[] = "No." . ($index + 2) . "Row: " . $e->getMessage();
             }
         }
     }

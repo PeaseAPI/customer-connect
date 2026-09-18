@@ -33,7 +33,7 @@ class PurchaseRequestController extends BaseApiController
         $validated['requested_by'] = $request->user()->id;
 
         $purchaseRequest = $this->procurementService->createPurchaseRequest($validated);
-        return $this->success($purchaseRequest->load(['requester', 'vendor']), '采购申请创建成功', 201);
+        return $this->success($purchaseRequest->load(['requester', 'vendor']), 'Purchase request created successfully', 201);
     }
 
     public function show(PurchaseRequest $purchaseRequest)
@@ -67,7 +67,7 @@ class PurchaseRequestController extends BaseApiController
                 $purchaseRequest,
                 $request->user()->id
             );
-            return $this->success($purchaseRequest->load(['requester', 'vendor', 'approver']), '审批通过');
+            return $this->success($purchaseRequest->load(['requester', 'vendor', 'approver']), 'Approval approved');
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), 400);
         }

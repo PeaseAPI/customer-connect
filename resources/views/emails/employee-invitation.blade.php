@@ -1,15 +1,15 @@
 @component('mail::message')
-# 邀请您加入 {{ $companyName }}
+# invites you to join {{ $companyName }}
 
-你好 {{ $employeeName }}，
+Hello {{ $employeeName }}，
 
-{{ $inviterName }} 邀请您加入 **{{ $companyName }}** 团队。
+{{ $inviterName }} invites you to join **{{ $companyName }}** team.
 
 @component('mail::button', ['url' => $acceptUrl])
-接受邀请
+Accept Invitation
 @endcomponent
 
-此邀请链接7天内有效。如果您未预期收到此邮件，请忽略。
+此邀请链接7天内有效。If you did not expect this email, please ignore it.
 
-谢谢！
+Thanks!
 @endcomponent

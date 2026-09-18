@@ -19,7 +19,7 @@ class NotificationSettingService
             ->map(fn($items) => $items->keyBy('channel'))
             ->toArray();
 
-        // 补全默认通知类型
+        // 补全默认Notification type
         $defaultTypes = $this->getDefaultNotificationTypes();
         $result = [];
         foreach ($defaultTypes as $type => $label) {
@@ -50,7 +50,7 @@ class NotificationSettingService
     }
 
     /**
-     * 更新用户通知设置
+     * Update user notification settings
      */
     public function updateUserSettings(int $userId, int $companyId, array $data): void
     {
@@ -96,7 +96,7 @@ class NotificationSettingService
     }
 
     /**
-     * 获取管理员全局通知设置
+     * 获取Admin全局通知设置
      */
     public function getCompanySettings(int $companyId): array
     {
@@ -115,31 +115,31 @@ class NotificationSettingService
     }
 
     /**
-     * 默认通知类型列表
+     * 默认Notification type列表
      */
     private function getDefaultNotificationTypes(): array
     {
         return [
-            'task_assigned' => '任务分配',
-            'task_updated' => '任务更新',
-            'task_completed' => '任务完成',
-            'task_comment' => '任务评论',
-            'project_created' => '项目创建',
-            'project_updated' => '项目更新',
-            'leave_request' => '请假申请',
-            'leave_status' => '请假审批结果',
-            'attendance_anomaly' => '考勤异常',
-            'ticket_created' => '工单创建',
-            'ticket_updated' => '工单更新',
-            'invoice_created' => '发票创建',
-            'payment_received' => '收款通知',
-            'contract_expiring' => '合同到期提醒',
-            'contract_status' => '合同状态变更',
-            'lead_assigned' => '线索分配',
-            'lead_follow_up' => '线索跟进提醒',
-            'event_reminder' => '事件提醒',
-            'birthday_reminder' => '生日提醒',
-            'announcement' => '公告通知',
+            'task_assigned' => 'Task assigned',
+            'task_updated' => 'Task updated',
+            'task_completed' => 'Task completed',
+            'task_comment' => 'Task comment',
+            'project_created' => 'Project created',
+            'project_updated' => 'Project updated',
+            'leave_request' => 'Leave request',
+            'leave_status' => 'Leave approval result',
+            'attendance_anomaly' => 'Attendance exception',
+            'ticket_created' => 'Ticket created',
+            'ticket_updated' => 'Ticket updated',
+            'invoice_created' => 'Invoice created',
+            'payment_received' => 'Payment notification',
+            'contract_expiring' => 'Contract expiry reminder',
+            'contract_status' => 'Contract status changed',
+            'lead_assigned' => 'Lead assigned',
+            'lead_follow_up' => 'Lead follow-up reminder',
+            'event_reminder' => 'Event reminder',
+            'birthday_reminder' => 'Birthday reminder',
+            'announcement' => 'Announcement',
         ];
     }
 }

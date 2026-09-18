@@ -28,20 +28,20 @@ class ProcessRecurringInvoice implements ShouldQueue
                 return;
             }
 
-            // 检查是否该生成新发票
+            // 检查YesNo该生成新Invoice
             if (!$recurring->shouldGenerateNow()) {
                 return;
             }
 
-            // 生成发票
+            // 生成Invoice
             $invoice = $recurring->generateInvoice();
 
-            Log::info("循环发票 #{$recurring->id} 生成新发票 #{$invoice->id}");
+            Log::info("Recurring invoice #{$recurring->id} generated new invoice #{$invoice->id}");
 
             // 更新下次生成日期
             $recurring->updateNextDate();
         } catch (\Exception $e) {
-            Log::error('处理循环发票失败', [
+            Log::error('Failed to process recurring invoice', [
                 'recurring_id' => $this->recurringInvoiceId,
                 'error' => $e->getMessage(),
             ]);

@@ -11,7 +11,7 @@ class DatabaseBackupController extends BaseApiController
     public function __construct(protected DatabaseBackupService $backupService) {}
 
     /**
-     * 获取备份列表
+     * Get backup list
      */
     public function index(Request $request)
     {
@@ -21,17 +21,17 @@ class DatabaseBackupController extends BaseApiController
     }
 
     /**
-     * 创建新备份
+     * Create new backup
      */
     public function store(Request $request)
     {
         $companyId = $request->attributes->get('company_id');
         $backup = $this->backupService->create($companyId, $request->user()->id);
-        return $this->success($backup, '备份任务已创建', 201);
+        return $this->success($backup, 'Backup job created', 201);
     }
 
     /**
-     * 查看备份详情
+     * View backup details
      */
     public function show(DatabaseBackup $databaseBackup)
     {
@@ -39,16 +39,16 @@ class DatabaseBackupController extends BaseApiController
     }
 
     /**
-     * 下载备份文件
+     * Download backup file
      */
     public function download(DatabaseBackup $databaseBackup)
     {
         if ($databaseBackup->status !== 'completed') {
-            return $this->error('备份尚未完成', 400);
+            return $this->error('Backup not yet completed', 400);
         }
 
         if (!\Illuminate\Support\Facades\Storage::exists($databaseBackup->path)) {
-            return $this->error('备份文件不存在', 404);
+            return $this->error('Backup file not found', 404);
         }
 
         return \Illuminate\Support\Facades\Storage::download(
@@ -58,25 +58,25 @@ class DatabaseBackupController extends BaseApiController
     }
 
     /**
-     * 恢复备份
+     * Restore backup
      */
     public function restore(DatabaseBackup $databaseBackup)
     {
         $result = $this->backupService->restore($databaseBackup);
 
         if (!$result) {
-            return $this->error('无法恢复此备份', 400);
+            return $this->error('Cannot restore this backup', 400);
         }
 
-        return $this->success(null, '恢复请求已提交');
+        return $this->success(null, 'Restore request submitted');
     }
 
     /**
-     * 删除备份
+     * Delete backup
      */
     public function destroy(DatabaseBackup $databaseBackup)
     {
         $this->backupService->delete($databaseBackup);
-        return $this->success(null, '备份已删除');
+        return $this->success(null, 'Backup deleted');
     }
 }

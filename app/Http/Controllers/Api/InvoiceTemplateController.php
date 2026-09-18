@@ -11,7 +11,7 @@ class InvoiceTemplateController extends BaseApiController
     public function __construct(protected InvoiceTemplateService $templateService) {}
 
     /**
-     * 列出发票模板
+     * List invoice templates
      */
     public function index(Request $request)
     {
@@ -21,7 +21,7 @@ class InvoiceTemplateController extends BaseApiController
     }
 
     /**
-     * 创建发票模板
+     * Create invoice template
      */
     public function store(Request $request)
     {
@@ -47,7 +47,7 @@ class InvoiceTemplateController extends BaseApiController
     }
 
     /**
-     * 查看发票模板详情
+     * View invoice template details
      */
     public function show(InvoiceTemplate $invoiceTemplate)
     {
@@ -55,7 +55,7 @@ class InvoiceTemplateController extends BaseApiController
     }
 
     /**
-     * 更新发票模板
+     * Update invoice template
      */
     public function update(Request $request, InvoiceTemplate $invoiceTemplate)
     {
@@ -75,7 +75,7 @@ class InvoiceTemplateController extends BaseApiController
     }
 
     /**
-     * 删除发票模板
+     * Delete invoice template
      */
     public function destroy(InvoiceTemplate $invoiceTemplate)
     {
@@ -89,7 +89,7 @@ class InvoiceTemplateController extends BaseApiController
     public function setDefault(InvoiceTemplate $invoiceTemplate)
     {
         $template = $this->templateService->setDefault($invoiceTemplate);
-        return $this->success($template, '已设为默认模板');
+        return $this->success($template, 'Set as default template');
     }
 
     /**

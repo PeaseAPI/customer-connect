@@ -57,7 +57,7 @@ class InternalApprovalService implements ApprovalServiceInterface
             return (string) $approvalRequest->id;
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('创建内部审批实例失败', ['error' => $e->getMessage()]);
+            Log::error('Failed to create internal approval instance', ['error' => $e->getMessage()]);
             return '';
         }
     }
@@ -70,7 +70,7 @@ class InternalApprovalService implements ApprovalServiceInterface
 
     public function registerCallback(string $url): void
     {
-        // 内置审批不需要回调注册
+        // Internal approval不需要回调注册
     }
 
     public function testConnection(): bool
@@ -80,11 +80,11 @@ class InternalApprovalService implements ApprovalServiceInterface
 
     public function getConfig(): array
     {
-        return ['type' => 'internal', 'name' => '内置审批'];
+        return ['type' => 'internal', 'name' => 'Internal approval'];
     }
 
     public function setConfig(array $config): void
     {
-        // 内置审批无需额外配置
+        // Internal approval无需额外配置
     }
 }

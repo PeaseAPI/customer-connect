@@ -85,7 +85,7 @@ class RolePermissionSeeder extends Seeder
             $role->syncPermissions($rolePermissions);
         }
 
-        $this->command->info('已创建 ' . count($permissions) . ' 个权限和 ' . count($roles) . ' 个角色');
+        $this->command->info('Created ' . count($permissions) . ' permissions and ' . count($roles) . ' roles');
     }
 
     private function getModulePermissions(string $module, array $actions = null): array

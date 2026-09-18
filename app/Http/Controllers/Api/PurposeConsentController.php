@@ -29,7 +29,7 @@ class PurposeConsentController extends BaseApiController
     {
         $v = $request->validated();
         $v['company_id'] = $request->attributes->get('company_id');
-        return $this->success($this->purposeConsentService->create($v)->load(['consentUsers', 'consentLeads']), '同意目的创建成功', 201);
+        return $this->success($this->purposeConsentService->create($v)->load(['consentUsers', 'consentLeads']), 'Consent purpose created successfully', 201);
     }
 
     public function show(PurposeConsent $purposeConsent)
@@ -56,7 +56,7 @@ class PurposeConsentController extends BaseApiController
         $v = $request->validated();
         return $this->success(
             $this->purposeConsentService->consentUser($consentId, $v, $request->ip(), $request->userAgent(), $request->attributes->get('company_id')),
-            '用户同意记录成功',
+            'User consent recorded successfully',
             201
         );
     }
@@ -67,7 +67,7 @@ class PurposeConsentController extends BaseApiController
         $v = $request->validated();
         return $this->success(
             $this->purposeConsentService->consentLead($consentId, $v, $request->ip(), $request->userAgent(), $request->attributes->get('company_id')),
-            '线索同意记录成功',
+            'Lead consent recorded successfully',
             201
         );
     }
@@ -84,19 +84,19 @@ class PurposeConsentController extends BaseApiController
         $v = $request->validated();
         $v['status'] = ApprovalStatus::Pending;
         $v['company_id'] = $request->attributes->get('company_id');
-        return $this->success($this->purposeConsentService->storeRemovalRequest($v), '数据删除请求创建成功', 201);
+        return $this->success($this->purposeConsentService->storeRemovalRequest($v), 'Data deletion request created successfully', 201);
     }
 
     public function approveRemovalRequest(Request $request, RemovalRequest $removalRequest)
     {
         $removalRequest = $this->purposeConsentService->approveRemovalRequest($removalRequest, $request->user()->id);
-        return $this->success($removalRequest, '数据删除请求已批准');
+        return $this->success($removalRequest, 'Data deletion request approved');
     }
 
     public function rejectRemovalRequest(Request $request, RemovalRequest $removalRequest)
     {
         $removalRequest = $this->purposeConsentService->rejectRemovalRequest($removalRequest, $request->user()->id);
-        return $this->success($removalRequest, '数据删除请求已拒绝');
+        return $this->success($removalRequest, 'Data deletion request rejected');
     }
 
     // Lead removal requests
@@ -111,6 +111,6 @@ class PurposeConsentController extends BaseApiController
         $v = $request->validated();
         $v['status'] = ApprovalStatus::Pending;
         $v['company_id'] = $request->attributes->get('company_id');
-        return $this->success($this->purposeConsentService->storeLeadRemovalRequest($v), '线索数据删除请求创建成功', 201);
+        return $this->success($this->purposeConsentService->storeLeadRemovalRequest($v), 'Lead data deletion request created successfully', 201);
     }
 }

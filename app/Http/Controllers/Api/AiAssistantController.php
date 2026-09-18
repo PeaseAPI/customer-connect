@@ -22,7 +22,7 @@ class AiAssistantController extends BaseApiController
     }
 
     /**
-     * 创建新对话
+     * 创建New conversation
      */
     public function store(Request $request)
     {
@@ -37,7 +37,7 @@ class AiAssistantController extends BaseApiController
             $validated['context'] ?? []
         );
 
-        return $this->success($conversation, '对话创建成功', 201);
+        return $this->success($conversation, 'Conversation created successfully', 201);
     }
 
     /**
@@ -95,6 +95,6 @@ class AiAssistantController extends BaseApiController
     public function destroy(Request $request, int $conversation)
     {
         $this->aiService->deleteConversation($conversation, $request->user()->id);
-        return $this->success(null, '对话已删除');
+        return $this->success(null, 'Conversation deleted');
     }
 }

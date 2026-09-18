@@ -44,7 +44,7 @@ class CreditNoteController extends BaseApiController
 
         $creditNote = $this->creditNoteService->create($validated, $items);
 
-        return $this->success($creditNote->load(['client', 'currency', 'items']), '信用票据创建成功', 201);
+        return $this->success($creditNote->load(['client', 'currency', 'items']), 'Credit note created successfully', 201);
     }
 
     public function show(CreditNote $creditNote)

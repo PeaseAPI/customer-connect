@@ -25,7 +25,7 @@ class ProjectTimeLogController extends BaseApiController
         $v['project_id'] = $projectId;
         $v['added_by'] = $request->user()->id;
         $v['editor'] = 'admin';
-        return $this->success($this->projectTimeLogService->create($v)->load(['user', 'task', 'creator']), '时间记录创建成功', 201);
+        return $this->success($this->projectTimeLogService->create($v)->load(['user', 'task', 'creator']), 'Time record created successfully', 201);
     }
 
     public function show($projectId, ProjectTimeLog $timeLog)
@@ -50,12 +50,12 @@ class ProjectTimeLogController extends BaseApiController
     public function startBreak(Request $request, $projectId, ProjectTimeLog $timeLog)
     {
         $break = $this->projectTimeLogService->startBreak($timeLog, $request->user()->company_id);
-        return $this->success($break, '休息开始', 201);
+        return $this->success($break, 'Break started', 201);
     }
 
     public function endBreak(Request $request, $projectId, ProjectTimeLog $timeLog, ProjectTimeLogBreak $breakLog)
     {
         $breakLog = $this->projectTimeLogService->endBreak($breakLog);
-        return $this->success($breakLog, '休息结束');
+        return $this->success($breakLog, 'Break ended');
     }
 }

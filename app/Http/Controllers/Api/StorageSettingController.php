@@ -54,11 +54,11 @@ class StorageSettingController extends BaseApiController
         ]);
 
         $setting = $this->storageSettingService->update($companyId, $validated);
-        return $this->success($setting, '存储设置更新成功');
+        return $this->success($setting, 'Storage settings updated successfully');
     }
 
     /**
-     * 测试存储连接
+     * Test storage connection
      */
     public function testConnection()
     {

@@ -54,7 +54,7 @@ class SalaryService
                 ->where('is_active', true)->first();
 
             if (!$structure) {
-                throw new \Exception('该员工没有活跃的薪资结构');
+                throw new \Exception('This employee has no active salary structure');
             }
 
             return Payslip::updateOrCreate(
@@ -134,7 +134,7 @@ class SalaryService
 
     private function calculateTax(float $grossSalary): float
     {
-        // 简化的税率计算，实际应根据中国个税法
+        // 简化的税率计算，实际应根据China 税法
         if ($grossSalary <= 5000) return 0;
         if ($grossSalary <= 8000) return round(($grossSalary - 5000) * 0.03, 2);
         if ($grossSalary <= 17000) return round(($grossSalary - 5000) * 0.1 - 210, 2);

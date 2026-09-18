@@ -26,7 +26,7 @@ class KnowledgeBaseController extends BaseApiController
         ]);
                 $v['added_by'] = $request->user()->id;
         $v['company_id'] = $request->attributes->get('company_id');
-        return $this->success($this->knowledgeBaseService->create($v)->load(['category', 'creator']), '知识库文章创建成功', 201);
+        return $this->success($this->knowledgeBaseService->create($v)->load(['category', 'creator']), 'Knowledge base article created successfully', 201);
     }
 
     public function show(KnowledgeBase $knowledgeBase) { return $this->success($knowledgeBase->load(['category', 'creator'])); }

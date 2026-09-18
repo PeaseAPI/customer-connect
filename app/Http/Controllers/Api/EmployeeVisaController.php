@@ -36,7 +36,7 @@ class EmployeeVisaController extends BaseApiController
 
         return $this->success(
             $this->visaService->create($validated)->load(['creator']),
-            '签证记录创建成功',
+            'Visa record created successfully',
             201
         );
     }

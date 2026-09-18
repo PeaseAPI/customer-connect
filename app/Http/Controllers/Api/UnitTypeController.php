@@ -25,7 +25,7 @@ class UnitTypeController extends BaseApiController
 
         $validated['company_id'] = $request->attributes->get('company_id');
 
-        return $this->success($this->unitTypeService->create($validated), '计量单位创建成功', 201);
+        return $this->success($this->unitTypeService->create($validated), 'Unit of measurement created successfully', 201);
     }
 
     public function show(UnitType $unitType)

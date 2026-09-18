@@ -66,7 +66,7 @@ class LeaveController extends BaseApiController
     public function approve(Leave $leave)
     {
         $leave = $this->leaveService->approve($leave, Auth::id());
-        return $this->success(null, '审批通过');
+        return $this->success(null, 'Approval approved');
     }
 
     public function reject(Request $request, Leave $leave)

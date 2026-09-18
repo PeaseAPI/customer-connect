@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Context;
 class ActivityLogService
 {
     /**
-     * 获取活动日志列表
+     * 获取Activity log列表
      */
     public function list(int $companyId, array $filters = [], int $perPage = 15)
     {
@@ -51,7 +51,7 @@ class ActivityLogService
     }
 
     /**
-     * 获取某实体的活动日志
+     * 获取某实体的Activity log
      */
     public function getForSubject(string $subjectType, int $subjectId, int $perPage = 15)
     {

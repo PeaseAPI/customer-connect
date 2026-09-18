@@ -29,7 +29,7 @@ class NoticeController extends BaseApiController
         $validated['added_by'] = $request->user()->id;
 
         $notice = $this->noticeService->create($validated);
-        return $this->success($notice->load('creator'), '公告创建成功', 201);
+        return $this->success($notice->load('creator'), 'Announcement created successfully', 201);
     }
 
     public function show(Notice $notice)
@@ -60,6 +60,6 @@ class NoticeController extends BaseApiController
     public function markAsRead(Notice $notice, Request $request)
     {
         $this->noticeService->markAsRead($notice, $request->user()->id);
-        return $this->success(null, '已标记为已读');
+        return $this->success(null, 'Marked as read');
     }
 }

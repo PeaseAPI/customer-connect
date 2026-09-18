@@ -35,7 +35,7 @@ class SalaryStructureController extends BaseApiController
         $validated['company_id'] = $request->attributes->get('company_id');
 
         $structure = $this->salaryService->createStructure($validated);
-        return $this->success($structure->load('user'), '薪资结构创建成功', 201);
+        return $this->success($structure->load('user'), 'Salary structure created successfully', 201);
     }
 
     public function show(SalaryStructure $salaryStructure)

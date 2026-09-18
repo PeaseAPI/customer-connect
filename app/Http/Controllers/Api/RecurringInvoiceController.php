@@ -26,7 +26,7 @@ class RecurringInvoiceController extends BaseApiController
 
         $invoice = $this->recurringInvoiceService->create($v);
 
-        return $this->success($invoice->load(['client', 'project', 'currency', 'creator']), '循环发票创建成功', 201);
+        return $this->success($invoice->load(['client', 'project', 'currency', 'creator']), 'Recurring invoice created successfully', 201);
     }
 
     public function show(RecurringInvoice $recurringInvoice)

@@ -26,20 +26,20 @@ class LeadImport implements ToCollection, WithHeadingRow
 
                 if ($validator->fails()) {
                     $this->failedCount++;
-                    $this->errors[] = "第" . ($index + 2) . "行: " . implode(', ', $validator->errors()->all());
+                    $this->errors[] = "No." . ($index + 2) . "Row: " . implode(', ', $validator->errors()->all());
                     continue;
                 }
 
                 Lead::create([
                     'lead_name' => $row['lead_name'],
                     'lead_email' => $row['lead_email'] ?? $row['Email'] ?? null,
-                    'lead_mobile' => $row['lead_mobile'] ?? $row['手机号'] ?? null,
-                    'lead_address' => $row['lead_address'] ?? $row['地址'] ?? null,
-                    'agent_id' => $row['agent_id'] ?? $row['代理ID'] ?? null,
-                    'source_id' => $row['source_id'] ?? $row['来源ID'] ?? null,
-                    'status_id' => $row['status_id'] ?? $row['状态ID'] ?? null,
+                    'lead_mobile' => $row['lead_mobile'] ?? $row['Phone number'] ?? null,
+                    'lead_address' => $row['lead_address'] ?? $row['Address'] ?? null,
+                    'agent_id' => $row['agent_id'] ?? $row['Agent ID'] ?? null,
+                    'source_id' => $row['source_id'] ?? $row['SourceID'] ?? null,
+                    'status_id' => $row['status_id'] ?? $row['StatusID'] ?? null,
                     'pipeline_stage_id' => $row['pipeline_stage_id'] ?? null,
-                    'value' => $row['value'] ?? $row['价值'] ?? null,
+                    'value' => $row['value'] ?? $row['Value'] ?? null,
                     'next_follow_up' => $row['next_follow_up'] ?? null,
                     'company_id' => $this->companyId,
                     'created_by' => auth()->id(),
@@ -48,7 +48,7 @@ class LeadImport implements ToCollection, WithHeadingRow
                 $this->importedCount++;
             } catch (\Exception $e) {
                 $this->failedCount++;
-                $this->errors[] = "第" . ($index + 2) . "行: " . $e->getMessage();
+                $this->errors[] = "No." . ($index + 2) . "Row: " . $e->getMessage();
             }
         }
     }

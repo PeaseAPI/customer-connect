@@ -28,7 +28,7 @@ class ChatController extends BaseApiController
         $participantIds = $v['participant_ids'];
         unset($v['participant_ids']);
         $chat = $this->chatService->create($v, $participantIds);
-        return $this->success($chat->load(['participants', 'creator']), '聊天创建成功', 201);
+        return $this->success($chat->load(['participants', 'creator']), 'Chat created successfully', 201);
     }
 
     public function show(Chat $chat)
@@ -61,20 +61,20 @@ class ChatController extends BaseApiController
         $v['user_id'] = $request->user()->id;
         $v['company_id'] = $chat->company_id;
         $message = $this->chatService->sendMessage($chat, $v);
-        return $this->success($message->load(['user']), '消息发送成功', 201);
+        return $this->success($message->load(['user']), 'Message sent successfully', 201);
     }
 
     public function addParticipants(AddChatParticipantsRequest $request, Chat $chat)
     {
         $v = $request->validated();
         $chat = $this->chatService->addParticipants($chat, $v['participant_ids']);
-        return $this->success($chat->load(['participants']), '参与者添加成功');
+        return $this->success($chat->load(['participants']), 'Participant added successfully');
     }
 
     public function removeParticipant(Request $request, Chat $chat, $userId)
     {
         $this->chatService->removeParticipant($chat, $userId);
-        return $this->success(null, '参与者移除成功');
+        return $this->success(null, 'Participant removed successfully');
     }
 
     /**

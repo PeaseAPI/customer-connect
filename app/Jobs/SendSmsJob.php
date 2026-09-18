@@ -34,10 +34,10 @@ class SendSmsJob implements ShouldQueue
                 'notification' => $smsManager->sendNotification(
                     $this->mobile, $this->params['template_id'], $this->params['data'], $this->driver
                 ),
-                default => Log::warning("未知短信类型: {$this->type}"),
+                default => Log::warning("Unknown SMS type: {$this->type}"),
             };
         } catch (\Exception $e) {
-            Log::error('短信发送Job失败', [
+            Log::error('SMS send job failed', [
                 'mobile' => $this->mobile,
                 'type' => $this->type,
                 'error' => $e->getMessage(),

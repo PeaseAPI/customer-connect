@@ -23,7 +23,7 @@ class AwardController extends BaseApiController
         $v = $request->validated();
         $v['added_by'] = $request->user()->id;
         $v['company_id'] = $request->attributes->get('company_id');
-        return $this->success($this->awardService->create($v)->load(['user', 'awardIcon', 'creator']), '奖项创建成功', 201);
+        return $this->success($this->awardService->create($v)->load(['user', 'awardIcon', 'creator']), 'Award created successfully', 201);
     }
 
     public function show(Award $award)

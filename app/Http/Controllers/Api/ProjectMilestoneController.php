@@ -24,7 +24,7 @@ class ProjectMilestoneController extends BaseApiController
         $v['project_id'] = $projectId;
         $v['added_by'] = $request->user()->id;
         $v['company_id'] = $request->attributes->get('company_id');
-        return $this->success($this->projectMilestoneService->create($v)->load(['creator']), '里程碑创建成功', 201);
+        return $this->success($this->projectMilestoneService->create($v)->load(['creator']), 'Milestone created successfully', 201);
     }
 
     public function show($projectId, ProjectMilestone $milestone)

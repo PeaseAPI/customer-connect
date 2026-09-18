@@ -24,7 +24,7 @@ class EstimateRequestController extends BaseApiController
         $v = $request->validated();
         $v['added_by'] = $request->user()->id;
         $v['company_id'] = $request->attributes->get('company_id');
-        return $this->success($this->estimateRequestService->create($v)->load(['client', 'estimate', 'creator']), '报价请求创建成功', 201);
+        return $this->success($this->estimateRequestService->create($v)->load(['client', 'estimate', 'creator']), 'Quote request created successfully', 201);
     }
 
     public function show(EstimateRequest $estimateRequest)
@@ -49,6 +49,6 @@ class EstimateRequestController extends BaseApiController
     {
         $v = $request->validated();
         $estimateRequest = $this->estimateRequestService->convert($estimateRequest, $v['estimate_id']);
-        return $this->success($estimateRequest->load(['client', 'estimate', 'creator']), '报价请求已转换为报价');
+        return $this->success($estimateRequest->load(['client', 'estimate', 'creator']), 'Quote request converted to quote');
     }
 }

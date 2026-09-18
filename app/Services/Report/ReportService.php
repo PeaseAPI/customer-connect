@@ -136,7 +136,7 @@ class ReportService
     }
 
         /**
-     * 工时报表 — 项目/员工工时汇总、计费vs非计费
+     * 工时报表 — 项目/Employee工时汇总、计费vs非计费
      */
     public function timelogReport(int $companyId, array $filters = []): array
     {
@@ -157,7 +157,7 @@ class ReportService
             ->with('project:id,project_name')
             ->get();
 
-        // 按员工汇总
+        // 按Employee汇总
         $byUser = (clone $timelogs)
             ->selectRaw('user_id, SUM(total_minutes) as total_minutes, COUNT(*) as entry_count')
             ->groupBy('user_id')
@@ -181,7 +181,7 @@ class ReportService
     }
 
     /**
-     * 费用报表 — 分类统计、部门对比、月度趋势
+     * 费用报表 — 分类统计、Department对比、月度趋势
      */
     public function expenseReport(int $companyId, array $filters = []): array
     {
@@ -228,7 +228,7 @@ class ReportService
     }
 
     /**
-     * 休假报表 — 部门统计、类型分布、余额汇总
+     * 休假报表 — Department统计、类型分布、余额汇总
      */
     public function leaveReport(int $companyId, array $filters = []): array
     {
@@ -256,7 +256,7 @@ class ReportService
             ->pluck('total_days', 'month')
             ->toArray();
 
-        // 员工假期余额汇总
+        // Employee假期余额汇总
         $balanceSummary = \App\Models\EmployeeLeaveQuota::where('company_id', $companyId)
             ->whereYear('created_at', $year)
             ->selectRaw('user_id, leave_type_id, SUM(quota) as total_quota, SUM(used) as total_used')

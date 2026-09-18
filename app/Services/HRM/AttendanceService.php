@@ -75,7 +75,7 @@ class AttendanceService
             ->first();
 
         if ($existing && $existing->clock_in_time) {
-            throw new \Exception('今日已签到');
+            throw new \Exception('Already checked in today');
         }
 
         $clockInTime = now();

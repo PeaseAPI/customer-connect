@@ -23,7 +23,7 @@ class LeaveStatusNotification extends Notification implements ShouldBroadcast
     public function toDatabase(object $notifiable): array
     {
                 $statusText = match ($this->status) {
-            ApprovalStatus::Approved->value => '已批准',
+            ApprovalStatus::Approved->value => 'Approved',
             ApprovalStatus::Rejected->value => 'Declined',
             ApprovalStatus::Canceled->value => 'Canceled',
             default => $this->status,
@@ -33,7 +33,7 @@ class LeaveStatusNotification extends Notification implements ShouldBroadcast
             'type' => 'leave_status',
             'leave_id' => $this->leave->id,
             'status' => $this->status,
-            'message' => "您的请假申请{$statusText}",
+            'message' => "Your leave request has been {$statusText}",
         ];
     }
 

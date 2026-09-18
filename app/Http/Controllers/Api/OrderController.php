@@ -41,7 +41,7 @@ class OrderController extends BaseApiController
 
         $order = $this->orderService->create($v);
 
-        return $this->success($order->load(['client', 'project', 'currency']), '订单创建成功', 201);
+        return $this->success($order->load(['client', 'project', 'currency']), 'Order created successfully', 201);
     }
 
     public function show(Order $order)

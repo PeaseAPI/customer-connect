@@ -32,7 +32,7 @@ class VendorController extends BaseApiController
         $validated['company_id'] = $request->attributes->get('company_id');
 
         $vendor = $this->procurementService->createVendor($validated);
-        return $this->success($vendor, '供应商创建成功', 201);
+        return $this->success($vendor, 'Vendor created successfully', 201);
     }
 
     public function show(Vendor $vendor)

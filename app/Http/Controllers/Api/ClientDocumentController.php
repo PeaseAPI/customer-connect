@@ -34,7 +34,7 @@ class ClientDocumentController extends BaseApiController
 
         return $this->success(
             $this->clientDocumentService->create($validated)->load(['creator']),
-            '客户文档创建成功',
+            'Client document created successfully',
             201
         );
     }

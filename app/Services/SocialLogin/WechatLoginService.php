@@ -57,7 +57,7 @@ class WechatLoginService implements SocialLoginInterface
                 'avatar' => $userData['headimgurl'] ?? '',
             ];
         } catch (\Exception $e) {
-            Log::error('微信登录异常', ['error' => $e->getMessage()]);
+            Log::error('WeChat login error', ['error' => $e->getMessage()]);
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }

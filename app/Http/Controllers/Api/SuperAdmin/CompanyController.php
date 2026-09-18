@@ -55,18 +55,18 @@ class CompanyController extends BaseApiController
     public function destroy(Company $company): JsonResponse
     {
         $company->update(['status' => CompanyStatus::Inactive]);
-        return $this->success(null, '公司已停用');
+        return $this->success(null, 'Company disabled');
     }
 
     public function activate(Company $company): JsonResponse
     {
         $company->update(['status' => CompanyStatus::Active]);
-        return $this->success(null, '公司已启用');
+        return $this->success(null, 'Company enabled');
     }
 
     public function suspend(Company $company): JsonResponse
     {
         $company->update(['status' => CompanyStatus::Suspended]);
-        return $this->success(null, '公司已暂停');
+        return $this->success(null, 'Company suspended');
     }
 }

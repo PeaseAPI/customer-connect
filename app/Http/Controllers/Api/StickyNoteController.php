@@ -30,7 +30,7 @@ class StickyNoteController extends BaseApiController
 
         return $this->success(
             $this->stickyNoteService->create($validated)->load(['user', 'creator']),
-            '便签创建成功',
+            'Sticky note created successfully',
             201
         );
     }

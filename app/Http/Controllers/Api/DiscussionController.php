@@ -30,7 +30,7 @@ class DiscussionController extends BaseApiController
         $validated['created_by'] = $request->user()->id;
         $validated['added_by'] = $request->user()->id;
         $discussion = $this->discussionService->create($validated);
-        return $this->success($discussion->load(['category', 'creator']), '讨论创建成功', 201);
+        return $this->success($discussion->load(['category', 'creator']), 'Discussion created successfully', 201);
     }
 
     public function show(Discussion $discussion)
@@ -74,12 +74,12 @@ class DiscussionController extends BaseApiController
             'user_id' => $request->user()->id,
             'company_id' => $discussion->company_id,
         ]);
-        return $this->success($reply->load('user'), '回复添加成功', 201);
+        return $this->success($reply->load('user'), 'Reply added successfully', 201);
     }
 
     public function markSolution(Discussion $discussion, DiscussionReply $reply)
     {
         $discussion = $this->discussionService->markSolution($discussion, $reply);
-        return $this->success($discussion->load(['category', 'creator', 'replies.user']), '已标记为最佳答案');
+        return $this->success($discussion->load(['category', 'creator', 'replies.user']), 'Marked as best answer');
     }
 }

@@ -20,6 +20,6 @@ class InvoiceSettingController extends BaseApiController
     {
         $v = $request->validated();
         $setting = $this->invoiceSettingService->update($request->user()->company_id, $v);
-        return $this->success($setting, '发票设置更新成功');
+        return $this->success($setting, 'Invoice settings updated successfully');
     }
 }

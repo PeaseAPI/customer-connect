@@ -37,7 +37,7 @@ class ExportDataJob implements ShouldQueue
                 $user->notify(new \App\Notifications\ExportReadyNotification($this->filePath, $fileName));
             }
         } catch (\Exception $e) {
-            Log::error('导出数据Job失败', [
+            Log::error('Export data job failed', [
                 'export_class' => get_class($this->export),
                 'error' => $e->getMessage(),
             ]);

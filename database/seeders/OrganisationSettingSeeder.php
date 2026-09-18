@@ -12,7 +12,7 @@ class OrganisationSettingSeeder extends Seeder
         $settings = [
             [
                 'company_id' => 1,
-                'company_name' => '客户通科技有限公司',
+                'company_name' => 'Customer Connect Technologies Ltd.',
                 'company_email' => 'admin@example.com',
                 'company_phone' => '400-888-9999',
                 'logo' => null,
@@ -29,7 +29,7 @@ class OrganisationSettingSeeder extends Seeder
             ],
             [
                 'company_id' => 2,
-                'company_name' => '演示企业',
+                'company_name' => 'Demo Company',
                 'company_email' => 'demo@example.com',
                 'company_phone' => '400-666-8888',
                 'logo' => null,
@@ -50,7 +50,7 @@ class OrganisationSettingSeeder extends Seeder
             OrganisationSetting::create($setting);
         }
 
-        $this->command->info('Created ' . count($settings) . ' 条组织设置');
+        $this->command->info('Created ' . count($settings) . ' organization settings');
     }
 }
 

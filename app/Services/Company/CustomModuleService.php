@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 class CustomModuleService
 {
     /**
-     * 列出自定义模块
+     * List custom modules
      */
     public function list(int $companyId, int $perPage = 15)
     {
@@ -20,7 +20,7 @@ class CustomModuleService
     }
 
     /**
-     * 创建自定义模块
+     * Create custom module
      */
     public function create(int $companyId, array $data): CustomModule
     {
@@ -31,7 +31,7 @@ class CustomModuleService
     }
 
     /**
-     * 更新自定义模块
+     * Update custom module
      */
     public function update(CustomModule $module, array $data): CustomModule
     {
@@ -40,7 +40,7 @@ class CustomModuleService
     }
 
     /**
-     * 删除自定义模块（及其所有数据）
+     * Delete custom module and all its data
      */
     public function delete(CustomModule $module): void
     {
@@ -49,7 +49,7 @@ class CustomModuleService
     }
 
     /**
-     * 添加模块数据记录
+     * Add module data record
      */
     public function addRecord(CustomModule $module, array $data, int $userId): CustomModuleData
     {
@@ -63,7 +63,7 @@ class CustomModuleService
     }
 
     /**
-     * 更新模块数据记录
+     * Update module data record
      */
     public function updateRecord(CustomModuleData $record, array $data, int $userId): CustomModuleData
     {
@@ -75,7 +75,7 @@ class CustomModuleService
     }
 
     /**
-     * 删除模块数据记录
+     * Delete module data record
      */
     public function deleteRecord(CustomModuleData $record): void
     {
@@ -83,7 +83,7 @@ class CustomModuleService
     }
 
     /**
-     * 获取模块数据列表
+     * List module data
      */
     public function listRecords(CustomModule $module, int $perPage = 15)
     {

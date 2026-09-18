@@ -38,11 +38,11 @@ class NotificationSettingController extends BaseApiController
         $companyId = $request->attributes->get('company_id');
         $this->settingService->updateUserSettings($request->user()->id, $companyId, $validated);
 
-        return $this->success(null, '通知设置已更新');
+        return $this->success(null, 'Notification settings updated');
     }
 
     /**
-     * 管理员获取全局通知设置
+     * Admin获取全局通知设置
      */
     public function companySettings(Request $request): JsonResponse
     {
@@ -52,7 +52,7 @@ class NotificationSettingController extends BaseApiController
     }
 
     /**
-     * 重置用户通知设置为默认值
+     * Reset user notification settings to default值
      */
     public function reset(Request $request): JsonResponse
     {
@@ -61,6 +61,6 @@ class NotificationSettingController extends BaseApiController
             ->where('company_id', $companyId)
             ->delete();
 
-        return $this->success(null, '通知设置已重置为默认值');
+        return $this->success(null, 'Notification settings reset to defaults');
     }
 }

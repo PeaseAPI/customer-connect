@@ -52,9 +52,9 @@ class WechatPayService implements PaymentServiceInterface
                     'gateway' => 'wechat',
                 ];
             }
-            return ['success' => false, 'error' => $result['return_msg'] ?? '下单失败'];
+            return ['success' => false, 'error' => $result['return_msg'] ?? 'Order failed'];
         } catch (\Exception $e) {
-            Log::error('微信支付创建订单异常', ['error' => $e->getMessage()]);
+            Log::error('WeChat Pay create order exception', ['error' => $e->getMessage()]);
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }

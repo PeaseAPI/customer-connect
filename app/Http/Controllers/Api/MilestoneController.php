@@ -32,7 +32,7 @@ class MilestoneController extends BaseApiController
 
         return $this->success(
             $this->milestoneService->create($validated)->load(['project']),
-            '里程碑创建成功',
+            'Milestone created successfully',
             201
         );
     }

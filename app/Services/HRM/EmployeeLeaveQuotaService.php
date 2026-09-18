@@ -31,7 +31,7 @@ class EmployeeLeaveQuotaService
                 'leave_quota_id' => $quota->id,
                 'action' => 'added',
                 'amount' => $data['no_of_leaves'],
-                'reason' => '初始分配',
+                'reason' => 'Initial assignment',
                 'added_by' => $userId,
             ]);
 

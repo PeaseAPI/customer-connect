@@ -66,7 +66,7 @@ class ProjectTemplateController extends BaseApiController
     }
 
     /**
-     * 从现有项目创建模板
+     * Create template from existing project
      */
     public function createFromProject(Request $request, Project $project)
     {
@@ -85,7 +85,7 @@ class ProjectTemplateController extends BaseApiController
     }
 
     /**
-     * 从模板创建项目
+     * Create project from template
      */
     public function createProject(Request $request, ProjectTemplate $projectTemplate)
     {

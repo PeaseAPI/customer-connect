@@ -30,7 +30,7 @@ class ContractSignatureController extends BaseApiController
 
         return $this->success(
             $this->contractSignatureService->create($validated)->load(['signer']),
-            '签名创建成功',
+            'Signature created successfully',
             201
         );
     }

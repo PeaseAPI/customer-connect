@@ -9,7 +9,7 @@ class RecurringEventService
 {
     /**
      * 生成循环事件
-     * 遍历所有到期需要生成的循环事件，自动创建下一周期的事件实例
+     * Iterate all due recurring events, auto-create next cycle event instance
      */
     public function generateRecurringEvents(): int
     {
@@ -32,7 +32,7 @@ class RecurringEventService
     }
 
     /**
-     * 为循环事件创建下一个实例
+     * Create next instance for recurring event
      */
     public function createNextInstance(Event $event): ?Event
     {
@@ -40,7 +40,7 @@ class RecurringEventService
         $endDateTime = Carbon::parse($event->end_date_time);
         $durationMinutes = $startDateTime->diffInMinutes($endDateTime);
 
-        // 计算下一次开始时间
+        // Calculate next start time
         $nextStart = $this->calculateNextDateTime(
             $startDateTime,
             $event->repeat_every ?? 1,
@@ -51,7 +51,7 @@ class RecurringEventService
             return null;
         }
 
-        // 检查是否超过截止日期
+        // 检查YesNo超过截止日期
         $repeatUntil = $event->repeat_until ? Carbon::parse($event->repeat_until) : null;
         if ($repeatUntil && $nextStart->gt($repeatUntil)) {
             // 更新原事件标记为不再循环
@@ -91,7 +91,7 @@ class RecurringEventService
     }
 
     /**
-     * 设置事件提醒
+     * 设置Event reminder
      */
     public function setReminder(Event $event, int $minutesBefore = 15): void
     {
@@ -110,7 +110,7 @@ class RecurringEventService
     }
 
     /**
-     * 检查并发送到期的事件提醒
+     * 检查并发送到期的Event reminder
      */
     public function processReminders(): int
     {
@@ -137,8 +137,8 @@ class RecurringEventService
                     'company_id' => $event->company_id,
                     'user_id' => $userId,
                     'type' => 'event_reminder',
-                    'title' => '事件即将开始',
-                    'message' => "「{$event->event_name}」将于{$event->start_date_time->format('H:i')}开始",
+                    'title' => 'Event starting soon',
+                    'message' => ""{$event->event_name}" starts at {$event->start_date_time->format('H:i')}",
                     'data' => [
                         'event_id' => $event->id,
                         'start_time' => $event->start_date_time->toDateTimeString(),
@@ -156,7 +156,7 @@ class RecurringEventService
     }
 
     /**
-     * 计算下一个循环日期时间
+     * 计算下一 循环日期时间
      */
     private function calculateNextDateTime(Carbon $currentDateTime, int $every, string $type): ?Carbon
     {

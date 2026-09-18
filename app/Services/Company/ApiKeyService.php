@@ -63,7 +63,7 @@ class ApiKeyService
             return null;
         }
 
-        // 更新最后使用时间
+        // 更新Last used at
         $apiKey->update(['last_used_at' => now()]);
 
         return $apiKey;

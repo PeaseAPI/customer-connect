@@ -29,7 +29,7 @@ class ContractDiscussionController extends BaseApiController
 
         return $this->success(
             $this->contractDiscussionService->create($validated)->load(['creator']),
-            '讨论创建成功',
+            'Discussion created successfully',
             201
         );
     }

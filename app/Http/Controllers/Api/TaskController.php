@@ -34,7 +34,7 @@ class TaskController extends BaseApiController
             'board_column' => 'nullable|integer',
             'is_pinned' => 'sometimes|boolean',
             'milestone_id' => 'nullable|exists:milestones,id',
-            // 循环任务
+            // Recurring task
             'is_recurring' => 'sometimes|boolean',
             'recurring_every' => 'nullable|integer|min:1',
             'recurring_type' => 'nullable|in:daily,weekly,monthly,yearly,custom',
@@ -61,7 +61,7 @@ class TaskController extends BaseApiController
             $task->labels()->sync($labelIds);
         }
 
-        // 如果是循环任务，设置下次生成日期
+        // If recurring task, set next generation date
         if (!empty($validated['is_recurring'])) {
             app(\App\Services\PM\RecurringTaskService::class)->setupRecurring($task, [
                 'every' => $validated['recurring_every'] ?? 1,
@@ -70,7 +70,7 @@ class TaskController extends BaseApiController
             ]);
         }
 
-        return $this->success($task->load(['assignee', 'project', 'creator', 'labels']), '任务创建成功', 201);
+        return $this->success($task->load(['assignee', 'project', 'creator', 'labels']), 'Task created successfully', 201);
     }
 
     public function show($projectId, Task $task)
@@ -126,7 +126,7 @@ class TaskController extends BaseApiController
 
         $this->taskService->reorder($request->tasks);
 
-        return $this->success(null, '排序更新成功');
+        return $this->success(null, 'Reorder updated successfully');
     }
 
     /**
@@ -135,11 +135,11 @@ class TaskController extends BaseApiController
     public function togglePin(Task $task)
     {
         $task->update(['is_pinned' => !$task->is_pinned]);
-        return $this->success($task->fresh(), $task->is_pinned ? '任务已置顶' : '任务已取消置顶');
+        return $this->success($task->fresh(), $task->is_pinned ? 'Task pinned' : 'Task unpinned');
     }
 
     /**
-     * 任务日历视图 — 按日期范围查询
+     * Task calendar view - query by date range
      */
     public function calendar(Request $request)
     {
@@ -174,7 +174,7 @@ class TaskController extends BaseApiController
     }
 
     /**
-     * 上传任务文件
+     * Upload task file
      */
     public function uploadFile(Request $request, Task $task)
     {
@@ -196,11 +196,11 @@ class TaskController extends BaseApiController
             'path' => $path,
         ]);
 
-        return $this->success($file, '文件上传成功', 201);
+        return $this->success($file, 'File uploaded successfully', 201);
     }
 
     /**
-     * 获取任务文件列表
+     * List task files
      */
     public function listFiles(Task $task)
     {
@@ -208,18 +208,18 @@ class TaskController extends BaseApiController
     }
 
     /**
-     * 删除任务文件
+     * Delete task file
      */
     public function deleteFile(Task $task, $fileId)
     {
         $file = $task->files()->where('id', $fileId)->first();
         if (!$file) {
-            return $this->error('文件不存在', 404);
+            return $this->error('File not found', 404);
         }
 
         \Illuminate\Support\Facades\Storage::disk($file->disk)->delete($file->path);
         $file->delete();
 
-        return $this->success(null, '文件删除成功');
+        return $this->success(null, 'File deleted successfully');
     }
 }

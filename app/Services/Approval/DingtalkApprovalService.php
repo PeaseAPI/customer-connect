@@ -31,7 +31,7 @@ class DingtalkApprovalService implements ApprovalServiceInterface
                 ]);
             return $response->json('instanceId', '');
         } catch (\Exception $e) {
-            Log::error('钉钉创建审批实例失败', ['error' => $e->getMessage()]);
+            Log::error('Failed to create DingTalk approval instance', ['error' => $e->getMessage()]);
             return '';
         }
     }
@@ -44,7 +44,7 @@ class DingtalkApprovalService implements ApprovalServiceInterface
                 ->get("https://api.dingtalk.com/v1.0/workflow/processInstances/{$instanceId}")
                 ->json();
         } catch (\Exception $e) {
-            Log::error('钉钉获取审批实例失败', ['error' => $e->getMessage()]);
+            Log::error('Failed to get DingTalk approval instance', ['error' => $e->getMessage()]);
             return [];
         }
     }

@@ -34,7 +34,7 @@ class AssetController extends BaseApiController
         $validated['company_id'] = $request->attributes->get('company_id');
 
         $asset = $this->assetService->create($validated);
-        return $this->success($asset->load('allocatedUser'), '资产创建成功', 201);
+        return $this->success($asset->load('allocatedUser'), 'Asset created successfully', 201);
     }
 
     public function show(Asset $asset)
@@ -66,7 +66,7 @@ class AssetController extends BaseApiController
     }
 
     /**
-     * 分配资产
+     * Assign asset
      */
     public function allocate(Request $request, Asset $asset)
     {
@@ -75,7 +75,7 @@ class AssetController extends BaseApiController
         ]);
 
         $asset = $this->assetService->allocate($asset, (int) $validated['user_id']);
-        return $this->success($asset->load('allocatedUser'), '资产分配成功');
+        return $this->success($asset->load('allocatedUser'), 'Asset assigned successfully');
     }
 
     /**
@@ -84,7 +84,7 @@ class AssetController extends BaseApiController
     public function returnAsset(Asset $asset)
     {
         $asset = $this->assetService->returnAsset($asset);
-        return $this->success($asset, '资产已归还');
+        return $this->success($asset, 'Asset returned');
     }
 
     /**
@@ -113,7 +113,7 @@ class AssetController extends BaseApiController
         ]);
 
         $record = $this->assetService->addMaintenanceRecord($asset, $validated);
-        return $this->success($record, '维护记录添加成功', 201);
+        return $this->success($record, 'Maintenance record added successfully', 201);
     }
 
     /**

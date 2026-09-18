@@ -23,9 +23,9 @@ class ContractStatusNotification extends Notification implements ShouldBroadcast
     public function toDatabase(object $notifiable): array
     {
                 $statusText = match ($this->status) {
-            ContractStatus::Active->value => '已生效',
+            ContractStatus::Active->value => 'Effective',
             ContractStatus::Expired->value => 'Expired',
-            ContractStatus::Canceled->value => '已终止',
+            ContractStatus::Canceled->value => 'Terminated',
             default => $this->status,
         };
 
@@ -34,7 +34,7 @@ class ContractStatusNotification extends Notification implements ShouldBroadcast
             'contract_id' => $this->contract->id,
             'contract_title' => $this->contract->title,
             'status' => $this->status,
-            'message' => "合同「{$this->contract->title}」{$statusText}",
+            'message' => "Contract "{$this->contract->title}" {$statusText}",
         ];
     }
 

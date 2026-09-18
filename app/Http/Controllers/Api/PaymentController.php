@@ -42,7 +42,7 @@ class PaymentController extends BaseApiController
 
         $payment = $this->paymentService->create($validated);
 
-        return $this->success($payment->load(['client', 'invoice', 'currency']), '支付记录创建成功', 201);
+        return $this->success($payment->load(['client', 'invoice', 'currency']), 'Payment record created successfully', 201);
     }
 
     public function show(Payment $payment)

@@ -40,7 +40,7 @@ class ApiKey extends Model
     }
 
     /**
-     * 检查密钥是否有效
+     * Check if key is valid
      */
     public function isValid(): bool
     {
@@ -56,7 +56,7 @@ class ApiKey extends Model
     }
 
     /**
-     * 检查是否有权限访问指定模块
+     * Check if the key has permission to access the specified module
      */
     public function hasPermission(string $module): bool
     {

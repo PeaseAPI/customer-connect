@@ -52,7 +52,7 @@ class TencentSmsService implements SmsServiceInterface
     }
 
     /**
-     * 发送短信（腾讯云短信API v2021-01-11）
+     * Send SMS（腾讯云短信API v2021-01-11）
      */
     private function sendSms(string $mobile, string $templateId, array $templateParams): bool
     {
@@ -111,14 +111,14 @@ class TencentSmsService implements SmsServiceInterface
                 if ($status && ($status['Code'] ?? '') === 'Ok') {
                     return true;
                 }
-                Log::error('腾讯云短信发送失败', ['result' => $result]);
+                Log::error('Tencent Cloud SMS send failed', ['result' => $result]);
                 return false;
             }
 
-            Log::error('腾讯云短信请求失败', ['status' => $response->status(), 'body' => $response->body()]);
+            Log::error('Tencent Cloud SMS request failed', ['status' => $response->status(), 'body' => $response->body()]);
             return false;
         } catch (\Exception $e) {
-            Log::error('腾讯云短信异常', ['message' => $e->getMessage()]);
+            Log::error('Tencent Cloud SMS error', ['message' => $e->getMessage()]);
             return false;
         }
     }

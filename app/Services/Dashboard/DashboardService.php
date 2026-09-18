@@ -148,7 +148,7 @@ class DashboardService
     }
 
     /**
-     * 管理员仪表盘 — 快捷入口+数据卡片+待办+图表
+     * Admin仪表盘 — 快捷入口+数据卡片+待办+图表
      */
     public function getAdminDashboard(int $companyId, int $userId): array
     {
@@ -163,17 +163,17 @@ class DashboardService
 
         return array_merge($overview, $finance, [
             'quick_entries' => [
-                ['label' => '创建项目', 'route' => 'projects.store'],
-                ['label' => '添加任务', 'route' => 'tasks.store'],
-                ['label' => '新建发票', 'route' => 'invoices.store'],
-                ['label' => '添加客户', 'route' => 'clients.store'],
+                ['label' => 'Create project', 'route' => 'projects.store'],
+                ['label' => 'Add task', 'route' => 'tasks.store'],
+                ['label' => 'New invoice', 'route' => 'invoices.store'],
+                ['label' => 'Add client', 'route' => 'clients.store'],
             ],
             'todo' => [
                 ['type' => 'approval', 'label' => 'Pending approval', 'count' => $pendingApprovals],
-                ['type' => 'contract', 'label' => '即将到期合同', 'count' => $expiringContracts],
-                ['type' => 'invoice', 'label' => '逾期发票', 'count' => $overdueInvoices],
-                ['type' => 'ticket', 'label' => '待处理工单', 'count' => $pendingTickets],
-                ['type' => 'task', 'label' => '逾期任务', 'count' => $overdueTasks],
+                ['type' => 'contract', 'label' => 'Expiring contracts', 'count' => $expiringContracts],
+                ['type' => 'invoice', 'label' => 'Overdue invoices', 'count' => $overdueInvoices],
+                ['type' => 'ticket', 'label' => 'Pending tickets', 'count' => $pendingTickets],
+                ['type' => 'task', 'label' => 'Overdue tasks', 'count' => $overdueTasks],
             ],
             'charts' => [
                 'income_vs_expense' => $this->getIncomeVsExpenseChart($companyId),
@@ -183,7 +183,7 @@ class DashboardService
     }
 
     /**
-     * 员工仪表盘 — 我的项目/任务/工时/考勤
+     * Employee dashboard - my projects/tasks/hours/attendance
      */
     public function getEmployeeDashboard(int $companyId, int $userId): array
     {
@@ -215,15 +215,15 @@ class DashboardService
             'overdue_tasks' => $overdueTasks,
             'this_week_hours' => round($thisWeekHours / 60, 1),
             'quick_actions' => [
-                ['label' => '打卡', 'route' => 'attendance.clock-in'],
-                ['label' => '申请请假', 'route' => 'leaves.store'],
-                ['label' => '提交工时', 'route' => 'timelogs.store'],
+                ['label' => 'Clock in', 'route' => 'attendance.clock-in'],
+                ['label' => 'Request leave', 'route' => 'leaves.store'],
+                ['label' => 'Submit time log', 'route' => 'timelogs.store'],
             ],
         ];
     }
 
     /**
-     * 客户仪表盘 — 项目/发票/合同/工单
+     * Client dashboard - projects/invoices/contracts/tickets
      */
     public function getClientDashboard(int $companyId, int $userId): array
     {

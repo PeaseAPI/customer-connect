@@ -38,7 +38,7 @@ class EmployeeController extends BaseApiController
 
         $user = $this->employeeService->create($validated);
 
-        return $this->success($user->load('employeeDetail'), '员工创建成功', 201);
+        return $this->success($user->load('employeeDetail'), 'EmployeeCreated successfully', 201);
     }
 
     public function show(User $employee)
@@ -77,7 +77,7 @@ class EmployeeController extends BaseApiController
     }
 
     /**
-     * 邮件邀请员工
+     * 邮件邀请Employee
      */
     public function invite(Request $request)
     {
@@ -115,11 +115,11 @@ class EmployeeController extends BaseApiController
             )
         );
 
-        return $this->success(['token' => $token], '邀请已发送', 201);
+        return $this->success(['token' => $token], 'Invitation sent', 201);
     }
 
     /**
-     * 员工批量导入（CSV/Excel）
+     * Employee批量导入（CSV/Excel）
      */
     public function import(Request $request)
     {
@@ -136,6 +136,6 @@ class EmployeeController extends BaseApiController
             $request->user()->id
         );
 
-        return $this->success(null, '导入任务已提交，完成后将通知您');
+        return $this->success(null, 'Import task submitted, you will be notified when complete');
     }
 }

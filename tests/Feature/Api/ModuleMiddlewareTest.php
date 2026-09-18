@@ -63,7 +63,7 @@ class ModuleMiddlewareTest extends TestCase
 
         $response = $this->getJson('/api/pm/projects');
         $response->assertStatus(403);
-        $response->assertJson(['message' => '模块 [pm] 未开通，请升级套餐']);
+        $response->assertJson(['message' => 'Module [pm] not enabled, please upgrade your plan']);
     }
 
     public function test_module_middleware_allows_access_for_super_admin(): void

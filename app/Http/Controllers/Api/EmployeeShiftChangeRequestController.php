@@ -33,7 +33,7 @@ class EmployeeShiftChangeRequestController extends BaseApiController
 
         return $this->success(
             $this->shiftChangeRequestService->create($validated)->load(['user', 'shift', 'currentShift']),
-            '换班申请创建成功',
+            'Shift change request created successfully',
             201
         );
     }
@@ -47,14 +47,14 @@ class EmployeeShiftChangeRequestController extends BaseApiController
     {
         $shiftChangeRequest = $this->shiftChangeRequestService->approve($shiftChangeRequest, $request->user()->id);
 
-        return $this->success($shiftChangeRequest->load(['user', 'shift', 'approver']), '换班申请已批准');
+        return $this->success($shiftChangeRequest->load(['user', 'shift', 'approver']), 'Shift change request approved');
     }
 
     public function reject(Request $request, EmployeeShiftChangeRequest $shiftChangeRequest)
     {
         $shiftChangeRequest = $this->shiftChangeRequestService->reject($shiftChangeRequest, $request->user()->id);
 
-        return $this->success($shiftChangeRequest->load(['user', 'shift', 'approver']), '换班申请已拒绝');
+        return $this->success($shiftChangeRequest->load(['user', 'shift', 'approver']), 'Shift change request rejected');
     }
 
     public function destroy(EmployeeShiftChangeRequest $shiftChangeRequest)

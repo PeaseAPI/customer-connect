@@ -31,7 +31,7 @@ class ContractTemplateController extends BaseApiController
 
         return $this->success(
             $this->contractTemplateService->create($validated)->load(['contractType', 'creator']),
-            '合同模板创建成功',
+            'Contract template created successfully',
             201
         );
     }

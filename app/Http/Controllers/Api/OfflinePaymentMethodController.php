@@ -22,7 +22,7 @@ class OfflinePaymentMethodController extends BaseApiController
     {
         $v = $request->validated();
         $v['company_id'] = $request->attributes->get('company_id');
-        return $this->success($this->offlinePaymentMethodService->create($v), '线下支付方式创建成功', 201);
+        return $this->success($this->offlinePaymentMethodService->create($v), 'Offline payment method created successfully', 201);
     }
 
     public function show(OfflinePaymentMethod $offlinePaymentMethod)

@@ -18,7 +18,7 @@ class SmsManager
         return match ($driver) {
             'aliyun' => new AliyunSmsService(),
             'tencent' => new TencentSmsService(),
-            default => throw new \InvalidArgumentException("不支持的短信驱动: {$driver}"),
+            default => throw new \InvalidArgumentException("Unsupported SMS driver: {$driver}"),
         };
     }
 
@@ -30,7 +30,7 @@ class SmsManager
         try {
             return $this->driver($driver)->sendVerificationCode($mobile, $code);
         } catch (\Exception $e) {
-            Log::error('短信发送失败', ['mobile' => $mobile, 'error' => $e->getMessage()]);
+            Log::error('SMS send failed', ['mobile' => $mobile, 'error' => $e->getMessage()]);
             return false;
         }
     }
@@ -43,7 +43,7 @@ class SmsManager
         try {
             return $this->driver($driver)->sendNotification($mobile, $templateId, $params);
         } catch (\Exception $e) {
-            Log::error('通知短信发送失败', ['mobile' => $mobile, 'error' => $e->getMessage()]);
+            Log::error('Notification SMS send failed', ['mobile' => $mobile, 'error' => $e->getMessage()]);
             return false;
         }
     }

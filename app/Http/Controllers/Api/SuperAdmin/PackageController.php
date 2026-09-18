@@ -36,7 +36,7 @@ class PackageController extends BaseApiController
         ]);
 
                 $package = Package::create($validated);
-        return $this->success($package, '套餐创建成功', 201);
+        return $this->success($package, 'Package created successfully', 201);
     }
 
         public function show(Package $package): JsonResponse
@@ -67,6 +67,6 @@ class PackageController extends BaseApiController
         public function destroy(Package $package): JsonResponse
     {
         $package->update(['is_active' => false]);
-        return $this->success(null, '套餐已停用');
+        return $this->success(null, 'Package disabled');
     }
 }

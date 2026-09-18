@@ -27,7 +27,7 @@ class AppreciationController extends BaseApiController
         $v['awarded_by'] = $request->user()->id;
         $v['added_by'] = $request->user()->id;
         $v['company_id'] = $request->attributes->get('company_id');
-        return $this->success($this->appreciationService->create($v)->load(['user', 'creator']), '表彰创建成功', 201);
+        return $this->success($this->appreciationService->create($v)->load(['user', 'creator']), 'Appreciation created successfully', 201);
     }
 
     public function show(Appreciation $appreciation) { return $this->success($appreciation->load(['user', 'creator'])); }

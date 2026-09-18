@@ -30,7 +30,7 @@ class ProductSubCategoryController extends BaseApiController
 
         return $this->success(
             $this->productSubCategoryService->create($validated),
-            '产品子分类创建成功',
+            'Product sub-category created successfully',
             201
         );
     }

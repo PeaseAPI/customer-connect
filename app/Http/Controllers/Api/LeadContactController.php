@@ -32,7 +32,7 @@ class LeadContactController extends BaseApiController
 
         return $this->success(
             $this->leadContactService->create($validated)->load(['lead', 'creator']),
-            '联系人创建成功',
+            'Contact created successfully',
             201
         );
     }

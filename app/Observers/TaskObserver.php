@@ -36,7 +36,7 @@ class TaskObserver
         $progress = $total > 0 ? round(($completed / $total) * 100, 2) : 0;
         $project->update(['progress' => $progress]);
 
-        // 如果所有任务完成，自动更新项目状态
+        // 如果所有Task completed，自动更新项目Status
         if ($total > 0 && $completed === $total) {
             $project->update(['status' => ProjectStatus::Completed]);
         } elseif ($project->status === ProjectStatus::Completed && $completed < $total) {

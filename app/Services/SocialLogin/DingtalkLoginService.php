@@ -42,7 +42,7 @@ class DingtalkLoginService implements SocialLoginInterface
             ]);
             $tokenData = $response->json();
             if (isset($tokenData['code'])) {
-                return ['success' => false, 'error' => $tokenData['message'] ?? '获取token失败'];
+                return ['success' => false, 'error' => $tokenData['message'] ?? 'Failed to get token'];
             }
             $userResponse = Http::withToken($tokenData['accessToken'])
                 ->get('https://api.dingtalk.com/v1.0/contact/users/me');
@@ -56,7 +56,7 @@ class DingtalkLoginService implements SocialLoginInterface
                 'mobile' => $userData['mobile'] ?? '',
             ];
         } catch (\Exception $e) {
-            Log::error('钉钉登录异常', ['error' => $e->getMessage()]);
+            Log::error('DingTalk login error', ['error' => $e->getMessage()]);
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }

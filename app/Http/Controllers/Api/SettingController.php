@@ -11,7 +11,7 @@ class SettingController extends BaseApiController
     public function __construct(protected SettingService $settingService) {}
 
     /**
-     * 获取所有设置
+     * Get all settings
      */
     public function index()
     {
@@ -45,11 +45,11 @@ class SettingController extends BaseApiController
 
         $setting = $this->settingService->updateOrganisation($companyId, $validated);
 
-        return $this->success($setting, '组织设置更新成功');
+        return $this->success($setting, 'Organization settings updated successfully');
     }
 
     /**
-     * 获取GDPR设置
+     * Get GDPR settings
      */
     public function getGdpr()
     {
@@ -58,7 +58,7 @@ class SettingController extends BaseApiController
     }
 
     /**
-     * 更新GDPR设置
+     * Update GDPR settings
      */
     public function updateGdpr(Request $request)
     {
@@ -74,11 +74,11 @@ class SettingController extends BaseApiController
         ]);
 
         $setting = $this->settingService->updateGdpr($companyId, $validated);
-        return $this->success($setting, 'GDPR设置更新成功');
+        return $this->success($setting, 'GDPR settings updated successfully');
     }
 
     /**
-     * 获取通知设置
+     * Get notification settings
      */
     public function getNotifications()
     {
@@ -87,7 +87,7 @@ class SettingController extends BaseApiController
     }
 
     /**
-     * 更新通知设置
+     * Update notification settings
      */
     public function updateNotification(Request $request, string $type)
     {
@@ -104,11 +104,11 @@ class SettingController extends BaseApiController
         ]);
 
         $setting = $this->settingService->updateNotificationSetting($companyId, $type, $validated);
-        return $this->success($setting, '通知设置更新成功');
+        return $this->success($setting, 'Notification settings updated successfully');
     }
 
     /**
-     * 获取模块设置
+     * Get module settings
      */
     public function getModuleSetting(string $module)
     {
@@ -116,14 +116,14 @@ class SettingController extends BaseApiController
         $validModules = ['invoice', 'project', 'task', 'attendance', 'leave', 'timelog', 'contract', 'ticket', 'lead'];
 
         if (!in_array($module, $validModules)) {
-            return $this->error('无效的模块名称', 400);
+            return $this->error('Invalid module name', 400);
         }
 
         return $this->success($this->settingService->getModuleSetting($companyId, $module));
     }
 
     /**
-     * 更新模块设置
+     * Update module settings
      */
     public function updateModuleSetting(Request $request, string $module)
     {
@@ -131,10 +131,10 @@ class SettingController extends BaseApiController
         $validModules = ['invoice', 'project', 'task', 'attendance', 'leave', 'timelog', 'contract', 'ticket', 'lead'];
 
         if (!in_array($module, $validModules)) {
-            return $this->error('无效的模块名称', 400);
+            return $this->error('Invalid module name', 400);
         }
 
         $setting = $this->settingService->updateModuleSetting($companyId, $module, $request->all());
-        return $this->success($setting, '模块设置更新成功');
+        return $this->success($setting, 'Module settings updated successfully');
     }
 }

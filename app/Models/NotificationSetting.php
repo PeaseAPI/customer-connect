@@ -35,7 +35,7 @@ class NotificationSetting extends Model
     }
 
     /**
-     * 检查用户是否启用了某种通知类型
+     * 检查用户YesNo启用了某种Notification type
      */
     public static function isEnabledForUser(int $userId, string $type, string $channel = 'database'): bool
     {
@@ -49,7 +49,7 @@ class NotificationSetting extends Model
     }
 
     /**
-     * 检查当前是否在静默时段内
+     * 检查当前YesNo在静默时段内
      */
     public function isQuietHoursNow(): bool
     {

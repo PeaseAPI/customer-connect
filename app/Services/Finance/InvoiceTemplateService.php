@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 class InvoiceTemplateService
 {
     /**
-     * 列出发票模板
+     * List invoice templates
      */
     public function list(int $companyId, int $perPage = 15)
     {
@@ -19,7 +19,7 @@ class InvoiceTemplateService
     }
 
     /**
-     * 创建发票模板
+     * Create invoice template
      */
     public function create(int $companyId, array $data): InvoiceTemplate
     {
@@ -27,7 +27,7 @@ class InvoiceTemplateService
         $data['slug'] = $data['slug'] ?? Str::slug($data['name']);
 
         if (!empty($data['is_default'])) {
-            // 取消其他默认模板
+            // 取消Other默认模板
             InvoiceTemplate::where('company_id', $companyId)
                 ->where('is_default', true)
                 ->update(['is_default' => false]);
@@ -37,7 +37,7 @@ class InvoiceTemplateService
     }
 
     /**
-     * 更新发票模板
+     * Update invoice template
      */
     public function update(InvoiceTemplate $template, array $data): InvoiceTemplate
     {
@@ -52,12 +52,12 @@ class InvoiceTemplateService
     }
 
     /**
-     * 删除发票模板
+     * Delete invoice template
      */
     public function delete(InvoiceTemplate $template): void
     {
         if ($template->is_default) {
-            // 如果删除默认模板，将第一个可用模板设为默认
+            // 如果删除默认模板，将No.一 可用模板设为默认
             $nextDefault = InvoiceTemplate::where('company_id', $template->company_id)
                 ->where('id', '!=', $template->id)
                 ->where('is_active', true)
@@ -85,7 +85,7 @@ class InvoiceTemplateService
     }
 
     /**
-     * 从现有发票创建模板
+     * 从现有Invoice created模板
      */
     public function createFromInvoice(int $companyId, string $name, int $invoiceId): InvoiceTemplate
     {

@@ -41,7 +41,7 @@ class ApiKeyController extends BaseApiController
             'plain_key' => $apiKey->plain_key,
             'expires_at' => $apiKey->expires_at,
             'created_at' => $apiKey->created_at,
-        ], 'API Key 创建成功，请妥善保管密钥，此为唯一一次可见', 201);
+        ], 'API Key created successfully. Please keep the key safe, this is the only time it will be visible', 201);
     }
 
     /**
@@ -58,7 +58,7 @@ class ApiKeyController extends BaseApiController
     public function revoke(ApiKey $apiKey)
     {
         $this->apiKeyService->revoke($apiKey);
-        return $this->success(null, 'API Key 已吊销');
+        return $this->success(null, 'API Key revoked');
     }
 
     /**
@@ -67,6 +67,6 @@ class ApiKeyController extends BaseApiController
     public function destroy(ApiKey $apiKey)
     {
         $this->apiKeyService->delete($apiKey);
-        return $this->success(null, 'API Key 已删除');
+        return $this->success(null, 'API Key deleted');
     }
 }

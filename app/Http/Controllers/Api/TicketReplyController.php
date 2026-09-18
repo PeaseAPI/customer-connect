@@ -28,7 +28,7 @@ class TicketReplyController extends BaseApiController
 
         return $this->success(
             $this->ticketService->createReply($ticketId, $validated)->load(['user', 'creator']),
-            '回复成功',
+            'Reply successful',
             201
         );
     }

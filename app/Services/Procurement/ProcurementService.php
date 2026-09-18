@@ -67,7 +67,7 @@ class ProcurementService
             PurchaseRequest::whereDate('created_at', today())->count() + 1, 4, '0', STR_PAD_LEFT
         );
 
-        // 计算总金额
+        // 计算总Amount
         $totalAmount = collect($data['items'] ?? [])->sum(function ($item) {
             return ($item['quantity'] ?? 0) * ($item['unit_price'] ?? 0);
         });
@@ -97,7 +97,7 @@ class ProcurementService
     public function approvePurchaseRequest(PurchaseRequest $request, int $approverId): PurchaseRequest
     {
         if ($request->status !== 'pending') {
-            throw new \Exception('只能审批待审批的采购申请');
+            throw new \Exception('Can only approve pending purchase requests');
         }
 
         $request->update([
@@ -112,7 +112,7 @@ class ProcurementService
     public function rejectPurchaseRequest(PurchaseRequest $request, int $approverId): PurchaseRequest
     {
         if ($request->status !== 'pending') {
-            throw new \Exception('只能拒绝待审批的采购申请');
+            throw new \Exception('Can only reject pending purchase requests');
         }
 
         $request->update([

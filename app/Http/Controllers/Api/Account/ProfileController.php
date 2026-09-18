@@ -42,11 +42,11 @@ class ProfileController extends BaseApiController
         $user = $request->user();
 
         if (!Hash::check($validated['current_password'], $user->password)) {
-            return $this->error('当前密码不正确', 422);
+            return $this->error('Current password is incorrect', 422);
         }
 
                 $user->update(['password' => $validated['password']]);
-        return $this->success(null, '密码修改成功');
+        return $this->success(null, 'Password changed successfully');
     }
 
         public function updatePreferences(Request $request): JsonResponse

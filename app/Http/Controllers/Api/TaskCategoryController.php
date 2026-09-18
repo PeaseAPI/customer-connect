@@ -29,7 +29,7 @@ class TaskCategoryController extends BaseApiController
 
         return $this->success(
             $this->taskCategoryService->create($validated)->load(['creator']),
-            '任务分类创建成功',
+            'Task category created successfully',
             201
         );
     }

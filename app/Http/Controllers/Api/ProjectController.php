@@ -85,12 +85,12 @@ class ProjectController extends BaseApiController
         ]);
 
         $this->projectService->addMember($project, $validated['user_id'], $validated['role'] ?? 'member');
-        return $this->success(null, '成员添加成功');
+        return $this->success(null, 'Member added successfully');
     }
 
     public function removeMember(Project $project, $user)
     {
         $this->projectService->removeMember($project, $user);
-        return $this->success(null, '成员移除成功');
+        return $this->success(null, 'Member removed successfully');
     }
 }

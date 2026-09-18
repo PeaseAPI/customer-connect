@@ -53,7 +53,7 @@ class AliyunSmsService implements SmsServiceInterface
     }
 
     /**
-     * 发送短信（阿里云短信API）
+     * Send SMS（阿里云短信API）
      */
     private function sendSms(string $mobile, string $templateId, array $templateParams): bool
     {
@@ -84,14 +84,14 @@ class AliyunSmsService implements SmsServiceInterface
                 if (($result['Code'] ?? '') === 'OK') {
                     return true;
                 }
-                Log::error('阿里云短信发送失败', ['result' => $result]);
+                Log::error('Alibaba Cloud SMS send failed', ['result' => $result]);
                 return false;
             }
 
-            Log::error('阿里云短信请求失败', ['status' => $response->status(), 'body' => $response->body()]);
+            Log::error('Alibaba Cloud SMS request failed', ['status' => $response->status(), 'body' => $response->body()]);
             return false;
         } catch (\Exception $e) {
-            Log::error('阿里云短信异常', ['message' => $e->getMessage()]);
+            Log::error('Alibaba Cloud SMS error', ['message' => $e->getMessage()]);
             return false;
         }
     }

@@ -13,7 +13,7 @@ class CompanyController extends BaseApiController
     {
         $company = $request->user()->company;
         if (!$company) {
-            return $this->error('未关联公司', 404);
+            return $this->error('No associated company', 404);
         }
         return $this->success($company->load(['subscription.package']));
     }
@@ -22,7 +22,7 @@ class CompanyController extends BaseApiController
     {
         $company = $request->user()->company;
         if (!$company) {
-            return $this->error('未关联公司', 404);
+            return $this->error('No associated company', 404);
         }
 
         $validated = $request->validate([

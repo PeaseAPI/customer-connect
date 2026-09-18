@@ -27,7 +27,7 @@ class StorageSettingService
     }
 
     /**
-     * 获取存储驱动配置（供文件上传使用）
+     * Get storage driver config (for file uploads)
      */
     public function getDriverConfig(int $companyId): array
     {
@@ -41,14 +41,14 @@ class StorageSettingService
     }
 
     /**
-     * 测试存储连接
+     * Test storage connection
      */
     public function testConnection(int $companyId): array
     {
         $setting = $this->get($companyId);
 
         if (!$setting) {
-            return ['success' => true, 'driver' => 'local', 'message' => '本地存储正常运行'];
+            return ['success' => true, 'driver' => 'local', 'message' => 'Local storage running normally'];
         }
 
         try {
@@ -61,13 +61,13 @@ class StorageSettingService
             return [
                 'success' => $exists,
                 'driver' => $setting->default_driver,
-                'message' => $exists ? '存储连接正常' : '存储写入失败',
+                'message' => $exists ? 'Storage connection normal' : 'Storage write failed',
             ];
         } catch (\Exception $e) {
             return [
                 'success' => false,
                 'driver' => $setting->default_driver,
-                'message' => '连接失败: ' . $e->getMessage(),
+                'message' => 'Connection failed: ' . $e->getMessage(),
             ];
         }
     }

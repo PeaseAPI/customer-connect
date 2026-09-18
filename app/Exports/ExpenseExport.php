@@ -49,7 +49,7 @@ class ExpenseExport implements FromQuery, WithHeadings, WithMapping, ShouldQueue
     public function headings(): array
     {
         return [
-            'ID', '费用名称', '金额', '购买日期', '购买来源',
+            'ID', 'Expense Name', 'Amount', 'Purchase Date', 'Purchase Source',
             'Category', 'Project', 'Status', 'Billable', 'Notes', 'Submitted By', 'Created At',
         ];
     }
@@ -65,7 +65,7 @@ class ExpenseExport implements FromQuery, WithHeadings, WithMapping, ShouldQueue
             $expense->category?->category_name,
             $expense->project?->project_name,
             $expense->status?->value ?? $expense->status,
-            $expense->billable ? '是' : '否',
+            $expense->billable ? 'Yes' : 'No',
             $expense->note,
             $expense->user?->name,
             $expense->created_at->format('Y-m-d H:i:s'),

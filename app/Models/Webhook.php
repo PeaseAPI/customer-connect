@@ -47,7 +47,7 @@ class Webhook extends Model
     }
 
     /**
-     * 检查是否订阅了某事件
+     * 检查YesNo订阅了某事件
      */
     public function isSubscribedTo(string $event): bool
     {
@@ -55,7 +55,7 @@ class Webhook extends Model
     }
 
     /**
-     * 记录失败并检查是否应该自动禁用
+     * 记录失败并检查YesNo应该自动禁用
      */
     public function recordFailure(): void
     {

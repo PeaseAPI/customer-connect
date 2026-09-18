@@ -33,7 +33,7 @@ class LeadFollowUpController extends BaseApiController
 
         return $this->success(
             $this->leadFollowUpService->create($validated)->load(['lead', 'addedBy']),
-            '跟进创建成功',
+            'Follow-up created successfully',
             201
         );
     }

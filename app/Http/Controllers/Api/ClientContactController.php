@@ -37,7 +37,7 @@ class ClientContactController extends BaseApiController
 
         return $this->success(
             $this->clientContactService->create($validated)->load(['creator']),
-            '客户联系人创建成功',
+            'Client contact created successfully',
             201
         );
     }

@@ -30,10 +30,10 @@ class AttendanceController extends BaseApiController
         ]);
 
         if (!$data) {
-            return $this->error('今日已打卡', 422);
+            return $this->error('Already clocked in today', 422);
         }
 
-        return $this->success($data->load(['user', 'shift']), '上班打卡成功', 201);
+        return $this->success($data->load(['user', 'shift']), 'Clocked in successfully', 201);
     }
 
     public function clockOut(Request $request)
@@ -44,9 +44,9 @@ class AttendanceController extends BaseApiController
         ]);
 
         if (!$data) {
-            return $this->error('未找到打卡记录或已下班打卡', 404);
+            return $this->error('No clock-in record found or already clocked out', 404);
         }
 
-        return $this->success($data->load(['user', 'shift']), '下班打卡成功');
+        return $this->success($data->load(['user', 'shift']), 'Clocked out successfully');
     }
 }

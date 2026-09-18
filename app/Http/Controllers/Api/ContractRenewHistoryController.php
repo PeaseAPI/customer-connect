@@ -32,7 +32,7 @@ class ContractRenewHistoryController extends BaseApiController
 
         return $this->success(
             $this->contractRenewHistoryService->create($validated)->load(['creator']),
-            '续约记录创建成功',
+            'Renewal record created successfully',
             201
         );
     }

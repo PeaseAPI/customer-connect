@@ -24,7 +24,7 @@ class DatabaseBackupService
             'created_by' => $userId,
         ]);
 
-        // 异步执行备份
+        // Execute backup asynchronously
         dispatch(function () use ($backup, $companyId) {
             try {
                 $backup->update(['status' => 'processing']);
@@ -50,7 +50,7 @@ class DatabaseBackupService
     }
 
     /**
-     * 获取备份列表
+     * Get backup list
      */
     public function list(int $companyId, int $perPage = 15)
     {
@@ -61,7 +61,7 @@ class DatabaseBackupService
     }
 
     /**
-     * 删除备份
+     * Delete backup
      */
     public function delete(DatabaseBackup $backup): void
     {
@@ -73,7 +73,7 @@ class DatabaseBackupService
     }
 
     /**
-     * 恢复备份（仅恢复该公司的数据）
+     * Restore backup（仅恢复该公司的数据）
      */
     public function restore(DatabaseBackup $backup): bool
     {
@@ -86,12 +86,12 @@ class DatabaseBackupService
         }
 
         // 标记恢复中 — 实际恢复逻辑根据需求实现
-        // 此处为安全起见，只提供接口，恢复操作需管理员确认
+        // 此处为安全起见，只提供接口，恢复操作需Admin确认
         return true;
     }
 
     /**
-     * 生成 SQL 转储
+     * Generate SQL dump
      */
     protected function generateSqlDump(int $companyId): string
     {

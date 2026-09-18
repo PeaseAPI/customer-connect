@@ -14,7 +14,7 @@ class DashboardController extends BaseApiController
         $companyId = $request->attributes->get('company_id');
         $user = $request->user();
 
-        // 根据角色返回不同的仪表盘视图
+        // Return different dashboard views based on role
         if ($user->isClient()) {
             $data = $this->dashboardService->getClientDashboard($companyId, $user->id);
         } elseif ($user->isAdmin()) {

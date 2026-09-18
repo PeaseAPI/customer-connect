@@ -10,7 +10,7 @@ class ActivityLogController extends BaseApiController
     public function __construct(protected ActivityLogService $activityLogService) {}
 
     /**
-     * 获取活动日志列表
+     * 获取Activity log列表
      */
     public function index(Request $request)
     {
@@ -27,7 +27,7 @@ class ActivityLogController extends BaseApiController
     }
 
     /**
-     * 获取某实体的活动日志
+     * 获取某实体的Activity log
      */
     public function forSubject(Request $request, string $subjectType, int $subjectId)
     {
@@ -55,6 +55,6 @@ class ActivityLogController extends BaseApiController
             $validated['days_to_keep'] ?? 90
         );
 
-        return $this->success(['deleted' => $deleted], "已清理 {$deleted} 条旧日志");
+        return $this->success(['deleted' => $deleted], "Cleaned up {$deleted} old log entries");
     }
 }

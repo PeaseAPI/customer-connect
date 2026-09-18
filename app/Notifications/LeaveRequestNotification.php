@@ -27,7 +27,7 @@ class LeaveRequestNotification extends Notification implements ShouldBroadcast
             'employee_name' => $this->leave->employee?->name,
             'leave_type' => $this->leave->leaveType?->name,
             'duration' => $this->leave->duration,
-            'message' => "{$this->leave->employee?->name} 申请了 {$this->leave->duration} 天假期",
+            'message' => "{$this->leave->employee?->name} requested {$this->leave->duration} days of leave",
         ];
     }
 

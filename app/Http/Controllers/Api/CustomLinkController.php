@@ -38,7 +38,7 @@ class CustomLinkController extends BaseApiController
     }
 
     /**
-     * 创建自定义链接
+     * Create custom link
      */
     public function store(Request $request)
     {
@@ -54,11 +54,11 @@ class CustomLinkController extends BaseApiController
         $companyId = $request->attributes->get('company_id');
         $link = $this->customLinkService->create($companyId, $validated);
 
-        return $this->success($link, '自定义链接创建成功', 201);
+        return $this->success($link, 'Custom link created successfully', 201);
     }
 
     /**
-     * 更新自定义链接
+     * Update custom link
      */
     public function update(Request $request, CustomLink $customLink)
     {
@@ -77,12 +77,12 @@ class CustomLinkController extends BaseApiController
     }
 
     /**
-     * 删除自定义链接
+     * Delete custom link
      */
     public function destroy(CustomLink $customLink)
     {
         $this->customLinkService->delete($customLink);
-        return $this->success(null, '自定义链接已删除');
+        return $this->success(null, 'Custom link deleted');
     }
 
     /**
@@ -97,6 +97,6 @@ class CustomLinkController extends BaseApiController
         ]);
 
         $this->customLinkService->reorder($validated['items']);
-        return $this->success(null, '排序更新成功');
+        return $this->success(null, 'Reorder updated successfully');
     }
 }

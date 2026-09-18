@@ -44,7 +44,7 @@ class InvoiceController extends BaseApiController
 
         $invoice = $this->invoiceService->create($validated, $items);
 
-        return $this->success($invoice->load(['client', 'project', 'currency', 'items']), '发票创建成功', 201);
+        return $this->success($invoice->load(['client', 'project', 'currency', 'items']), 'InvoiceCreated successfully', 201);
     }
 
     public function show(Invoice $invoice)
@@ -76,13 +76,13 @@ class InvoiceController extends BaseApiController
     public function send(Invoice $invoice)
     {
         $this->invoiceService->send($invoice);
-        return $this->success($invoice->fresh(), '发票已发送');
+        return $this->success($invoice->fresh(), 'Invoice sent');
     }
 
     public function cancel(Invoice $invoice)
     {
         $this->invoiceService->cancel($invoice);
-        return $this->success($invoice->fresh(), '发票已取消');
+        return $this->success($invoice->fresh(), 'Invoice cancelled');
     }
 
     public function recordPayment(Request $request, Invoice $invoice)
@@ -101,6 +101,6 @@ class InvoiceController extends BaseApiController
 
         $payment = $this->invoiceService->recordPayment($invoice, $validated);
 
-        return $this->success($payment, '付款记录成功', 201);
+        return $this->success($payment, 'Payment recorded successfully', 201);
     }
 }

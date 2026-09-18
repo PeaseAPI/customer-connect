@@ -11,7 +11,7 @@ class PaymentManager
         return match ($gateway) {
             'alipay' => new AlipayService(),
             'wechat' => new WechatPayService(),
-            default => throw new \InvalidArgumentException("不支持的支付网关: {$gateway}"),
+            default => throw new \InvalidArgumentException("Unsupported payment gateway: {$gateway}"),
         };
     }
 
@@ -20,7 +20,7 @@ class PaymentManager
         try {
             return $this->driver($gateway)->createOrder($orderData);
         } catch (\Exception $e) {
-            Log::error('支付创建订单失败', ['gateway' => $gateway, 'error' => $e->getMessage()]);
+            Log::error('Payment create order failed', ['gateway' => $gateway, 'error' => $e->getMessage()]);
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -30,7 +30,7 @@ class PaymentManager
         try {
             return $this->driver($gateway)->verifyCallback($callbackData);
         } catch (\Exception $e) {
-            Log::error('支付回调验签失败', ['gateway' => $gateway, 'error' => $e->getMessage()]);
+            Log::error('Payment callback signature verification failed', ['gateway' => $gateway, 'error' => $e->getMessage()]);
             return false;
         }
     }

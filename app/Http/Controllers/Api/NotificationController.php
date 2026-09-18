@@ -19,7 +19,7 @@ class NotificationController extends BaseApiController
     public function update(Request $request, Notification $notification)
     {
         $this->notificationService->markAsRead($notification);
-        return $this->success(null, '已标记已读');
+        return $this->success(null, 'Marked as read');
     }
 
     public function destroy(Notification $notification)
@@ -31,7 +31,7 @@ class NotificationController extends BaseApiController
     public function markAllRead()
     {
         $this->notificationService->markAllRead();
-        return $this->success(null, '全部标记已读');
+        return $this->success(null, 'All marked as read');
     }
 
     public function unreadCount()

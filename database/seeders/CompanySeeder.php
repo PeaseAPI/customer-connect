@@ -12,7 +12,7 @@ class CompanySeeder extends Seeder
     {
         $companies = [
             [
-                'company_name' => '客户通科技有限公司',
+                'company_name' => 'Customer Connect Technologies Ltd.',
                 'company_email' => 'admin@example.com',
                 'company_phone' => '400-888-9999',
                 'subdomain' => 'demo',
@@ -22,7 +22,7 @@ class CompanySeeder extends Seeder
                 'license_expire_on' => now()->addYear(),
             ],
             [
-                'company_name' => '演示企业',
+                'company_name' => 'Demo Company',
                 'company_email' => 'demo@example.com',
                 'company_phone' => '400-666-8888',
                 'subdomain' => 'demo',
@@ -37,6 +37,6 @@ class CompanySeeder extends Seeder
             Company::create($company);
         }
 
-        $this->command->info('Created ' . count($companies) . ' 家公司');
+        $this->command->info('Created ' . count($companies) . ' companies');
     }
 }

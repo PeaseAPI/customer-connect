@@ -10,19 +10,19 @@ use Carbon\Carbon;
 class RecurringTaskService
 {
     /**
-     * 生成循环任务
-     * 遍历所有到期需要生成的循环任务，自动创建下一周期的任务实例
+     * 生成Recurring task
+     * Iterate all due recurring tasks, auto-create next cycle task instance
      */
     public function generateRecurringTasks(): int
     {
         $created = 0;
         $now = now();
 
-        // 找出所有需要生成下一次实例的循环任务
+        // Find all recurring tasks that need next instance
         $recurringTasks = Task::where('is_recurring', true)
             ->whereNotNull('recurring_next_date')
             ->where('recurring_next_date', '<=', $now->toDateString())
-            ->whereNull('parent_task_id') // 只处理父任务
+            ->whereNull('parent_task_id') // Only process parent tasks
             ->get();
 
         foreach ($recurringTasks as $parentTask) {
@@ -36,7 +36,7 @@ class RecurringTaskService
     }
 
     /**
-     * 为循环任务创建下一个实例
+     * 为Recurring task创建下一 实例
      */
     public function createNextInstance(Task $parentTask): ?Task
     {
@@ -91,7 +91,7 @@ class RecurringTaskService
     }
 
     /**
-     * 设置任务为循环任务
+     * 设置任务为Recurring task
      */
     public function setupRecurring(Task $task, array $config): Task
     {
@@ -112,7 +112,7 @@ class RecurringTaskService
     }
 
     /**
-     * 停止循环任务
+     * 停止Recurring task
      */
     public function stopRecurring(Task $task): Task
     {
@@ -125,7 +125,7 @@ class RecurringTaskService
     }
 
     /**
-     * 计算下一个循环日期
+     * 计算下一 循环日期
      */
     private function calculateNextDate(Carbon $currentDate, int $every, string $type, ?string $until = null): ?Carbon
     {
@@ -137,7 +137,7 @@ class RecurringTaskService
             default => $currentDate->copy()->addDays($every),
         };
 
-        // 检查是否超过截止日期
+        // 检查YesNo超过截止日期
         if ($until && $nextDate->gt(Carbon::parse($until))) {
             return null;
         }

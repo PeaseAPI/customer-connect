@@ -41,7 +41,7 @@ class ProjectTemplateService
     }
 
     /**
-     * 从现有项目创建模板
+     * Create template from existing project
      */
     public function createFromProject(Project $project, string $templateName, ?string $description = null): ProjectTemplate
     {
@@ -76,14 +76,14 @@ class ProjectTemplateService
     }
 
     /**
-     * 从模板创建项目
+     * Create project from template
      */
     public function createProjectFromTemplate(ProjectTemplate $template, array $projectData): Project
     {
         return DB::transaction(function () use ($template, $projectData) {
             $projectData['company_id'] = $projectData['company_id'] ?? $template->company_id;
 
-            // 创建项目
+            // Create project
             $project = Project::create(collect($projectData)->only([
                 'company_id', 'project_name', 'client_id', 'start_date', 'deadline',
                 'status', 'priority', 'budget', 'project_summary', 'category_id', 'created_by',

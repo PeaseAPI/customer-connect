@@ -11,8 +11,8 @@ class PackageSeeder extends Seeder
     {
         $packages = [
             [
-                'name' => '免费版',
-                'description' => '适合小型团队，基础功能',
+                'name' => 'Free Edition',
+                'description' => 'Suitable for small teams, basic features',
                 'is_free' => true,
                 'max_employees' => 5,
                 'max_storage_mb' => 500,
@@ -25,8 +25,8 @@ class PackageSeeder extends Seeder
                 'modules' => ['hrm' => true, 'crm' => true, 'pm' => false, 'finance' => false],
             ],
             [
-                'name' => '标准版',
-                'description' => '适合成长型企业，全功能模块',
+                'name' => 'Standard Edition',
+                'description' => 'Suitable for growing businesses, all feature modules',
                 'is_free' => false,
                 'max_employees' => 50,
                 'max_storage_mb' => 5000,
@@ -39,8 +39,8 @@ class PackageSeeder extends Seeder
                 'modules' => ['hrm' => true, 'crm' => true, 'pm' => true, 'finance' => true],
             ],
             [
-                'name' => '专业版',
-                'description' => '适合中大型企业，高级功能+定制支持',
+                'name' => 'Professional Edition',
+                'description' => 'Suitable for mid-to-large enterprises, advanced features + custom support',
                 'is_free' => false,
                 'max_employees' => 200,
                 'max_storage_mb' => 20000,
@@ -53,8 +53,8 @@ class PackageSeeder extends Seeder
                 'modules' => ['hrm' => true, 'crm' => true, 'pm' => true, 'finance' => true],
             ],
             [
-                'name' => '旗舰版',
-                'description' => '不限人数，专属客服+私有部署',
+                'name' => 'Enterprise Edition',
+                'description' => 'Unlimited users, dedicated support + private deployment',
                 'is_free' => false,
                 'max_employees' => 0,
                 'max_storage_mb' => 0,
@@ -72,7 +72,7 @@ class PackageSeeder extends Seeder
             Package::create($package);
         }
 
-        $this->command->info('已创建 ' . count($packages) . ' 个套餐');
+        $this->command->info('Created ' . count($packages) . ' packages');
     }
 }
 

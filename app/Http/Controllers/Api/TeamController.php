@@ -25,7 +25,7 @@ class TeamController extends BaseApiController
         $memberIds = $v['member_ids'] ?? [];
         unset($v['member_ids']);
         $team = $this->teamService->create($v, $memberIds);
-        return $this->success($team->load(['creator', 'members']), '团队创建成功', 201);
+        return $this->success($team->load(['creator', 'members']), 'Team created successfully', 201);
     }
 
     public function show(Team $team)
@@ -52,12 +52,12 @@ class TeamController extends BaseApiController
     {
         $v = $request->validated();
         $team = $this->teamService->addMembers($team, $v['member_ids']);
-        return $this->success($team->load(['creator', 'members']), '成员添加成功');
+        return $this->success($team->load(['creator', 'members']), 'Member added successfully');
     }
 
     public function removeMember(Request $request, Team $team, $userId)
     {
         $team = $this->teamService->removeMember($team, $userId);
-        return $this->success($team->load(['creator', 'members']), '成员移除成功');
+        return $this->success($team->load(['creator', 'members']), 'Member removed successfully');
     }
 }

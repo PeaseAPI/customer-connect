@@ -5,7 +5,7 @@ namespace App\Services\Payment;
 interface PaymentServiceInterface
 {
     /**
-     * 创建支付订单
+     * Create payment order
      */
     public function createOrder(array $orderData): array;
 
@@ -20,7 +20,7 @@ interface PaymentServiceInterface
     public function refund(string $transactionId, float $amount, string $reason = ''): array;
 
     /**
-     * 查询订单状态
+     * 查询订单Status
      */
     public function queryOrder(string $outTradeNo): array;
 

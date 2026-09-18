@@ -29,7 +29,7 @@ class ProjectCategoryController extends BaseApiController
 
         return $this->success(
             $this->projectCategoryService->create($validated)->load(['creator']),
-            '项目分类创建成功',
+            'Project category created successfully',
             201
         );
     }

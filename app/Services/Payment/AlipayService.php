@@ -49,7 +49,7 @@ class AlipayService implements PaymentServiceInterface
                 'gateway' => 'alipay',
             ];
         } catch (\Exception $e) {
-            Log::error('支付宝创建订单失败', ['error' => $e->getMessage()]);
+            Log::error('Alipay create order failed', ['error' => $e->getMessage()]);
             return ['error' => $e->getMessage()];
         }
     }
@@ -69,7 +69,7 @@ class AlipayService implements PaymentServiceInterface
             $algo = $signType === 'RSA2' ? OPENSSL_ALGO_SHA256 : OPENSSL_ALGO_SHA1;
             return openssl_verify($content, base64_decode($sign), $pubKey, $algo) === 1;
         } catch (\Exception $e) {
-            Log::error('支付宝回调验签失败', ['error' => $e->getMessage()]);
+            Log::error('Alipay callback signature verification failed', ['error' => $e->getMessage()]);
             return false;
         }
     }

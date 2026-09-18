@@ -27,7 +27,7 @@ class TaskAssignedNotification extends Notification implements ShouldBroadcast
             'task_id' => $this->task->id,
             'task_title' => $this->task->title,
             'project_name' => $this->task->project?->name,
-            'message' => "您有新的任务：{$this->task->title}",
+            'message' => "You have a new task: {$this->task->title}",
         ];
     }
 
@@ -37,7 +37,7 @@ class TaskAssignedNotification extends Notification implements ShouldBroadcast
             'type' => 'task_assigned',
             'task_id' => $this->task->id,
             'task_title' => $this->task->title,
-            'message' => "您有新的任务：{$this->task->title}",
+            'message' => "You have a new task: {$this->task->title}",
         ]);
     }
 }

@@ -10,10 +10,10 @@ class ContractObserver
 {
     public function created(Contract $contract): void
     {
-        // 新建合同时记录活动日志
+        // 新建合同时记录Activity log
         activity()
             ->performedOn($contract)
-            ->log('创建合同');
+            ->log('Create contract');
     }
 
     public function updated(Contract $contract): void
@@ -25,7 +25,7 @@ class ContractObserver
                     'old' => $contract->getOriginal('status'),
                     'new' => $contract->status,
                 ])
-                ->log('合同状态变更');
+                ->log('Contract status changed');
         }
     }
 
@@ -33,6 +33,6 @@ class ContractObserver
     {
         activity()
             ->performedOn($contract)
-            ->log('删除合同');
+            ->log('Delete contract');
     }
 }

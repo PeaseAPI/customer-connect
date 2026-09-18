@@ -46,7 +46,7 @@ class ProposalController extends BaseApiController
 
         $proposal = $this->proposalService->create($validated, $items);
 
-        return $this->success($proposal->load(['client', 'currency', 'items']), '提案创建成功', 201);
+        return $this->success($proposal->load(['client', 'currency', 'items']), 'Proposal created successfully', 201);
     }
 
     public function show(Proposal $proposal)
@@ -85,16 +85,16 @@ class ProposalController extends BaseApiController
     public function send(Proposal $proposal)
     {
         $proposal = $this->proposalService->send($proposal);
-        return $this->success($proposal, '提案已发送');
+        return $this->success($proposal, 'Proposal sent');
     }
 
     public function convertToInvoice(Proposal $proposal)
     {
                 if ($proposal->status !== ProposalStatus::Accepted) {
-            return $this->error('只有已接受的提案可以转换为发票', 400);
+            return $this->error('Only accepted proposals can be converted to invoices', 400);
         }
 
         $invoice = $this->proposalService->convertToInvoice($proposal);
-        return $this->success($invoice->load('items'), '提案已转换为发票', 201);
+        return $this->success($invoice->load('items'), 'Proposal converted to invoice', 201);
     }
 }

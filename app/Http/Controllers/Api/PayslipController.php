@@ -24,7 +24,7 @@ class PayslipController extends BaseApiController
         ]);
 
         $payslip = $this->salaryService->generatePayslip($validated['user_id'], $validated['month']);
-        return $this->success($payslip->load('user'), '工资条生成成功', 201);
+        return $this->success($payslip->load('user'), 'Payslip generated successfully', 201);
     }
 
     public function batchGenerate(Request $request)
@@ -38,13 +38,13 @@ class PayslipController extends BaseApiController
             $request->attributes->get('company_id')
         );
 
-        return $this->success($result, "已生成 {$result['generated']} 份工资条");
+        return $this->success($result, "Generated {$result['generated']} payslips");
     }
 
     public function send(Payslip $payslip)
     {
         $payslip = $this->salaryService->sendPayslip($payslip);
-        return $this->success($payslip, '工资条已发送');
+        return $this->success($payslip, 'Payslip sent');
     }
 
     public function show(Payslip $payslip)

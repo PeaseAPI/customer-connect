@@ -12,7 +12,7 @@ class CustomModuleController extends BaseApiController
     public function __construct(protected CustomModuleService $customModuleService) {}
 
     /**
-     * 列出自定义模块
+     * List custom modules
      */
     public function index(Request $request)
     {
@@ -22,7 +22,7 @@ class CustomModuleController extends BaseApiController
     }
 
     /**
-     * 创建自定义模块
+     * Create custom module
      */
     public function store(Request $request)
     {
@@ -45,11 +45,11 @@ class CustomModuleController extends BaseApiController
         $companyId = $request->attributes->get('company_id');
         $module = $this->customModuleService->create($companyId, $validated);
 
-        return $this->success($module, '自定义模块创建成功', 201);
+        return $this->success($module, 'Custom module created successfully', 201);
     }
 
     /**
-     * 查看自定义模块详情
+     * View custom module details
      */
     public function show(CustomModule $customModule)
     {
@@ -57,7 +57,7 @@ class CustomModuleController extends BaseApiController
     }
 
     /**
-     * 更新自定义模块
+     * Update custom module
      */
     public function update(Request $request, CustomModule $customModule)
     {
@@ -77,18 +77,18 @@ class CustomModuleController extends BaseApiController
     }
 
     /**
-     * 删除自定义模块
+     * Delete custom module
      */
     public function destroy(CustomModule $customModule)
     {
         $this->customModuleService->delete($customModule);
-        return $this->success(null, '自定义模块已删除');
+        return $this->success(null, 'Custom module deleted');
     }
 
-    // ===== 模块数据 CRUD =====
+    // ===== Module data CRUD =====
 
     /**
-     * 获取模块数据列表
+     * List module data
      */
     public function listRecords(Request $request, CustomModule $customModule)
     {
@@ -97,7 +97,7 @@ class CustomModuleController extends BaseApiController
     }
 
     /**
-     * 添加模块数据
+     * Add module data
      */
     public function storeRecord(Request $request, CustomModule $customModule)
     {
@@ -117,11 +117,11 @@ class CustomModuleController extends BaseApiController
             $request->user()->id
         );
 
-        return $this->success($record->load(['creator', 'updater']), '记录创建成功', 201);
+        return $this->success($record->load(['creator', 'updater']), 'Record created successfully', 201);
     }
 
     /**
-     * 更新模块数据
+     * Update module data
      */
     public function updateRecord(Request $request, CustomModule $customModule, CustomModuleData $record)
     {
@@ -135,11 +135,11 @@ class CustomModuleController extends BaseApiController
     }
 
     /**
-     * 删除模块数据
+     * Delete module data
      */
     public function destroyRecord(CustomModule $customModule, CustomModuleData $record)
     {
         $this->customModuleService->deleteRecord($record);
-        return $this->success(null, '记录已删除');
+        return $this->success(null, 'Record deleted');
     }
 }

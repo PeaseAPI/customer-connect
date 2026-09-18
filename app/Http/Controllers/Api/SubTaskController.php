@@ -31,7 +31,7 @@ class SubTaskController extends BaseApiController
         $validated['added_by'] = $request->user()->id;
         $subTask = $this->subTaskService->create($task, $validated);
 
-        return $this->success($subTask->load(['assignee', 'creator']), '子任务创建成功', 201);
+        return $this->success($subTask->load(['assignee', 'creator']), 'Sub-task created successfully', 201);
     }
 
     public function show(Task $task, SubTask $subTask)

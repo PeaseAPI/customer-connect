@@ -26,7 +26,7 @@ class DatabaseBackup extends Model
     }
 
     /**
-     * 格式化文件大小
+     * Format file size
      */
     public function getFormattedSizeAttribute(): string
     {

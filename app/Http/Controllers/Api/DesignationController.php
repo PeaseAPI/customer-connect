@@ -27,7 +27,7 @@ class DesignationController extends BaseApiController
 
         return $this->success(
             $this->designationService->create($validated),
-            '职位创建成功',
+            'PositionCreated successfully',
             201
         );
     }
