@@ -89,7 +89,12 @@ class SalaryService
     public function sendPayslip(Payslip $payslip): Payslip
     {
         $payslip->update(['status' => 'sent']);
-        // TODO: 发送邮件通知
+        $payslip->user?->notify(new \App\Notifications\EmployeeReminderNotification('工资条已发送', [
+            'payslip_id' => $payslip->id,
+            'month' => $payslip->month,
+            'net_salary' => (string) $payslip->net_salary,
+        ]));
+
         return $payslip->fresh();
     }
 

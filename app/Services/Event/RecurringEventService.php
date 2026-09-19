@@ -138,7 +138,7 @@ class RecurringEventService
                     'user_id' => $userId,
                     'type' => 'event_reminder',
                     'title' => 'Event starting soon',
-                    'message' => ""{$event->event_name}" starts at {$event->start_date_time->format('H:i')}",
+                    'message' => "{$event->event_name} starts at {$event->start_date_time->format('H:i')}",
                     'data' => [
                         'event_id' => $event->id,
                         'start_time' => $event->start_date_time->toDateTimeString(),

@@ -1,7 +1,10 @@
 <?php
+
 namespace App\Console\Commands;
 
-use App\Models\User; use App\Events\WeeklyTimesheetSubmitted;
+use App\Models\Employee;
+use App\Models\User;
+use App\Notifications\EmployeeReminderNotification;
 use Illuminate\Console\Command;
 
 class SendWeeklyTimesheetReminders extends Command
@@ -11,7 +14,24 @@ class SendWeeklyTimesheetReminders extends Command
 
     public function handle(): int
     {
-        $this->info("Weekly timesheet reminders sent");
+        $week = now()->format('o-W');
+        $employees = Employee::where('status', 'active')->whereNotNull('user_id')->get();
+
+        $reminded = 0;
+        foreach ($employees as $employee) {
+            $user = User::find($employee->user_id);
+            if (! $user) {
+                continue;
+            }
+
+            $user->notify(new EmployeeReminderNotification('周报提交提醒', [
+                'week' => $week,
+                'employee_code' => $employee->employee_code,
+            ]));
+            $reminded++;
+        }
+
+        $this->info("Weekly timesheet reminders sent: {$reminded}");
         return self::SUCCESS;
     }
 }

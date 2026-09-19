@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Console\Commands;
 
 use App\Models\Company;
@@ -11,7 +12,16 @@ class DeleteSpamCompanies extends Command
 
     public function handle(): int
     {
-        $this->info("Spam companies deleted");
+        $companies = Company::where('status', 'inactive')
+            ->whereNull('deleted_at')
+            ->where('created_at', '<', now()->subDays(30))
+            ->get();
+
+        foreach ($companies as $company) {
+            $company->delete();
+        }
+
+        $this->info("Spam companies deleted: {$companies->count()}");
         return self::SUCCESS;
     }
 }
