@@ -20,6 +20,8 @@ class Company extends Model
         'company_email',
         'company_phone',
         'logo',
+        'logo_background_color',
+        'login_background',
         'subdomain',
         'custom_domain',
         'status',

@@ -55,6 +55,11 @@ class CompanyController extends BaseApiController
             'company_name' => 'sometimes|string|max:191',
             'company_email' => 'sometimes|email',
             'company_phone' => 'sometimes|string|max:30',
+            // Branding fields are set from the admin company settings page.
+            // Files are stored by the web layer; the API only keeps the path.
+            'logo' => 'sometimes|nullable|string|max:255',
+            'logo_background_color' => 'sometimes|nullable|string|max:20',
+            'login_background' => 'sometimes|nullable|string|max:255',
         ]);
 
         $company = $this->companyService->update($company, $validated);

@@ -1,43 +1,45 @@
 @extends('layouts.auth')
-@section('title', 'Register')
+@section('title', 'Sign Up')
 @section('content')
-    <h4 class="mb-12">Create your account</h4>
-    <p class="mb-32 text-secondary-light text-lg">Get started with Customer Connect CRM</p>
     <form method="POST" action="{{ route('register') }}">
         @csrf
-        <div class="icon-field mb-16">
-            <span class="icon top-50 translate-middle-y"><i class="ri-user-3-line"></i></span>
-            <input id="name" type="text" name="name" value="{{ old('name') }}" required
-                   class="form-control h-56-px bg-neutral-50 radius-12" placeholder="Full name">
-        </div>
-        @error('name') <p class="text-danger text-sm mb-16">{{ $message }}</p> @enderror
+        <h3 class="mb-4 f-w-500">Sign Up</h3>
 
-        <div class="icon-field mb-16">
-            <span class="icon top-50 translate-middle-y"><i class="ri-mail-line"></i></span>
-            <input id="email" type="email" name="email" value="{{ old('email') }}" required
-                   class="form-control h-56-px bg-neutral-50 radius-12" placeholder="you@company.com">
-        </div>
-        @error('email') <p class="text-danger text-sm mb-16">{{ $message }}</p> @enderror
-
-        <div class="position-relative mb-16">
-            <div class="icon-field">
-                <span class="icon top-50 translate-middle-y"><i class="ri-lock-password-line"></i></span>
-                <input id="password" type="password" name="password" required
-                       class="form-control h-56-px bg-neutral-50 radius-12" placeholder="Password (min 8 characters)">
-            </div>
-            <span class="toggle-password ri-eye-line cursor-pointer position-absolute end-0 top-50 translate-middle-y me-16 text-secondary-light" data-toggle="#password"></span>
-            @error('password') <p class="text-danger text-sm mt-8 mb-0">{{ $message }}</p> @enderror
+        <div class="form-group text-left">
+            <label for="name">Full name</label>
+            <input tabindex="1" type="text" name="name" id="name" autofocus value="{{ old('name') }}"
+                   placeholder="Full name" class="form-control height-50 f-15 light_text @error('name') is-invalid @enderror">
+            @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
         </div>
 
-        <div class="icon-field mb-20">
-            <span class="icon top-50 translate-middle-y"><i class="ri-shield-keyhole-line"></i></span>
-            <input id="password_confirmation" type="password" name="password_confirmation" required
-                   class="form-control h-56-px bg-neutral-50 radius-12" placeholder="Confirm password">
+        <div class="form-group text-left">
+            <label for="email">Email</label>
+            <input tabindex="2" type="email" name="email" id="email" value="{{ old('email') }}"
+                   placeholder="Email" class="form-control height-50 f-15 light_text @error('email') is-invalid @enderror">
+            @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
         </div>
 
-        <button type="submit" class="btn btn-primary text-sm btn-sm px-12 py-16 w-100 radius-12 mt-8">Create account</button>
+        <div class="form-group text-left">
+            <label for="password">Password</label>
+            <input tabindex="3" type="password" name="password" id="password"
+                   placeholder="Password (min 8 characters)"
+                   class="form-control height-50 f-15 light_text @error('password') is-invalid @enderror">
+            @error('password') <div class="invalid-feedback">{{ $message }}</div> @enderror
+        </div>
+
+        <div class="form-group text-left">
+            <label for="password_confirmation">Confirm Password</label>
+            <input tabindex="4" type="password" name="password_confirmation" id="password_confirmation"
+                   placeholder="Confirm Password"
+                   class="form-control height-50 f-15 light_text @error('password_confirmation') is-invalid @enderror">
+            @error('password_confirmation') <div class="invalid-feedback">{{ $message }}</div> @enderror
+        </div>
+
+        <button type="submit" class="btn-primary f-w-500 rounded w-100 height-50 f-18">
+            Sign Up
+        </button>
     </form>
-    <div class="mt-32 text-center text-sm">
-        <p class="mb-0">Already have an account? <a href="{{ route('login') }}" class="text-primary-600 fw-semibold">Sign In</a></p>
-    </div>
+@endsection
+@section('outside_box')
+    <p class="my-2 f-12">Already have an account? <a href="{{ route('login') }}" class="text-dark-grey">Sign In</a></p>
 @endsection

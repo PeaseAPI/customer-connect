@@ -1,38 +1,46 @@
 @extends('layouts.auth')
 @section('title', 'Sign In')
 @section('content')
-    <h4 class="mb-12">Sign In to your Account</h4>
-    <p class="mb-32 text-secondary-light text-lg">Welcome back! please enter your details</p>
     <form method="POST" action="{{ route('login') }}">
         @csrf
-        <div class="icon-field mb-16">
-            <span class="icon top-50 translate-middle-y"><i class="ri-mail-line"></i></span>
-            <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus
-                   class="form-control h-56-px bg-neutral-50 radius-12" placeholder="you@company.com">
-        </div>
-        @error('email') <p class="text-danger text-sm mb-16">{{ $message }}</p> @enderror
+        <h3 class="mb-4 f-w-500">Sign In</h3>
 
-        <div class="position-relative mb-20">
-            <div class="icon-field">
-                <span class="icon top-50 translate-middle-y"><i class="ri-lock-password-line"></i></span>
-                <input id="password" type="password" name="password" required
-                       class="form-control h-56-px bg-neutral-50 radius-12" placeholder="Enter your password">
+        <div class="form-group text-left">
+            <label for="email">Email</label>
+            <input tabindex="1" type="email" name="email" id="email" autofocus value="{{ old('email') }}"
+                   placeholder="Email" class="form-control height-50 f-15 light_text @error('email') is-invalid @enderror">
+            @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
+        </div>
+
+        <div class="form-group text-left">
+            <label for="password">Password</label>
+            <div class="input-group">
+                <input type="password" name="password" id="password" placeholder="Password" tabindex="2"
+                       class="form-control height-50 f-15 light_text @error('password') is-invalid @enderror">
+                <div class="input-group-append">
+                    <button type="button" title="View Password"
+                            class="btn btn-outline-secondary border-grey height-50 toggle-password">
+                        <i class="ri-eye-line"></i>
+                    </button>
+                </div>
             </div>
-            <span class="toggle-password ri-eye-line cursor-pointer position-absolute end-0 top-50 translate-middle-y me-16 text-secondary-light" data-toggle="#password"></span>
-            @error('password') <p class="text-danger text-sm mt-8 mb-0">{{ $message }}</p> @enderror
+            @error('password') <div class="invalid-feedback d-block">{{ $message }}</div> @enderror
         </div>
 
-        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-20">
-            <div class="form-check style-check d-flex align-items-center">
-                <input class="form-check-input" type="checkbox" name="remember" id="remember">
-                <label class="form-check-label line-height-1 fw-medium text-secondary-light" for="remember">Remember me</label>
-            </div>
-            <a href="{{ route('password.request') }}" class="text-primary-600 fw-medium">Forgot password?</a>
+        <div class="forgot_pswd mb-3">
+            <a href="{{ route('password.request') }}">Forgot Password</a>
         </div>
 
-        <button type="submit" class="btn btn-primary text-sm btn-sm px-12 py-16 w-100 radius-12 mt-16">Sign In</button>
+        <div class="form-group text-left">
+            <input id="remember" class="cursor-pointer" type="checkbox" name="remember">
+            <label for="remember" class="cursor-pointer">Remember Me</label>
+        </div>
+
+        <button type="submit" class="btn-primary f-w-500 rounded w-100 height-50 f-18">
+            Login
+        </button>
     </form>
-    <div class="mt-32 text-center text-sm">
-        <p class="mb-0">Don't have an account? <a href="{{ route('register') }}" class="text-primary-600 fw-semibold">Sign Up</a></p>
-    </div>
+@endsection
+@section('outside_box')
+    <p class="my-2 f-12">Don't have an account? <a href="{{ route('register') }}" class="text-dark-grey">Sign Up</a></p>
 @endsection

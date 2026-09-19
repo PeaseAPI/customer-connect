@@ -39,9 +39,9 @@
     <button type="button" class="sidebar-close-btn"><i class="ri-close-line"></i></button>
     <div>
         <a href="{{ route('dashboard') }}" class="sidebar-logo">
-            <img src="{{ asset('assets/images/logo.png') }}" alt="Customer Connect" class="light-logo">
-            <img src="{{ asset('assets/images/logo-light.png') }}" alt="Customer Connect" class="dark-logo">
-            <img src="{{ asset('assets/images/logo-icon.png') }}" alt="Customer Connect" class="logo-icon">
+            <img src="{{ \App\Support\Branding::logoUrl() }}" alt="{{ \App\Support\Branding::appName() }}" class="light-logo">
+            <img src="{{ \App\Support\Branding::logoUrl() }}" alt="{{ \App\Support\Branding::appName() }}" class="dark-logo">
+            <img src="{{ \App\Support\Branding::logoUrl() }}" alt="{{ \App\Support\Branding::appName() }}" class="logo-icon">
         </a>
     </div>
     <div class="sidebar-menu-area">
