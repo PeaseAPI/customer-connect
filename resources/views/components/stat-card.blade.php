@@ -1,11 +1,12 @@
-@props(['label', 'value', 'color', 'icon' => 'default'])
+@props(['label', 'value', 'color', 'icon' => 'default', 'trend' => null, 'trendDir' => 'up'])
 @php
     $bgClass = match($color) {
-        'blue' => 'bg-blue-50 text-blue-600',
-        'green' => 'bg-green-50 text-green-600',
-        'purple' => 'bg-purple-50 text-purple-600',
-        'amber' => 'bg-amber-50 text-amber-600',
-        default => 'bg-gray-50 text-gray-600',
+        'blue' => 'bg-primary-100 text-primary-500',
+        'green' => 'bg-emerald-50 text-emerald-500',
+        'purple' => 'bg-violet-50 text-violet-500',
+        'amber' => 'bg-amber-50 text-amber-500',
+        'red' => 'bg-red-50 text-red-500',
+        default => 'bg-surface text-bodytext',
     };
     $iconSvg = match($icon) {
         'projects' => '<path stroke-linecap="round" stroke-linejoin="round" d="M2 9.5V5.25A2.25 2.25 0 014.25 3h4.5A2.25 2.25 0 0111 5.25v4.5A2.25 2.25 0 018.75 12h-4.5A2.25 2.25 0 012 9.75v-.25zm11-4.25V5.25A2.25 2.25 0 0115.25 3h4.5A2.25 2.25 0 0122 5.25v4.5A2.25 2.25 0 0119.75 12h-4.5A2.25 2.25 0 0113 9.75v-.25zM2 18.75v-4.5A2.25 2.25 0 014.25 12h4.5A2.25 2.25 0 0111 14.25v4.5A2.25 2.25 0 018.75 21h-4.5A2.25 2.25 0 012 18.75zm11 0v-4.5A2.25 2.25 0 0115.25 12h4.5A2.25 2.25 0 0122 14.25v4.5A2.25 2.25 0 0119.75 21h-4.5A2.25 2.25 0 0113 18.75z"/>',
@@ -15,18 +16,24 @@
         default => '<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/>',
     };
 @endphp
-<div class="bg-white overflow-hidden rounded-xl border border-gray-200 p-6">
-    <div class="flex items-center">
+<div class="bg-white overflow-hidden rounded-xl border border-stroke p-5 transition-shadow hover:shadow-sm">
+    <div class="flex items-center gap-4">
         <div class="flex-shrink-0">
-            <div class="h-10 w-10 rounded-lg {{ $bgClass }} flex items-center justify-center">
-                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">{!! $iconSvg !!}</svg>
+            <div class="h-12 w-12 rounded-xl {{ $bgClass }} flex items-center justify-center">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">{!! $iconSvg !!}</svg>
             </div>
         </div>
-        <div class="ml-4 w-0 flex-1">
+        <div class="w-0 flex-1">
             <dl>
-                <dt class="text-sm font-medium text-gray-500 truncate">{{ $label }}</dt>
-                <dd class="text-2xl font-bold text-gray-900">{{ $value }}</dd>
+                <dt class="text-sm font-normal text-bodytext truncate">{{ $label }}</dt>
+                <dd class="text-[26px] leading-8 font-bold text-ink mt-0.5">{{ $value }}</dd>
             </dl>
         </div>
+        @if($trend !== null)
+        <span class="flex-shrink-0 inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold {{ $trendDir === 'up' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600' }}">
+            <svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $trendDir === 'up' ? 'M4.5 15.75l7.5-7.5 7.5 7.5' : 'M19.5 8.25l-7.5 7.5-7.5-7.5' }}"/></svg>
+            {{ $trend }}
+        </span>
+        @endif
     </div>
 </div>
