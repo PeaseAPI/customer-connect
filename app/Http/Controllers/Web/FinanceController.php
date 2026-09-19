@@ -9,7 +9,7 @@ class FinanceController extends Controller
 {
     use HasCrudActions;
 
-public function invoices(Request $request)
+    public function invoices(Request $request)
     {
         $params = array_filter([
             'page' => $request->input('page', 1),
@@ -18,9 +18,11 @@ public function invoices(Request $request)
         ]);
         $response = $this->apiGet($request, '/api/finance/invoices?' . http_build_query($params));
         $data = $response->json();
+        $clients = $this->apiGet($request, '/api/crm/clients?per_page=100')->json('data', []);
         return view('finance.invoices', [
             'invoices' => $data['data'] ?? [],
             'pagination' => $this->extractPagination($data),
+            'clients' => $clients,
         ]);
     }
 
@@ -33,7 +35,7 @@ public function invoices(Request $request)
         return back()->withErrors($response->json('errors', []))->withInput();
     }
 
-    public function updateInvoice(Request $request, $id)
+    public function updateInvoice(Request $request, string $id)
     {
         $response = $this->apiPut($request, "/api/finance/invoices/{$id}", $request->all());
         if ($response->successful()) {
@@ -42,13 +44,13 @@ public function invoices(Request $request)
         return back()->withErrors($response->json('errors', []))->withInput();
     }
 
-    public function destroyInvoice(Request $request, $id)
+    public function destroyInvoice(Request $request, string $id)
     {
         $this->apiDelete($request, "/api/finance/invoices/{$id}");
         return redirect()->route('finance.invoices')->with('success', 'Invoice deleted successfully');
     }
 
-public function estimates(Request $request)
+    public function estimates(Request $request)
     {
         $params = array_filter([
             'page' => $request->input('page', 1),
@@ -57,9 +59,11 @@ public function estimates(Request $request)
         ]);
         $response = $this->apiGet($request, '/api/finance/estimates?' . http_build_query($params));
         $data = $response->json();
+        $clients = $this->apiGet($request, '/api/crm/clients?per_page=100')->json('data', []);
         return view('finance.estimates', [
             'estimates' => $data['data'] ?? [],
             'pagination' => $this->extractPagination($data),
+            'clients' => $clients,
         ]);
     }
 
@@ -72,7 +76,7 @@ public function estimates(Request $request)
         return back()->withErrors($response->json('errors', []))->withInput();
     }
 
-    public function updateEstimate(Request $request, $id)
+    public function updateEstimate(Request $request, string $id)
     {
         $response = $this->apiPut($request, "/api/finance/estimates/{$id}", $request->all());
         if ($response->successful()) {
@@ -81,13 +85,13 @@ public function estimates(Request $request)
         return back()->withErrors($response->json('errors', []))->withInput();
     }
 
-    public function destroyEstimate(Request $request, $id)
+    public function destroyEstimate(Request $request, string $id)
     {
         $this->apiDelete($request, "/api/finance/estimates/{$id}");
         return redirect()->route('finance.estimates')->with('success', 'Estimate deleted successfully');
     }
 
-public function payments(Request $request)
+    public function payments(Request $request)
     {
         $params = array_filter([
             'page' => $request->input('page', 1),
@@ -95,9 +99,13 @@ public function payments(Request $request)
         ]);
         $response = $this->apiGet($request, '/api/finance/payments?' . http_build_query($params));
         $data = $response->json();
+        $clients = $this->apiGet($request, '/api/crm/clients?per_page=100')->json('data', []);
+        $invoices = $this->apiGet($request, '/api/finance/invoices?per_page=100')->json('data', []);
         return view('finance.payments', [
             'payments' => $data['data'] ?? [],
             'pagination' => $this->extractPagination($data),
+            'clients' => $clients,
+            'invoices' => $invoices,
         ]);
     }
 
@@ -110,7 +118,16 @@ public function payments(Request $request)
         return back()->withErrors($response->json('errors', []))->withInput();
     }
 
-public function expenses(Request $request)
+    public function updatePayment(Request $request, string $id)
+    {
+        $response = $this->apiPut($request, "/api/finance/payments/{$id}", $request->all());
+        if ($response->successful()) {
+            return redirect()->route('finance.payments')->with('success', 'Payment updated successfully');
+        }
+        return back()->withErrors($response->json('errors', []))->withInput();
+    }
+
+    public function expenses(Request $request)
     {
         $params = array_filter([
             'page' => $request->input('page', 1),
@@ -137,7 +154,7 @@ public function expenses(Request $request)
         return back()->withErrors($response->json('errors', []))->withInput();
     }
 
-    public function updateExpense(Request $request, $id)
+    public function updateExpense(Request $request, string $id)
     {
         $response = $this->apiPut($request, "/api/finance/expenses/{$id}", $request->all());
         if ($response->successful()) {
@@ -146,13 +163,13 @@ public function expenses(Request $request)
         return back()->withErrors($response->json('errors', []))->withInput();
     }
 
-    public function destroyExpense(Request $request, $id)
+    public function destroyExpense(Request $request, string $id)
     {
         $this->apiDelete($request, "/api/finance/expenses/{$id}");
         return redirect()->route('finance.expenses')->with('success', 'Expense deleted successfully');
     }
 
-    public function approveExpense(Request $request, $id)
+    public function approveExpense(Request $request, string $id)
     {
         $response = $this->apiPost($request, "/api/finance/expenses/{$id}/approve");
         if ($response->successful()) {

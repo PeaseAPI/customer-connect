@@ -13,6 +13,12 @@ use App\Http\Controllers\Api\ExpenseController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\LeaveController;
 use App\Http\Controllers\Api\TicketController;
+use App\Http\Controllers\Api\TicketTypeController;
+use App\Http\Controllers\Api\TicketChannelController;
+use App\Http\Controllers\Api\TicketFileController;
+use App\Http\Controllers\Api\TicketReplyTemplateController;
+use App\Http\Controllers\Api\TicketSettingController;
+use App\Http\Controllers\Api\TicketEmailSettingController;
 use App\Http\Controllers\Api\ContractController;
 use App\Http\Controllers\Api\ApprovalController;
 use App\Http\Controllers\Api\DashboardController;
@@ -82,6 +88,71 @@ use App\Http\Controllers\Api\SmsTemplateController;
 use App\Http\Controllers\Api\CountryController;
 use App\Http\Controllers\Api\CurrencyController;
 use App\Http\Controllers\Api\DeviceTokenController;
+use App\Http\Controllers\Api\SearchController;
+use App\Http\Controllers\Api\GanttLinkController;
+use App\Http\Controllers\Api\ActivityLogController;
+use App\Http\Controllers\Api\AiAssistantController;
+use App\Http\Controllers\Api\ApiKeyController;
+use App\Http\Controllers\Api\AssetController;
+use App\Http\Controllers\Api\BankTransactionController;
+use App\Http\Controllers\Api\ChatMentionController;
+use App\Http\Controllers\Api\ChatMessageFileController;
+use App\Http\Controllers\Api\ContentAuditCallbackController;
+use App\Http\Controllers\Api\ContentAuditLogController;
+use App\Http\Controllers\Api\CustomFieldController;
+use App\Http\Controllers\Api\CustomLinkController;
+use App\Http\Controllers\Api\CustomModuleController;
+use App\Http\Controllers\Api\DatabaseBackupController;
+use App\Http\Controllers\Api\DepartmentController;
+use App\Http\Controllers\Api\DesignationController;
+use App\Http\Controllers\Api\DiscussionFileController;
+use App\Http\Controllers\Api\EcloudSettingController;
+use App\Http\Controllers\Api\EstimateController;
+use App\Http\Controllers\Api\EventFileController;
+use App\Http\Controllers\Api\FaqCategoryController;
+use App\Http\Controllers\Api\FaqController;
+use App\Http\Controllers\Api\FooterSettingController;
+use App\Http\Controllers\Api\FrontPublicController;
+use App\Http\Controllers\Api\FrontendController;
+use App\Http\Controllers\Api\FrontendSectionController;
+use App\Http\Controllers\Api\IdentityVerificationController;
+use App\Http\Controllers\Api\ImportController;
+use App\Http\Controllers\Api\InvoiceFileController;
+use App\Http\Controllers\Api\InvoiceReminderHistoryController;
+use App\Http\Controllers\Api\InvoiceTemplateController;
+use App\Http\Controllers\Api\KnowledgeBaseFileController;
+use App\Http\Controllers\Api\LeadContactController;
+use App\Http\Controllers\Api\LeadFileController;
+use App\Http\Controllers\Api\LeadFollowUpController;
+use App\Http\Controllers\Api\LeadFormController;
+use App\Http\Controllers\Api\LeadNoteController;
+use App\Http\Controllers\Api\LeaveFileController;
+use App\Http\Controllers\Api\MilestoneController;
+use App\Http\Controllers\Api\PaymentCallbackController;
+use App\Http\Controllers\Api\PayslipController;
+use App\Http\Controllers\Api\ProductFileController;
+use App\Http\Controllers\Api\ProjectFileController;
+use App\Http\Controllers\Api\ProjectNoteController;
+use App\Http\Controllers\Api\ProjectRatingController;
+use App\Http\Controllers\Api\ProposalTemplateController;
+use App\Http\Controllers\Api\PurchaseRequestController;
+use App\Http\Controllers\Api\RecurringEventController;
+use App\Http\Controllers\Api\RolePermissionController;
+use App\Http\Controllers\Api\SalaryStructureController;
+use App\Http\Controllers\Api\SecuritySettingController;
+use App\Http\Controllers\Api\SeoDetailController;
+use App\Http\Controllers\Api\SignUpSettingController;
+use App\Http\Controllers\Api\SocialAuthSettingController;
+use App\Http\Controllers\Api\SocialLinkSettingController;
+use App\Http\Controllers\Api\StorageSettingController;
+use App\Http\Controllers\Api\TaxSettingController;
+use App\Http\Controllers\Api\TestimonialSettingController;
+use App\Http\Controllers\Api\ThemeSettingController;
+use App\Http\Controllers\Api\TicketReplyController;
+use App\Http\Controllers\Api\TimelogController;
+use App\Http\Controllers\Api\VendorController;
+use App\Http\Controllers\Api\VerificationProviderController;
+use App\Http\Controllers\Api\WebhookController;
 use Illuminate\Support\Facades\Route;
 
 // Public API (no auth required)
@@ -210,6 +281,7 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
         Route::post('deals/{deal}/change-stage', [DealController::class, 'changeStage']);
         Route::post('deals/{deal}/notes', [DealController::class, 'storeNote']);
         Route::get('deals/{deal}/history', [DealController::class, 'history']);
+        Route::get('pipelines/all', [PipelineController::class, 'all']);
         Route::apiResource('pipelines', PipelineController::class);
         Route::post('pipelines/{pipeline}/stages', [PipelineController::class, 'storeStage']);
         Route::put('pipeline-stages/{stage}', [PipelineController::class, 'updateStage']);
@@ -234,6 +306,11 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
         Route::post('tasks/{task}/files', [TaskController::class, 'uploadFile']);
         Route::get('tasks/{task}/files', [TaskController::class, 'listFiles']);
         Route::delete('tasks/{task}/files/{fileId}', [TaskController::class, 'deleteFile']);
+        // Standalone task routes (project-less context, used by the web UI)
+        Route::get('tasks', [TaskController::class, 'index']);
+        Route::post('tasks', [TaskController::class, 'store']);
+        Route::put('tasks/{task}', [TaskController::class, 'updateGlobal']);
+        Route::delete('tasks/{task}', [TaskController::class, 'destroyGlobal']);
         // Project Templates
         Route::apiResource('project-templates', ProjectTemplateController::class);
         Route::post('projects/{project}/create-template', [ProjectTemplateController::class, 'createFromProject']);
@@ -359,6 +436,12 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
         Route::get('expenses', [ReportController::class, 'expenses']);
         Route::get('leaves', [ReportController::class, 'leaves']);
     });
+
+    // Global Search
+    Route::get('search', [SearchController::class, 'search']);
+
+    // Gantt Links (Task Dependencies)
+    Route::apiResource('gantt-links', GanttLinkController::class)->only(['index', 'store', 'destroy']);
 
         // Settings
     Route::prefix('settings')->group(function () {
@@ -506,6 +589,74 @@ Route::middleware(['auth:sanctum', 'company', 'subscription'])->group(function (
 
     // ===== Device Tokens (Push Notifications) =====
     Route::apiResource('device-tokens', DeviceTokenController::class)->only(['index', 'store', 'destroy']);
+
+    // ===== Ticket Extras =====
+    Route::apiResource('ticket-types', TicketTypeController::class);
+    Route::apiResource('ticket-channels', TicketChannelController::class);
+    Route::apiResource('ticket-files', TicketFileController::class)->only(['index', 'store', 'destroy']);
+    Route::apiResource('ticket-reply-templates', TicketReplyTemplateController::class);
+    Route::prefix('ticket-settings')->group(function () {
+        Route::get('/', [TicketSettingController::class, 'index']);
+        Route::put('/', [TicketSettingController::class, 'update']);
+    });
+    Route::prefix('ticket-email-settings')->group(function () {
+        Route::get('/', [TicketEmailSettingController::class, 'index']);
+        Route::put('/', [TicketEmailSettingController::class, 'update']);
+    });
+
+    // ===== Chat Enhancements =====
+    Route::apiResource('chat-message-files', ChatMessageFileController::class)->only(['index', 'store', 'destroy']);
+    Route::apiResource('chat-mentions', ChatMentionController::class)->only(['index', 'store']);
+
+    // ===== Event Enhancements =====
+    Route::apiResource('event-files', EventFileController::class)->only(['index', 'store', 'destroy']);
+    Route::apiResource('recurring-events', RecurringEventController::class);
+
+    // ===== Knowledge Base Enhancements =====
+    Route::apiResource('knowledge-base-files', KnowledgeBaseFileController::class)->only(['index', 'store', 'destroy']);
+    Route::apiResource('knowledge-base-categories', \App\Http\Controllers\Api\KnowledgeBaseCategoryController::class);
+
+    // ===== Discussion Enhancements =====
+    Route::apiResource('discussion-files', DiscussionFileController::class)->only(['index', 'store', 'destroy']);
+    Route::apiResource('discussion-categories', \App\Http\Controllers\Api\DiscussionCategoryController::class);
+
+    // ===== Project Extras =====
+    Route::apiResource('project-files', ProjectFileController::class)->only(['index', 'store', 'destroy']);
+    Route::apiResource('project-ratings', ProjectRatingController::class);
+    Route::apiResource('project-notes', ProjectNoteController::class);
+
+    // ===== Invoice Extras =====
+    Route::apiResource('invoice-files', InvoiceFileController::class)->only(['index', 'store', 'destroy']);
+    Route::apiResource('invoice-reminder-histories', InvoiceReminderHistoryController::class)->only(['index', 'show']);
+
+    // ===== Lead Extras =====
+    Route::apiResource('lead-files', LeadFileController::class)->only(['index', 'store', 'destroy']);
+    Route::apiResource('lead-notes', LeadNoteController::class);
+    Route::apiResource('lead-forms', LeadFormController::class);
+
+    // ===== Other File Models =====
+    Route::apiResource('leave-files', LeaveFileController::class)->only(['index', 'store', 'destroy']);
+    Route::apiResource('product-files', ProductFileController::class)->only(['index', 'store', 'destroy']);
+    Route::apiResource('proposal-templates', ProposalTemplateController::class);
+    Route::apiResource('bank-transactions', BankTransactionController::class);
+
+    // ===== Import =====
+    Route::post('import', [ImportController::class, 'import']);
+
+    // ===== Role & Permission =====
+    Route::apiResource('roles', RolePermissionController::class)->except(['show']);
+
+    // ===== Settings (Theme/Security/SignUp/Social) =====
+    Route::prefix('settings')->group(function () {
+        Route::get('theme', [ThemeSettingController::class, 'show']);
+        Route::put('theme', [ThemeSettingController::class, 'update']);
+        Route::get('security', [SecuritySettingController::class, 'show']);
+        Route::put('security', [SecuritySettingController::class, 'update']);
+        Route::get('signup', [SignUpSettingController::class, 'show']);
+        Route::put('signup', [SignUpSettingController::class, 'update']);
+        Route::get('social-auth', [SocialAuthSettingController::class, 'show']);
+        Route::put('social-auth', [SocialAuthSettingController::class, 'update']);
+    });
 });
 
 // ===== Account Management (auth + company context) =====
@@ -528,6 +679,32 @@ Route::middleware(['auth:sanctum', 'super_admin'])->prefix('super-admin')->group
     Route::post('subscriptions/{subscription}/renew', [\App\Http\Controllers\Api\SuperAdmin\SubscriptionController::class, 'renew']);
     Route::apiResource('users', \App\Http\Controllers\Api\SuperAdmin\UserController::class);
     Route::post('users/{user}/reset-password', [\App\Http\Controllers\Api\SuperAdmin\UserController::class, 'resetPassword']);
+
+    // SaaS Frontend Management
+    Route::apiResource('frontend-sections', \App\Http\Controllers\Api\FrontendSectionController::class);
+    Route::put('frontend-sections/{id}', [\App\Http\Controllers\Api\FrontendController::class, 'updateSection']);
+    Route::apiResource('faqs', \App\Http\Controllers\Api\FaqController::class);
+    Route::apiResource('faq-categories', \App\Http\Controllers\Api\FaqCategoryController::class);
+    Route::apiResource('seo-details', \App\Http\Controllers\Api\SeoDetailController::class);
+    Route::apiResource('footer-settings', \App\Http\Controllers\Api\FooterSettingController::class);
+    Route::apiResource('social-link-settings', \App\Http\Controllers\Api\SocialLinkSettingController::class);
+    Route::apiResource('testimonial-settings', \App\Http\Controllers\Api\TestimonialSettingController::class);
+});
+
+// ===== Frontend Public Routes (no auth required) =====
+Route::prefix('front')->group(function () {
+    Route::get('home', [\App\Http\Controllers\Api\FrontPublicController::class, 'home']);
+    Route::get('pricing', [\App\Http\Controllers\Api\FrontPublicController::class, 'pricing']);
+    Route::get('features', [\App\Http\Controllers\Api\FrontPublicController::class, 'features']);
+    Route::get('faq', [\App\Http\Controllers\Api\FrontendController::class, 'faqPublic']);
+    Route::get('seo', [\App\Http\Controllers\Api\FrontendController::class, 'seoPublic']);
+});
+
+// ===== Approval Callback Routes (no auth, webhook callbacks) =====
+Route::prefix('approval-callback')->group(function () {
+    Route::post('dingtalk', [\App\Http\Controllers\Api\ApprovalController::class, 'dingtalkCallback']);
+    Route::post('wework', [\App\Http\Controllers\Api\ApprovalController::class, 'weworkCallback']);
+    Route::post('feishu', [\App\Http\Controllers\Api\ApprovalController::class, 'feishuCallback']);
 });
 
 // ===== Payment Callback Routes (no auth) =====
@@ -535,5 +712,59 @@ Route::prefix('payment')->group(function () {
     Route::post('alipay/notify', [\App\Http\Controllers\Api\PaymentCallbackController::class, 'alipayNotify']);
     Route::get('alipay/return', [\App\Http\Controllers\Api\PaymentCallbackController::class, 'alipayReturn']);
     Route::post('wechat/notify', [\App\Http\Controllers\Api\PaymentCallbackController::class, 'wechatNotify']);
+});
+
+// ===== Content Audit Callback Routes (no auth, webhook) =====
+// 多Provider异步审核回调: 显式指定provider 或 根据payload自动识别
+Route::prefix('content-audit')->group(function () {
+    Route::post('callback', [\App\Http\Controllers\Api\ContentAuditCallbackController::class, 'callback']);
+    Route::post('callback/{provider}', [\App\Http\Controllers\Api\ContentAuditCallbackController::class, 'callback']);
+});
+// 兼容旧路由(自动识别, 等价于 content-audit/callback)
+Route::post('ecloud/audit-callback', [\App\Http\Controllers\Api\ContentAuditCallbackController::class, 'callback']);
+
+// ===== Ecloud Integration Routes (auth required) =====
+Route::middleware(['auth:sanctum', 'company'])->group(function () {
+    // 手机号实名认证
+    Route::prefix('identity-verification')->group(function () {
+        Route::post('two-factor', [\App\Http\Controllers\Api\IdentityVerificationController::class, 'twoFactor']);
+        Route::post('three-factor', [\App\Http\Controllers\Api\IdentityVerificationController::class, 'threeFactor']);
+        // 实人认证渠道(IdentityVerifyManager: aliyun/tencent/alipay/wechat)
+        Route::post('id-card', [\App\Http\Controllers\Api\IdentityVerificationController::class, 'idCard']);
+        Route::post('phone-three-factor', [\App\Http\Controllers\Api\IdentityVerificationController::class, 'phoneThreeFactor']);
+        Route::post('bank-card', [\App\Http\Controllers\Api\IdentityVerificationController::class, 'bankCard']);
+        Route::post('batch', [\App\Http\Controllers\Api\IdentityVerificationController::class, 'batchVerify']);
+        Route::get('status', [\App\Http\Controllers\Api\IdentityVerificationController::class, 'status']);
+    });
+    Route::apiResource('identity-verifications', \App\Http\Controllers\Api\IdentityVerificationController::class)->only(['index', 'show']);
+
+    // 内容审核记录
+    Route::prefix('content-audit')->group(function () {
+        Route::get('logs', [\App\Http\Controllers\Api\ContentAuditLogController::class, 'index']);
+        Route::get('logs/{id}', [\App\Http\Controllers\Api\ContentAuditLogController::class, 'show']);
+        Route::get('blocked', [\App\Http\Controllers\Api\ContentAuditLogController::class, 'blocked']);
+        Route::get('review-pending', [\App\Http\Controllers\Api\ContentAuditLogController::class, 'reviewPending']);
+        Route::post('review/{id}', [\App\Http\Controllers\Api\ContentAuditLogController::class, 'review']);
+        Route::get('statistics', [\App\Http\Controllers\Api\ContentAuditLogController::class, 'statistics']);
+        Route::get('status', [\App\Http\Controllers\Api\ContentAuditLogController::class, 'status']);
+    });
+
+    // 移动云集成设置（管理员）
+    Route::middleware('super_admin')->prefix('ecloud-settings')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Api\EcloudSettingController::class, 'index']);
+        Route::put('/', [\App\Http\Controllers\Api\EcloudSettingController::class, 'update']);
+        Route::post('test-connection', [\App\Http\Controllers\Api\EcloudSettingController::class, 'testConnection']);
+        Route::post('test-phone-verify', [\App\Http\Controllers\Api\EcloudSettingController::class, 'testPhoneVerify']);
+        Route::post('test-content-audit', [\App\Http\Controllers\Api\EcloudSettingController::class, 'testContentAudit']);
+    });
+
+    // 多平台验证服务Provider管理（实人认证/号码认证/内容审核）
+    Route::middleware('super_admin')->prefix('verification-providers')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Api\VerificationProviderController::class, 'index']);
+        Route::get('{service}/test', [\App\Http\Controllers\Api\VerificationProviderController::class, 'test'])
+            ->whereIn('service', ['identity_verify', 'phone_verify', 'content_security']);
+        Route::put('{service}/driver', [\App\Http\Controllers\Api\VerificationProviderController::class, 'setDriver'])
+            ->whereIn('service', ['identity_verify', 'phone_verify', 'content_security']);
+    });
 });
 

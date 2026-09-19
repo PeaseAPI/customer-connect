@@ -30,6 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'module' => CheckModuleEnabled::class,
             'super_admin' => EnsureSuperAdmin::class,
             'api_key' => \App\Http\Middleware\AuthenticateApiKey::class,
+            'content.audit' => \App\Http\Middleware\ContentAuditMiddleware::class,
         ]);
 
         // Exclude routes that don't need multi-tenant checks

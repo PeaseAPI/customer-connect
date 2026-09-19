@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Estimate;
 use App\Services\Finance\EstimateService;
+use App\Events\EstimateAccepted;
+use App\Events\EstimateDeclined;
 use Illuminate\Http\Request;
 
 class EstimateController extends BaseApiController
@@ -60,6 +62,7 @@ class EstimateController extends BaseApiController
     {
         $validated = $request->validate([
             'client_id' => 'sometimes|exists:users,id',
+            'status' => 'sometimes|string|in:pending,sent,accepted,declined,expired',
             'sub_total' => 'sometimes|numeric',
             'total' => 'sometimes|numeric',
             'valid_till' => 'sometimes|date',
@@ -94,5 +97,19 @@ class EstimateController extends BaseApiController
     {
         $estimate = $this->estimateService->send($estimate);
         return $this->success($estimate, 'Quote sent');
+    }
+
+    public function accept(Estimate $estimate)
+    {
+        $estimate = $this->estimateService->accept($estimate);
+        event(new EstimateAccepted($estimate));
+        return $this->success($estimate, 'Quote accepted');
+    }
+
+    public function decline(Estimate $estimate)
+    {
+        $estimate = $this->estimateService->decline($estimate);
+        event(new EstimateDeclined($estimate));
+        return $this->success($estimate, 'Quote declined');
     }
 }

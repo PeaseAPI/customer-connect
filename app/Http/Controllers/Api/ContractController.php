@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Contract;
 use App\Services\CRM\ContractService;
+use App\Events\ContractExpiringSoon;
 use Illuminate\Http\Request;
 
 class ContractController extends BaseApiController

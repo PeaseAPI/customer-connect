@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\TaskComment;
 use App\Services\PM\TaskCommentService;
+use App\Events\TaskCommentAdded;
 use Illuminate\Http\Request;
 
 class TaskCommentController extends BaseApiController
@@ -28,8 +29,13 @@ class TaskCommentController extends BaseApiController
         $validated['added_by'] = $request->user()->id;
         $validated['company_id'] = $request->attributes->get('company_id');
 
+        $comment = $this->taskCommentService->create($validated);
+
+        // Fire TaskCommentAdded event
+        event(new TaskCommentAdded($comment));
+
         return $this->success(
-            $this->taskCommentService->create($validated)->load(['user', 'creator']),
+            $comment->load(['user', 'creator']),
             'Task commentCreated successfully',
             201
         );

@@ -18,9 +18,11 @@ class ProjectController extends Controller
         ]);
         $response = $this->apiGet($request, '/api/pm/projects?' . http_build_query($params));
         $data = $response->json();
+        $clients = $this->apiGet($request, '/api/crm/clients?per_page=100')->json('data', []);
         return view('projects.index', [
             'projects' => $data['data'] ?? [],
             'pagination' => $this->extractPagination($data),
+            'clients' => $clients,
         ]);
     }
 
@@ -33,7 +35,7 @@ class ProjectController extends Controller
         return back()->withErrors($response->json('errors', []))->withInput();
     }
 
-    public function show(Request $request, $id)
+    public function show(Request $request, int $id)
     {
         $response = $this->apiGet($request, "/api/pm/projects/{$id}");
         return view('projects.show', [
@@ -41,7 +43,7 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, int $id)
     {
         $response = $this->apiPut($request, "/api/pm/projects/{$id}", $request->all());
         if ($response->successful()) {
@@ -50,13 +52,13 @@ class ProjectController extends Controller
         return back()->withErrors($response->json('errors', []))->withInput();
     }
 
-    public function destroy(Request $request, $id)
+    public function destroy(Request $request, int $id)
     {
         $this->apiDelete($request, "/api/pm/projects/{$id}");
         return redirect()->route('projects.index')->with('success', 'Project deleted successfully');
     }
 
-    public function tasks(Request $request, $projectId)
+    public function tasks(Request $request, int $projectId)
     {
         $params = array_filter([
             'page' => $request->input('page', 1),
@@ -101,7 +103,7 @@ class ProjectController extends Controller
         return back()->withErrors($response->json('errors', []))->withInput();
     }
 
-    public function updateTask(Request $request, $id)
+    public function updateTask(Request $request, int $id)
     {
         $response = $this->apiPut($request, "/api/pm/tasks/{$id}", $request->all());
         if ($response->successful()) {
@@ -110,9 +112,12 @@ class ProjectController extends Controller
         return back()->withErrors($response->json('errors', []))->withInput();
     }
 
-    public function destroyTask(Request $request, $id)
+    public function destroyTask(Request $request, int $id)
     {
-        $this->apiDelete($request, "/api/pm/tasks/{$id}");
-        return back()->with('success', 'Task deleted successfully');
+        $response = $this->apiDelete($request, "/api/pm/tasks/{$id}");
+        if ($response->successful()) {
+            return back()->with('success', 'Task deleted successfully');
+        }
+        return back()->with('error', 'Failed to delete task');
     }
 }

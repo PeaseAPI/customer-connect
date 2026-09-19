@@ -4,11 +4,16 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Ticket;
 use App\Services\Ticket\TicketService;
+use App\Events\TicketStatusChanged;
+use App\Services\ContentSecurity\ContentSecurityManager;
 use Illuminate\Http\Request;
 
 class TicketController extends BaseApiController
 {
-    public function __construct(protected TicketService $ticketService) {}
+    public function __construct(
+        protected TicketService $ticketService,
+        protected ContentSecurityManager $auditService,
+    ) {}
 
     public function index(Request $request)
     {
@@ -30,6 +35,13 @@ class TicketController extends BaseApiController
 
         $validated['created_by'] = $request->user()->id;
         $validated['company_id'] = $request->attributes->get('company_id');
+
+        // 内容审核
+        $content = ($validated['subject'] ?? '') . ' ' . ($validated['description'] ?? '');
+        $auditResult = $this->auditService->auditText($content, 'Ticket', null);
+        if (!$auditResult['passed']) {
+            return $this->error('内容审核未通过：' . ($auditResult['message'] ?? '内容违规'), 422);
+        }
 
         $ticket = $this->ticketService->create($validated);
 
@@ -63,6 +75,7 @@ class TicketController extends BaseApiController
 
         if ($status) {
             $ticket = $this->ticketService->changeStatus($ticket, $status);
+            event(new TicketStatusChanged($ticket));
         }
 
         if (array_key_exists('agent_id', $request->all())) {

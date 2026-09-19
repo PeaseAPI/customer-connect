@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Task;
 use App\Services\PM\TaskService;
+use App\Events\TaskAssigned;
 use Illuminate\Http\Request;
 
 class TaskController extends BaseApiController
@@ -55,6 +56,11 @@ class TaskController extends BaseApiController
         unset($validated['label_ids']);
 
         $task = $this->taskService->create($validated);
+
+        // Fire TaskAssigned event if task has assignee
+        if (!empty($validated['assign_to'])) {
+            event(new TaskAssigned($task));
+        }
 
         // 同步标签
         if (!empty($labelIds)) {
@@ -115,6 +121,22 @@ class TaskController extends BaseApiController
     {
         $this->taskService->delete($task);
         return $this->success(null, 'Deleted successfully');
+    }
+
+    /**
+     * Standalone update without project context (used by the web UI).
+     */
+    public function updateGlobal(Request $request, Task $task)
+    {
+        return $this->update($request, $task->project_id, $task);
+    }
+
+    /**
+     * Standalone delete without project context (used by the web UI).
+     */
+    public function destroyGlobal(Task $task)
+    {
+        return $this->destroy($task->project_id, $task);
     }
 
         public function reorder(Request $request)
@@ -210,7 +232,7 @@ class TaskController extends BaseApiController
     /**
      * Delete task file
      */
-    public function deleteFile(Task $task, $fileId)
+    public function deleteFile(Task $task, int $fileId)
     {
         $file = $task->files()->where('id', $fileId)->first();
         if (!$file) {

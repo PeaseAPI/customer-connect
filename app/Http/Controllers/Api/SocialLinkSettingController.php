@@ -1,0 +1,15 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Models\SocialLinkSetting;
+use Illuminate\Http\Request;
+
+class SocialLinkSettingController extends BaseApiController
+{
+    public function index(Request $r){return $this->paginated(SocialLinkSetting::query()->latest(),$r);}
+    public function store(Request $r){$d=$r->all();$d['company_id']=app('App\Services\ContextService')->getCompanyId();return $this->success(SocialLinkSetting::create($d),'Created',201);}
+    public function show(SocialLinkSetting $m){return $this->success($m);}
+    public function update(Request $r,SocialLinkSetting $m){$m->update($r->all());return $this->success($m,'Updated');}
+    public function destroy(SocialLinkSetting $m){$m->delete();return $this->success(null,'Deleted');}
+}

@@ -8,11 +8,17 @@ use App\Http\Requests\SendMessageRequest;
 use App\Http\Requests\AddChatParticipantsRequest;
 use App\Models\Chat;
 use App\Services\Chat\ChatService;
+use App\Events\NewChatMessage;
+use App\Events\ChatMention;
+use App\Services\ContentSecurity\ContentSecurityManager;
 use Illuminate\Http\Request;
 
 class ChatController extends BaseApiController
 {
-    public function __construct(protected ChatService $chatService) {}
+    public function __construct(
+        protected ChatService $chatService,
+        protected ContentSecurityManager $auditService,
+    ) {}
 
     public function index(Request $request)
     {
@@ -60,7 +66,18 @@ class ChatController extends BaseApiController
         $v = $request->validated();
         $v['user_id'] = $request->user()->id;
         $v['company_id'] = $chat->company_id;
+
+        // 内容审核 - 聊天消息实时审核
+        $auditResult = $this->auditService->auditText($v['message'] ?? '', 'ChatMessage', null);
+        if (!$auditResult['passed']) {
+            return $this->error('内容审核未通过：' . ($auditResult['message'] ?? '内容违规'), 422);
+        }
+
         $message = $this->chatService->sendMessage($chat, $v);
+
+        // Fire NewChatMessage event
+        event(new NewChatMessage($message));
+
         return $this->success($message->load(['user']), 'Message sent successfully', 201);
     }
 

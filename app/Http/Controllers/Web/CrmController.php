@@ -35,7 +35,7 @@ class CrmController extends Controller
         return back()->withErrors($response->json('errors', []))->withInput();
     }
 
-    public function updateLead(Request $request, $id)
+    public function updateLead(Request $request, int $id)
     {
         $response = $this->apiPut($request, "/api/crm/leads/{$id}", $request->all());
         if ($response->successful()) {
@@ -44,13 +44,13 @@ class CrmController extends Controller
         return back()->withErrors($response->json('errors', []))->withInput();
     }
 
-    public function destroyLead(Request $request, $id)
+    public function destroyLead(Request $request, int $id)
     {
         $this->apiDelete($request, "/api/crm/leads/{$id}");
         return redirect()->route('crm.leads')->with('success', 'Lead deleted successfully');
     }
 
-    public function convertLead(Request $request, $id)
+    public function convertLead(Request $request, int $id)
     {
         $response = $this->apiPost($request, "/api/crm/leads/{$id}/convert");
         if ($response->successful()) {
@@ -82,7 +82,7 @@ class CrmController extends Controller
         return back()->withErrors($response->json('errors', []))->withInput();
     }
 
-    public function updateClient(Request $request, $id)
+    public function updateClient(Request $request, int $id)
     {
         $response = $this->apiPut($request, "/api/crm/clients/{$id}", $request->all());
         if ($response->successful()) {
@@ -91,7 +91,7 @@ class CrmController extends Controller
         return back()->withErrors($response->json('errors', []))->withInput();
     }
 
-    public function destroyClient(Request $request, $id)
+    public function destroyClient(Request $request, int $id)
     {
         $this->apiDelete($request, "/api/crm/clients/{$id}");
         return redirect()->route('crm.clients')->with('success', 'Client deleted successfully');
@@ -106,7 +106,7 @@ class CrmController extends Controller
         ]);
         $response = $this->apiGet($request, '/api/crm/deals?' . http_build_query($params));
         $data = $response->json();
-        $pipelines = $this->apiGet($request, '/api/crm/pipelines')->json('data', []);
+        $pipelines = $this->apiGet($request, '/api/crm/pipelines/all')->json('data', []);
         return view('crm.deals', [
             'deals' => $data['data'] ?? [],
             'pagination' => $this->extractPagination($data),
@@ -123,7 +123,7 @@ class CrmController extends Controller
         return back()->withErrors($response->json('errors', []))->withInput();
     }
 
-    public function updateDeal(Request $request, $id)
+    public function updateDeal(Request $request, int $id)
     {
         $response = $this->apiPut($request, "/api/crm/deals/{$id}", $request->all());
         if ($response->successful()) {
@@ -132,7 +132,7 @@ class CrmController extends Controller
         return back()->withErrors($response->json('errors', []))->withInput();
     }
 
-    public function destroyDeal(Request $request, $id)
+    public function destroyDeal(Request $request, int $id)
     {
         $this->apiDelete($request, "/api/crm/deals/{$id}");
         return redirect()->route('crm.deals')->with('success', 'Deal deleted successfully');
@@ -140,9 +140,15 @@ class CrmController extends Controller
 
     public function pipelines(Request $request)
     {
-        $response = $this->apiGet($request, '/api/crm/pipelines');
+        $params = array_filter([
+            'page' => $request->input('page', 1),
+            'search' => $request->input('search'),
+        ]);
+        $response = $this->apiGet($request, '/api/crm/pipelines?' . http_build_query($params));
+        $data = $response->json();
         return view('crm.pipelines', [
-            'pipelines' => $response->json('data', []),
+            'pipelines' => $data['data'] ?? [],
+            'pagination' => $this->extractPagination($data),
         ]);
     }
 
@@ -155,7 +161,7 @@ class CrmController extends Controller
         return back()->withErrors($response->json('errors', []))->withInput();
     }
 
-    public function updatePipeline(Request $request, $id)
+    public function updatePipeline(Request $request, int $id)
     {
         $response = $this->apiPut($request, "/api/crm/pipelines/{$id}", $request->all());
         if ($response->successful()) {
@@ -164,7 +170,7 @@ class CrmController extends Controller
         return back()->withErrors($response->json('errors', []))->withInput();
     }
 
-    public function destroyPipeline(Request $request, $id)
+    public function destroyPipeline(Request $request, int $id)
     {
         $this->apiDelete($request, "/api/crm/pipelines/{$id}");
         return redirect()->route('crm.pipelines')->with('success', 'Pipeline deleted successfully');

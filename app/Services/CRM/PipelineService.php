@@ -8,9 +8,22 @@ use Illuminate\Support\Facades\DB;
 
 class PipelineService
 {
-    public function list()
+    public function list(array $filters = [], int $perPage = 15)
     {
-        return LeadPipeline::with('stages')->get();
+        return LeadPipeline::with('stages')
+            ->when(isset($filters['search']) && $filters['search'] !== '', function ($q) use ($filters) {
+                $q->where('name', 'like', "%{$filters['search']}%");
+            })
+            ->orderBy('priority')
+            ->paginate($perPage);
+    }
+
+    /**
+     * Full unpaginated list (used for dropdown/option lists, e.g. deals stage filter).
+     */
+    public function listAll()
+    {
+        return LeadPipeline::with('stages')->orderBy('priority')->get();
     }
 
     public function create(array $data, int $userId): LeadPipeline

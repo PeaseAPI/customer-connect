@@ -85,6 +85,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/estimates/{id}', [FinanceController::class, 'destroyEstimate'])->name('estimates.destroy');
         Route::get('/payments', [FinanceController::class, 'payments'])->name('payments');
         Route::post('/payments', [FinanceController::class, 'storePayment'])->name('payments.store');
+        Route::put('/payments/{id}', [FinanceController::class, 'updatePayment'])->name('payments.update');
         Route::get('/expenses', [FinanceController::class, 'expenses'])->name('expenses');
         Route::post('/expenses', [FinanceController::class, 'storeExpense'])->name('expenses.store');
         Route::put('/expenses/{id}', [FinanceController::class, 'updateExpense'])->name('expenses.update');
@@ -99,9 +100,6 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/employees/{id}', [HrmController::class, 'updateEmployee'])->name('employees.update');
         Route::delete('/employees/{id}', [HrmController::class, 'destroyEmployee'])->name('employees.destroy');
         Route::get('/attendance', [HrmController::class, 'attendance'])->name('attendance');
-        Route::post('/attendance', [HrmController::class, 'storeAttendance'])->name('attendance.store');
-        Route::put('/attendance/{id}', [HrmController::class, 'updateAttendance'])->name('attendance.update');
-        Route::delete('/attendance/{id}', [HrmController::class, 'destroyAttendance'])->name('attendance.destroy');
         Route::get('/leaves', [HrmController::class, 'leaves'])->name('leaves');
         Route::post('/leaves', [HrmController::class, 'storeLeave'])->name('leaves.store');
         Route::put('/leaves/{id}', [HrmController::class, 'updateLeave'])->name('leaves.update');

@@ -44,10 +44,10 @@ class CheckModuleEnabled
             if (!in_array($module, $enabledModules)) {
                 if ($request->expectsJson()) {
                     return response()->json([
-                        'message' => "Module [{$module}] not available, please upgrade your plan",
+                        'message' => "Module [{$module}] not enabled, please upgrade your plan",
                     ], 403);
                 }
-                abort(403, "Module [{$module}] not available, please upgrade your plan");
+                abort(403, "Module [{$module}] not enabled, please upgrade your plan");
             }
         }
 

@@ -16,4 +16,15 @@ enum LeaveDuration: string
             self::HalfSecond => 'Afternoon',
         };
     }
+
+    /**
+     * Number of leave days consumed by this duration.
+     */
+    public function days(): float
+    {
+        return match ($this) {
+            self::Full => 1.0,
+            self::HalfFirst, self::HalfSecond => 0.5,
+        };
+    }
 }

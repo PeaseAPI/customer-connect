@@ -11,9 +11,14 @@ class PipelineController extends BaseApiController
 {
     public function __construct(protected PipelineService $pipelineService) {}
 
-    public function index()
+    public function index(Request $request)
     {
-        return $this->success($this->pipelineService->list());
+        return $this->paginated($this->pipelineService->list($request->all(), $request->per_page ?? 15));
+    }
+
+    public function all()
+    {
+        return $this->success($this->pipelineService->listAll());
     }
 
     public function store(Request $request)

@@ -11,6 +11,8 @@ class ApprovalManager
         $provider = $provider ?? config('services.approval.driver', 'internal');
         return match ($provider) {
             'dingtalk' => new DingtalkApprovalService(),
+            'wework' => new WeworkApprovalService(),
+            'feishu' => new FeishuApprovalService(),
             'internal' => new InternalApprovalService(),
             default => throw new \InvalidArgumentException("Unsupported approval service: {$provider}"),
         };

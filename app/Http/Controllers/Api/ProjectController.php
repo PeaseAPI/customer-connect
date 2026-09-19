@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Project;
 use App\Services\PM\ProjectService;
+use App\Events\NewProjectMember;
 use Illuminate\Http\Request;
 
 class ProjectController extends BaseApiController
@@ -85,6 +86,7 @@ class ProjectController extends BaseApiController
         ]);
 
         $this->projectService->addMember($project, $validated['user_id'], $validated['role'] ?? 'member');
+        event(new NewProjectMember($project, $validated['user_id']));
         return $this->success(null, 'Member added successfully');
     }
 

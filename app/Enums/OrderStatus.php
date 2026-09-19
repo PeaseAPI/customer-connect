@@ -7,7 +7,7 @@ enum OrderStatus: string
     case Pending = 'pending';
     case Processing = 'processing';
     case Completed = 'completed';
-    case Canceled = 'canceled';
+    case Cancelled = 'cancelled';
 
     public function label(): string
     {
@@ -15,7 +15,7 @@ enum OrderStatus: string
             self::Pending => 'Pending',
             self::Processing => 'Processing',
             self::Completed => 'Completed',
-            self::Canceled => 'Canceled',
+            self::Cancelled => 'Cancelled',
         };
     }
 }

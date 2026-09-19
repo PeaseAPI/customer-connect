@@ -57,6 +57,7 @@ class ExpenseController extends BaseApiController
             'project_id' => 'nullable|exists:projects,id',
             'billable' => 'nullable|boolean',
             'note' => 'nullable|string',
+            'status' => 'sometimes|string|in:pending,approved,declined',
         ]);
 
         $expense = $this->expenseService->update($expense, $validated);

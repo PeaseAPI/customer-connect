@@ -12,16 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('notifications', function (Blueprint $table) {
+            // 兼容Laravel database通道 + 站内信模块自定义列的混合结构
             $table->uuid('id')->primary();
-            $table->unsignedBigInteger('company_id');
-            $table->unsignedBigInteger('user_id');
-            $table->string('type', 50);
-            $table->string('title');
+            $table->string('type', 255);
+            $table->timestamp('read_at')->nullable()->index();
+            $table->unsignedBigInteger('company_id')->nullable()->index();
+            $table->unsignedBigInteger('user_id')->nullable()->index();
+            $table->string('title')->nullable();
             $table->text('message')->nullable();
             $table->json('data')->nullable();
-            $table->string('channel', 20)->nullable();
-            $table->timestamp('read_at')->nullable();
-            $table->index('user_id');
+            $table->string('channel', 30)->nullable();
             $table->timestamps();
         });
     }

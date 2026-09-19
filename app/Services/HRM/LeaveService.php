@@ -3,6 +3,7 @@
 namespace App\Services\HRM;
 
 use App\Enums\ApprovalStatus;
+use App\Enums\LeaveDuration;
 use App\Models\Leave;
 use App\Models\EmployeeLeaveQuota;
 use App\Events\LeaveStatusChanged;
@@ -44,7 +45,7 @@ class LeaveService
         });
     }
 
-        public function approve(Leave $leave, int $approverId, ?string $comment = null): Leave
+    public function approve(Leave $leave, int $approverId, ?string $comment = null): Leave
     {
         return DB::transaction(function () use ($leave, $approverId, $comment) {
             $oldStatus = $leave->status?->value ?? (string) $leave->getRawOriginal('status');
@@ -72,7 +73,7 @@ class LeaveService
     public function cancel(Leave $leave): Leave
     {
         $oldStatus = $leave->status?->value ?? (string) $leave->getRawOriginal('status');
-                $leave->update(['status' => ApprovalStatus::Canceled]);
+        $leave->update(['status' => ApprovalStatus::Canceled]);
         if ($oldStatus === ApprovalStatus::Approved->value) {
             $this->restoreLeaveBalance($leave);
         }
@@ -112,7 +113,9 @@ class LeaveService
             ->first();
 
         if ($quota) {
-            $used = $leave->duration?->value ? (float) $leave->duration->value : 1;
+            $duration = $leave->duration;
+
+            $used = $duration instanceof LeaveDuration ? $duration->days() : 1.0;
             $quota->increment('leaves_used', $used);
             $quota->decrement('leaves_remaining', $used);
         }
@@ -126,7 +129,9 @@ class LeaveService
             ->first();
 
         if ($quota) {
-            $used = $leave->duration?->value ? (float) $leave->duration->value : 1;
+            $duration = $leave->duration;
+
+            $used = $duration instanceof LeaveDuration ? $duration->days() : 1.0;
             $quota->decrement('leaves_used', $used);
             $quota->increment('leaves_remaining', $used);
         }

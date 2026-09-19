@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Deal;
 use App\Services\CRM\DealService;
+use App\Events\DealStatusChanged;
 use Illuminate\Http\Request;
 
 class DealController extends BaseApiController
@@ -78,7 +79,7 @@ class DealController extends BaseApiController
         ]);
 
         $deal = $this->dealService->changeStage($deal, $validated['pipeline_stage_id'], $request->user()->id);
-
+        event(new DealStatusChanged($deal));
         return $this->success($deal->load('stage'), 'Stage updated');
     }
 

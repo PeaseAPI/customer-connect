@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Notice;
 use App\Services\Notice\NoticeService;
+use App\Events\NewNotice;
 use Illuminate\Http\Request;
 
 class NoticeController extends BaseApiController
@@ -29,6 +30,7 @@ class NoticeController extends BaseApiController
         $validated['added_by'] = $request->user()->id;
 
         $notice = $this->noticeService->create($validated);
+        event(new NewNotice($notice));
         return $this->success($notice->load('creator'), 'Announcement created successfully', 201);
     }
 

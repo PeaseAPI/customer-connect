@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Enums\OrderStatus;
 use App\Models\Order;
 use App\Services\Finance\OrderService;
+use App\Events\NewOrderPlaced;
 use Illuminate\Http\Request;
 
 class OrderController extends BaseApiController
@@ -40,7 +41,7 @@ class OrderController extends BaseApiController
         }
 
         $order = $this->orderService->create($v);
-
+        event(new NewOrderPlaced($order));
         return $this->success($order->load(['client', 'project', 'currency']), 'Order created successfully', 201);
     }
 

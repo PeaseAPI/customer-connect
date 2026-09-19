@@ -47,10 +47,20 @@ class ExpenseService
 
     public function update(Expense $expense, array $data): Expense
     {
-        // Status changes must go through approve() or reject()
+        $status = $data['status'] ?? null;
         unset($data['status']);
 
         $expense->update($data);
+
+        // 状态变更复用审批副作用(approved_by/approved_at/approval_remark)
+        if ($status !== null) {
+            match ($status) {
+                ExpenseStatus::Approved->value => $this->approve($expense, (int) (auth()->id() ?? 0), $data['approval_remark'] ?? null),
+                ExpenseStatus::Declined->value => $this->reject($expense, (int) (auth()->id() ?? 0), $data['approval_remark'] ?? ($data['note'] ?? 'Rejected via update')),
+                default => $expense->update(['status' => ExpenseStatus::from($status)]),
+            };
+        }
+
         return $expense->fresh();
     }
 

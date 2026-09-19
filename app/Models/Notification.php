@@ -3,19 +3,20 @@
 namespace App\Models;
 
 use App\Traits\HasCompanyScope;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Notification extends Model
 {
-    use HasCompanyScope, HasFactory;
+    use HasCompanyScope, HasUuids, HasFactory;
 
     public $incrementing = false;
     protected $keyType = 'string';
 
     protected $fillable = [
-        'company_id', 'user_id', 'type', 'title', 'message',
+        'id', 'company_id', 'user_id', 'type', 'title', 'message',
         'data', 'read_at', 'channel',
     ];
 

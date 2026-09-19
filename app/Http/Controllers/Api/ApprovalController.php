@@ -51,4 +51,31 @@ class ApprovalController extends BaseApiController
         $this->approvalService->reject($approvalRequest, $request->remark);
         return $this->success(null, 'Declined');
     }
+
+    /**
+     * DingTalk approval callback (webhook)
+     */
+    public function dingtalkCallback(Request $request)
+    {
+        $this->approvalService->handleCallback('dingtalk', $request->all());
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * WeWork (企业微信) approval callback (webhook)
+     */
+    public function weworkCallback(Request $request)
+    {
+        $this->approvalService->handleCallback('wework', $request->all());
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Feishu (飞书) approval callback (webhook)
+     */
+    public function feishuCallback(Request $request)
+    {
+        $this->approvalService->handleCallback('feishu', $request->all());
+        return response()->json(['success' => true]);
+    }
 }

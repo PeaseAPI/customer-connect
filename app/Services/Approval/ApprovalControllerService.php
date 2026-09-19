@@ -71,4 +71,37 @@ class ApprovalControllerService
             ->with(['flow', 'user'])
             ->paginate($perPage);
     }
+
+    /**
+     * Handle approval callback from external platforms (DingTalk/WeWork/Feishu)
+     */
+    public function handleCallback(string $driver, array $payload): void
+    {
+        $service = ApprovalManager::driver($driver);
+
+        $result = $service->getApprovalStatus($payload);
+
+        if (!$result) {
+            return;
+        }
+
+        $requestId = $result['request_id'] ?? null;
+        $status = $result['status'] ?? null;
+
+        if (!$requestId || !$status) {
+            return;
+        }
+
+        $approvalRequest = ApprovalRequest::where('external_id', $requestId)->first();
+
+        if (!$approvalRequest) {
+            return;
+        }
+
+        if ($status === 'approved') {
+            $approvalRequest->update(['status' => ApprovalStatus::Approved]);
+        } elseif ($status === 'rejected') {
+            $approvalRequest->update(['status' => ApprovalStatus::Rejected]);
+        }
+    }
 }

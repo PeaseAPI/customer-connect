@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Http;
 
 class HrmController extends Controller
 {
-        use HasCrudActions;
+    use HasCrudActions;
 
-public function employees(Request $request)
+    public function employees(Request $request)
     {
         $params = array_filter([
             'page' => $request->input('page', 1),
@@ -39,7 +39,7 @@ public function employees(Request $request)
         return back()->withErrors($response->json('errors', []))->withInput();
     }
 
-    public function updateEmployee(Request $request, $id)
+    public function updateEmployee(Request $request, int $id)
     {
         $response = $this->apiPut($request, "/api/hrm/employees/{$id}", $request->all());
         if ($response->successful()) {
@@ -48,13 +48,13 @@ public function employees(Request $request)
         return back()->withErrors($response->json('errors', []))->withInput();
     }
 
-    public function destroyEmployee(Request $request, $id)
+    public function destroyEmployee(Request $request, int $id)
     {
         $this->apiDelete($request, "/api/hrm/employees/{$id}");
         return redirect()->route('hrm.employees')->with('success', 'Employee deleted successfully');
     }
 
-public function attendance(Request $request)
+    public function attendance(Request $request)
     {
         $params = array_filter([
             'page' => $request->input('page', 1),
@@ -69,31 +69,7 @@ public function attendance(Request $request)
         ]);
     }
 
-    public function storeAttendance(Request $request)
-    {
-        $response = $this->apiPost($request, '/api/hrm/attendances', $request->all());
-        if ($response->successful()) {
-            return redirect()->route('hrm.attendance')->with('success', 'Attendance record created successfully');
-        }
-        return back()->withErrors($response->json('errors', []))->withInput();
-    }
-
-    public function updateAttendance(Request $request, $id)
-    {
-        $response = $this->apiPut($request, "/api/hrm/attendances/{$id}", $request->all());
-        if ($response->successful()) {
-            return redirect()->route('hrm.attendance')->with('success', 'Attendance record updated successfully');
-        }
-        return back()->withErrors($response->json('errors', []))->withInput();
-    }
-
-    public function destroyAttendance(Request $request, $id)
-    {
-        $this->apiDelete($request, "/api/hrm/attendances/{$id}");
-        return redirect()->route('hrm.attendance')->with('success', 'Attendance record deleted successfully');
-    }
-
-public function leaves(Request $request)
+    public function leaves(Request $request)
     {
         $params = array_filter([
             'page' => $request->input('page', 1),
@@ -102,9 +78,11 @@ public function leaves(Request $request)
         ]);
         $response = $this->apiGet($request, '/api/hrm/leaves?' . http_build_query($params));
         $data = $response->json();
+        $leaveTypes = $this->apiGet($request, '/api/hrm/leave-types?per_page=100')->json('data', []);
         return view('hrm.leaves', [
             'leaves' => $data['data'] ?? [],
             'pagination' => $this->extractPagination($data),
+            'leaveTypes' => $leaveTypes,
         ]);
     }
 
@@ -117,7 +95,7 @@ public function leaves(Request $request)
         return back()->withErrors($response->json('errors', []))->withInput();
     }
 
-    public function updateLeave(Request $request, $id)
+    public function updateLeave(Request $request, int $id)
     {
         $response = $this->apiPut($request, "/api/hrm/leaves/{$id}", $request->all());
         if ($response->successful()) {
@@ -126,7 +104,7 @@ public function leaves(Request $request)
         return back()->withErrors($response->json('errors', []))->withInput();
     }
 
-    public function destroyLeave(Request $request, $id)
+    public function destroyLeave(Request $request, int $id)
     {
         $this->apiDelete($request, "/api/hrm/leaves/{$id}");
         return redirect()->route('hrm.leaves')->with('success', 'Leave request deleted successfully');

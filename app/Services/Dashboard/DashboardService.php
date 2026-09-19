@@ -8,6 +8,7 @@ use App\Models\Invoice;
 use App\Models\Lead;
 use App\Models\Project;
 use App\Models\Task;
+use App\Models\Ticket;
 use App\Models\Payment;
 use App\Models\Expense;
 use App\Enums\UserStatus;
@@ -28,7 +29,7 @@ class DashboardService
                 ->whereNotIn('status', [TaskStatus::Completed->value, TaskStatus::Cancelled->value])->count(),
             'invoices_count' => Invoice::where('company_id', $companyId)->count(),
             'leads_count' => Lead::where('company_id', $companyId)->count(),
-            'tickets_count' => 0,
+            'tickets_count' => Ticket::where('company_id', $companyId)->count(),
             'employees_count' => User::where('company_id', $companyId)->count(),
         ];
     }

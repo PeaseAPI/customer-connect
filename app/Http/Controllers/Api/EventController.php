@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Event;
 use App\Services\Event\EventService;
+use App\Events\EventReminderSent;
+use App\Events\EventInviteSent;
 use Illuminate\Http\Request;
 
 class EventController extends BaseApiController

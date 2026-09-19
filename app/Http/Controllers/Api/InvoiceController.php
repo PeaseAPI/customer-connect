@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Invoice;
 use App\Services\Finance\InvoiceService;
+use App\Events\InvoiceCreated;
+use App\Events\InvoiceUpdated;
 use Illuminate\Http\Request;
 
 class InvoiceController extends BaseApiController
@@ -44,6 +46,8 @@ class InvoiceController extends BaseApiController
 
         $invoice = $this->invoiceService->create($validated, $items);
 
+        event(new InvoiceCreated($invoice));
+
         return $this->success($invoice->load(['client', 'project', 'currency', 'items']), 'InvoiceCreated successfully', 201);
     }
 
@@ -63,6 +67,8 @@ class InvoiceController extends BaseApiController
         ]);
 
         $invoice = $this->invoiceService->update($invoice, $validated);
+
+        event(new InvoiceUpdated($invoice));
 
         return $this->success($invoice->load(['client', 'project', 'currency', 'items']), 'Updated successfully');
     }
