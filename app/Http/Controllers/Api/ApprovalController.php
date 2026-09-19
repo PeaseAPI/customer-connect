@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\ApprovalStatus;
 use App\Models\ApprovalRequest;
 use App\Services\Approval\ApprovalControllerService;
 use Illuminate\Http\Request;
@@ -32,6 +33,38 @@ class ApprovalController extends BaseApiController
     public function show(ApprovalRequest $approval)
     {
         return $this->success($approval->load(['flow', 'user', 'records.approver']));
+    }
+
+    /**
+     * 更新待审批的申请 (仅 pending 状态可改)
+     */
+    public function update(Request $request, ApprovalRequest $approval)
+    {
+        if ($approval->status !== ApprovalStatus::Pending) {
+            return $this->error('Only pending approval requests can be updated', 422);
+        }
+
+        $validated = $request->validate([
+            'form_data' => 'required|array',
+        ]);
+
+        $approval->update(['form_data' => $validated['form_data']]);
+
+        return $this->success($approval->fresh(), 'Approval request updated');
+    }
+
+    /**
+     * 撤回/删除待审批的申请 (仅 pending 状态可删)
+     */
+    public function destroy(ApprovalRequest $approval)
+    {
+        if ($approval->status !== ApprovalStatus::Pending) {
+            return $this->error('Only pending approval requests can be deleted', 422);
+        }
+
+        $approval->delete();
+
+        return $this->success(null, 'Approval request deleted');
     }
 
     public function pending()

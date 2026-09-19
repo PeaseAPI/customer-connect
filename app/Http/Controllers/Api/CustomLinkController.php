@@ -25,6 +25,14 @@ class CustomLinkController extends BaseApiController
     }
 
     /**
+     * 查看自定义链接详情
+     */
+    public function show(CustomLink $customLink)
+    {
+        return $this->success($customLink);
+    }
+
+    /**
      * 获取前端导航用的活跃链接
      */
     public function activeLinks(Request $request)

@@ -34,8 +34,8 @@ class SubscriptionController extends BaseApiController
         $validated = $request->validate([
             'company_id' => 'required|exists:companies,id',
             'package_id' => 'required|exists:packages,id',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after:start_date',
+            'ends_at' => 'required|date',
+            'trial_ends_at' => 'nullable|date',
             'status' => 'in:active,trial,expired,canceled',
         ]);
 
@@ -52,21 +52,18 @@ class SubscriptionController extends BaseApiController
     {
         $validated = $request->validate([
             'package_id' => 'sometimes|exists:packages,id',
-            'start_date' => 'sometimes|date',
-            'end_date' => 'sometimes|date|after:start_date',
+            'ends_at' => 'sometimes|date',
+            'trial_ends_at' => 'nullable|date',
             'status' => 'sometimes|in:active,trial,expired,canceled',
         ]);
 
         $subscription->update($validated);
 
-        // 如果升级套餐，同步更新公司的限制
+        // 如果变更套餐，同步更新公司的当前套餐
         if (isset($validated['package_id'])) {
-            $package = Package::find($validated['package_id']);
-            if ($package) {
-                $subscription->company->update([
-                    'max_users' => $package->max_users,
-                ]);
-            }
+            $subscription->company->update([
+                'package_id' => $validated['package_id'],
+            ]);
         }
 
         return $this->success($subscription->fresh()->load(['company', 'package']));
@@ -75,14 +72,21 @@ class SubscriptionController extends BaseApiController
     public function renew(Request $request, Subscription $subscription): JsonResponse
     {
         $validated = $request->validate([
-            'end_date' => 'required|date|after:' . $subscription->end_date->toDateString(),
+            'ends_at' => 'required|date|after:' . ($subscription->ends_at?->toDateString() ?? now()->toDateString()),
         ]);
 
-                $subscription->update([
-            'end_date' => $validated['end_date'],
+        $subscription->update([
+            'ends_at' => $validated['ends_at'],
             'status' => SubscriptionStatus::Active,
         ]);
 
         return $this->success($subscription->fresh(), 'Subscription renewed successfully');
+    }
+
+    public function destroy(Subscription $subscription): JsonResponse
+    {
+        $subscription->update(['status' => SubscriptionStatus::Canceled]);
+
+        return $this->success(null, 'Subscription canceled');
     }
 }

@@ -33,6 +33,25 @@ class UserController extends BaseApiController
         return $this->success($users);
     }
 
+    public function store(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'mobile' => 'nullable|string|max:20',
+            'password' => 'required|string|min:8',
+            'company_id' => 'required|exists:companies,id',
+            'status' => 'sometimes|in:active,deactive',
+        ]);
+
+        $validated['status'] = $validated['status'] ?? 'active';
+
+        $user = User::create($validated);
+        $user->load(['company', 'roles']);
+
+        return $this->success($user, 'User created successfully', 201);
+    }
+
     public function show(User $user): JsonResponse
     {
         $user->load(['company', 'roles', 'permissions']);

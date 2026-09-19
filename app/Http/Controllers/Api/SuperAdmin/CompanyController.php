@@ -18,8 +18,8 @@ class CompanyController extends BaseApiController
 
         if ($request->filled('keyword')) {
             $query->where(function ($q) use ($request) {
-                $q->where('name', 'like', "%{$request->keyword}%")
-                  ->orWhere('short_name', 'like', "%{$request->keyword}%");
+                $q->where('company_name', 'like', "%{$request->keyword}%")
+                  ->orWhere('company_email', 'like', "%{$request->keyword}%");
             });
         }
         if ($request->filled('status')) {
@@ -32,6 +32,22 @@ class CompanyController extends BaseApiController
         return $this->success($companies);
     }
 
+    public function store(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'company_name' => 'required|string|max:255',
+            'company_email' => 'required|email|max:255',
+            'company_phone' => 'nullable|string|max:30',
+            'status' => 'sometimes|in:active,inactive,suspended,expired',
+            'license_type' => 'nullable|string|max:50',
+            'license_expire_on' => 'nullable|date',
+        ]);
+
+        $company = Company::create($validated);
+
+        return $this->success($company->load('subscription.package'), 'Company created successfully', 201);
+    }
+
     public function show(Company $company): JsonResponse
     {
         $company->load(['subscription.package', 'users']);
@@ -41,11 +57,12 @@ class CompanyController extends BaseApiController
     public function update(Request $request, Company $company): JsonResponse
     {
         $validated = $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'short_name' => 'sometimes|string|max:100',
-                        'status' => 'sometimes|in:active,inactive,suspended,expired',
-            'max_users' => 'sometimes|integer|min:1',
-            'expire_at' => 'sometimes|date',
+            'company_name' => 'sometimes|string|max:255',
+            'company_email' => 'sometimes|email|max:255',
+            'company_phone' => 'sometimes|string|max:30',
+            'status' => 'sometimes|in:active,inactive,suspended,expired',
+            'license_type' => 'sometimes|string|max:50',
+            'license_expire_on' => 'sometimes|date',
         ]);
 
         $company->update($validated);

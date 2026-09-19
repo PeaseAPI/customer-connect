@@ -22,6 +22,56 @@ class AttendanceController extends BaseApiController
         return $this->success($attendance->load(['user', 'shift']));
     }
 
+    /**
+     * 手工补录考勤记录 (管理员)
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'date' => 'required|date',
+            'clock_in_time' => 'required|date',
+            'clock_out_time' => 'nullable|date|after:clock_in_time',
+            'shift_id' => 'nullable|exists:shifts,id',
+            'working_from' => 'nullable|in:office,home,other',
+        ]);
+        $validated['company_id'] = $request->attributes->get('company_id');
+
+        $exists = Attendance::where('user_id', $validated['user_id'])
+            ->where('date', $validated['date'])
+            ->exists();
+        if ($exists) {
+            return $this->error('Attendance already exists for this user and date', 422);
+        }
+
+        $attendance = Attendance::create($validated);
+
+        return $this->success($attendance->load(['user', 'shift']), 'Attendance created successfully', 201);
+    }
+
+    public function update(Request $request, Attendance $attendance)
+    {
+        $validated = $request->validate([
+            'clock_in_time' => 'sometimes|date',
+            'clock_out_time' => 'nullable|date|after:clock_in_time',
+            'shift_id' => 'nullable|exists:shifts,id',
+            'working_from' => 'nullable|in:office,home,other',
+            'late' => 'nullable|boolean',
+            'half_day' => 'nullable|boolean',
+        ]);
+
+        $attendance->update($validated);
+
+        return $this->success($attendance->fresh()->load(['user', 'shift']), 'Attendance updated successfully');
+    }
+
+    public function destroy(Attendance $attendance)
+    {
+        $attendance->delete();
+
+        return $this->success(null, 'Attendance deleted');
+    }
+
     public function clockIn(Request $request)
     {
         $data = $this->attendanceService->clockIn(Auth::id(), [
