@@ -20,7 +20,7 @@ class CleanupExpiredSubscriptions implements ShouldQueue
     {
         // 查找所有过期的订阅
         $expiredSubscriptions = Subscription::where('status', SubscriptionStatus::Active)
-            ->where('end_date', '<', now())
+            ->where('ends_at', '<', now())
             ->get();
 
         foreach ($expiredSubscriptions as $subscription) {
@@ -34,8 +34,8 @@ class CleanupExpiredSubscriptions implements ShouldQueue
 
         // 即将到期的订阅提醒（7天内）
         $expiringSubscriptions = Subscription::where('status', SubscriptionStatus::Active)
-            ->where('end_date', '<=', now()->addDays(7))
-            ->where('end_date', '>=', now())
+            ->where('ends_at', '<=', now()->addDays(7))
+            ->where('ends_at', '>=', now())
             ->with('company')
             ->get();
 
